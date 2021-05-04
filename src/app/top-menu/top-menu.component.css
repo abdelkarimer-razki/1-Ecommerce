@@ -1,0 +1,52 @@
+#topMenu{
+    height: 73px;
+    transition: 1s;
+}
+
+#logo{
+    cursor: pointer;
+}
+ul{
+    margin-bottom: 0;
+}
+#logo>li{
+    display: inline-block;
+    font-size: 16pt;
+    margin:10pt 0pt;
+}
+#logo>li>a{
+
+    display: inline-block;
+    text-decoration: none;
+    color: black;
+}
+#logo>li>a>label{
+}
+#sTopMenu{
+    float: right;
+    margin-right: 20pt;
+}
+#sTopMenu>ul{
+    list-style:none;
+    margin-top: 0;
+    padding: 8pt;
+    padding-top:4pt;
+}
+.menuElements{
+    font-size: 16pt;
+    display: inline-block;
+    margin:10pt 20pt;
+}
+.menuElements>a{
+    text-decoration: none;
+    color: black;
+}
+#Home>a:hover{
+    color: #FF3E22;
+}
+#Shopping>a:hover{
+    color: #F0E52B;
+}
+#Apropos>a:hover{
+    color: #34B865;
+}

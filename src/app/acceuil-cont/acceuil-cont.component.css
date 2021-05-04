@@ -1,0 +1,103 @@
+img{
+    width:100%;
+}
+#pic{
+    float: left;
+    width: 50%;
+}
+#welcome{
+    float: left;
+    width:50%;
+    margin-top: 0px;
+}
+#title{
+    text-align: center;
+    margin:150px auto 0 auto;
+    width:70%;
+}
+#title>p{
+    font-size:48px;
+    margin-bottom:15pt;
+}
+#bt{
+    margin: 0 auto;
+    border: 1px solid black;
+    border-radius:15px;
+    padding: 15pt;
+    width:fit-content;
+    transition: 0.5s;
+}
+#bt:hover{
+    background-color: black;
+    cursor: pointer;
+
+}
+#bt:hover  #btText{
+    color:white
+}
+#btText{
+    text-decoration: none;
+    color: black;
+    font-size:15pt;
+    transition: 0.5s;
+}
+.page1{
+    float: left;
+    width: 100%;
+}
+.pagination{
+    width: 300px;
+    margin: 0 auto;
+}
+.paginationList{
+    margin: 0 auto;
+    margin-top:10pt !important;
+}
+.paginationList>li{
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    margin: 0 15px;
+    transition-duration: 0.2s;
+    transform: rotate(45deg);
+    transition-property: all;
+    background-color: black;
+    cursor: pointer;
+}
+.paginationList>li:hover{
+    transform:rotate(90deg);
+    border-radius: 50%;
+}
+.paginationList>li::after{
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    margin: 0 15px;
+    border-radius: 50%;
+    background-color: red;
+}
+.page2{
+    height: 617px;
+}
+#titlePage2{
+    text-align: center;
+    margin-top: 50pt;
+}
+#leftCon{
+    width: 50%;
+    text-align: center;
+    float: left;
+    border-right: 1px solid #e2e2e2;
+}
+#leftCon>img{
+    width: 400px;
+    margin: 0 auto;
+}
+#rightCon{
+    width: 50%;
+    float: left;
+    text-align: center;
+}
+#rightCon>img{
+    width: 400px;
+}
