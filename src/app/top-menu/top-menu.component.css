@@ -9,18 +9,13 @@
 ul{
     margin-bottom: 0;
 }
-#logo>li{
-    display: inline-block;
-    font-size: 16pt;
-    margin:10pt 0pt;
-}
-#logo>li>a{
-
+#logo>a{
     display: inline-block;
     text-decoration: none;
     color: black;
-}
-#logo>li>a>label{
+    font-size: 14pt;
+    font-weight: bolder;
+    margin:10pt 0pt;
 }
 #sTopMenu{
     float: right;
@@ -45,7 +40,7 @@ ul{
     color: #FF3E22;
 }
 #Shopping>a:hover{
-    color: #F0E52B;
+    color: #FFBD61;
 }
 #Apropos>a:hover{
     color: #34B865;

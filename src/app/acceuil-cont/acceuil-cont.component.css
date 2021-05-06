@@ -1,3 +1,4 @@
+/*this is the code of the First part(First Page) */
 img{
     width:100%;
 }
@@ -13,22 +14,24 @@ img{
 #title{
     text-align: center;
     margin:150px auto 0 auto;
-    width:70%;
+    width:100%;
 }
 #title>p{
-    font-size:48px;
+    font-size:40px;
     margin-bottom:15pt;
+    width: 100% !important;
 }
 #bt{
     margin: 0 auto;
-    border: 1px solid black;
     border-radius:18px;
+    background: linear-gradient(to bottom, #fca6aa 0%, #F3888E 100%);
     padding: 15pt;
     width:fit-content;
     transition: 0.5s;
 }
 #bt:hover{
-    background-color: black;
+    box-shadow: 0 4px 8px 0 #ffa0a5, 0px 10px 50px 0 #ffa0a5;
+    background: linear-gradient(to bottom, #ff999e 0%, #F3888E 100%);
     cursor: pointer;
 
 }
@@ -37,7 +40,7 @@ img{
 }
 #btText{
     text-decoration: none;
-    color: black;
+    color: white;
     font-size:15pt;
     transition: 0.5s;
 }
@@ -46,6 +49,7 @@ img{
     width: 100%;
     height: 100%;
 }
+/*this is the code of the pagination that make's u surf inside the page*/
 .pagination{
     width: 300px;
     margin: 0 auto;
@@ -68,6 +72,7 @@ img{
 .paginationList>a:hover{
     transform:rotate(90deg);
     border-radius: 50%;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 .paginationList>a::after{
     display: inline-block;
@@ -77,6 +82,7 @@ img{
     border-radius: 50%;
     background-color: red;
 }
+/*this is the code of the second page*/
 .page2{
     height:587px;
     background: linear-gradient(to bottom, #F9F9F9 0%, white 100%);
@@ -86,7 +92,7 @@ img{
     height: 73px;
 }
 #titlePage2>h1{
-    margin-top: 10pt;
+    padding-top: 10pt;
 }
 #leftCon{
     width: 40%;
@@ -136,8 +142,55 @@ img{
 .Con{
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
+/*this is the code of the third page*/
 .page3{
     height:590px;
-    background-image: url(" ../../assets/bee.jpg");
-    background-repeat: no-repeat;
+    background: linear-gradient(to bottom,white  0%, #F9F9F9 100%);
+}
+#rightCon2{
+    padding-top:25pt;
+    float: left;
+    text-align: center;
+    height: 100%;
+    width: 50%;
+}
+.oHCon{
+    width: 35%;
+    background: linear-gradient(to bottom,#dbdbdb  0%, #f2f2f2 100%);
+    margin-left: 15pt;
+    margin-right: 15pt;
+    border-radius: 15pt;
+    margin: 0 auto;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.oHCon>h3{
+    margin-top: 15pt;
+}
+.oHCon>p{
+    margin-top:15pt;
+}
+.oHCon>img{
+    margin-top: 15pt;
+}
+.ConBottom{
+    width: 85%;
+    background-color: #f2f2f2;
+    margin-left: 40pt;
+    margin-top:30pt;
+    border-radius: 15pt;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    height: 170pt;
+    float: left;
+
+}
+.fab{
+    font-size: 55px;
+    
+}
+.iconsCon{
+    margin-top: 15pt;
+}
+#leftCon2{
+    width: 50%;
+    float: right;
 }
