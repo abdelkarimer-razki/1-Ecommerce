@@ -93,6 +93,7 @@ img{
 }
 #titlePage2>h1{
     padding-top: 10pt;
+    color: #2c466f;
 }
 #leftCon{
     width: 40%;
@@ -142,6 +143,9 @@ img{
 .Con{
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
+.Con>h3{
+    color: #2c466f;
+}
 /*this is the code of the third page*/
 .page3{
     height:590px;
@@ -156,7 +160,7 @@ img{
 }
 .oHCon{
     width: 35%;
-    background: linear-gradient(to bottom,#dbdbdb  0%, #f2f2f2 100%);
+    background-color: #f2f2f2;
     margin-left: 15pt;
     margin-right: 15pt;
     border-radius: 15pt;
@@ -165,6 +169,7 @@ img{
 }
 .oHCon>h3{
     margin-top: 15pt;
+    color: #2c466f;
 }
 .oHCon>p{
     margin-top:15pt;
@@ -191,6 +196,63 @@ img{
     margin-top: 15pt;
 }
 #leftCon2{
-    width: 50%;
+    padding-top:25pt;
     float: right;
+    text-align: center;
+    height: 100%;
+    width: 50%;
+}
+.counter{
+    background: linear-gradient(to bottom,#2c466f  0%, #224f8e 100%);
+    background-color: #1B3864;
+    width: 60px;
+    margin: 0 auto 8px auto;
+    border-radius: 15pt;
+    color: #F2F2F2;
+}
+#emailUs{
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    background-color: #F2F2F2;
+    border-radius: 15pt;
+    margin-right: 40pt;
+    padding-top: 15pt;
+    margin-left: 40pt;
+    height:558px;
+}
+#emailUs>input{
+    margin: 0 auto;
+    height: 30pt;
+    width: 80%;
+    border-radius: 15pt;
+    border:1px solid #e5e5e5;
+    margin-bottom: 15pt;
+    padding-left: 8pt;
+}
+#emailUs>input:focus{
+    outline: none !important;
+    box-shadow: 0 0 10px #ffa0a5;
+}
+#emailUs>textarea:focus{
+    outline: none !important;
+    box-shadow: 0 0 10px #ffa0a5;
+}
+#emailUs>label{
+    display: block;
+}
+#emailUs>button{
+    margin: 0 auto;
+    border-radius:18px;
+    background: linear-gradient(to bottom, #fca6aa 0%, #F3888E 100%);
+    padding: 15pt;
+    width:fit-content;
+    transition: 0.5s;
+}
+#emailUs>textarea{
+    margin: 0 auto;
+    width:80%;
+    display: block;
+    border:1px solid #e5e5e5;
+    padding-left: 8pt;
+    padding-top: 8pt;
+    border-radius: 15pt;
 }

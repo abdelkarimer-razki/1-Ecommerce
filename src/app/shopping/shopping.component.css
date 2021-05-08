@@ -1,0 +1,38 @@
+img{
+    width: 100% !important;
+    height: 300px !important;
+    margin: 15pt auto;
+    border-radius: 15pt !important;
+}
+#carouselExampleIndicators{
+    width: 50% !important;
+    margin: 15pt auto;
+    margin-left: 15pt;
+    float: left;
+    border-radius: 15pt !important;
+    height: 300px !important; 
+}
+.carousel-indicators>li{
+    border-radius: 50%;
+    width: 10pt;
+    opacity: 1;
+    top: 30px;
+    height: 10pt;
+    background-color: white !important;
+}
+.carousel-indicators>li:active{
+    background-color: #FFBD61 !important;
+}
+#conPage{
+    width: 100%;
+    height: 100%;
+    background-color: #f4f4f4;
+}
+#SearchSp{
+    float: left;
+    width: 30%;
+    height: 100px;
+    border-radius: 15pt;
+    margin-left: 15pt;
+    background-color: black;
+}

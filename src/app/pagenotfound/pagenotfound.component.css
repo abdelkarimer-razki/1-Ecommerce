@@ -1,0 +1,20 @@
+#cont{
+    width: 100%;
+    text-align: center;
+}
+#cont>div{
+    width:50%;
+    float: left;
+    margin-top: 130pt;
+}
+p{
+    font-size:25px;
+    color:#c1c1c1;
+}
+h1{
+    font-size: 50px;
+}
+img{
+    margin-left:20pt;
+    float: left;
+}

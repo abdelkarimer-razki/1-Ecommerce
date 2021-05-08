@@ -7,8 +7,8 @@
             <div id="title">
                 <p>Bienvenue dans notre magasin</p>
                 <p style="color:#c1c1c1;font-size: 20px;">COOPERATIVE BABMANSOUR</p>
-                <div id="bt">
-                    <a id="btText" href="">
+                <div id="bt" routerLink="/shopping">
+                    <a id="btText" >
                         Faire du shopping <i class="far fa-arrow-alt-circle-right"></i>
                     </a>
                 </div>
@@ -58,7 +58,7 @@
             </div>
             <!--<div class="counter">1356</div>-->
             <div class="ConBottom">
-                <label style="font-size: 35px;margin-top: 15pt;">Suivez-Nous sur nos plateformes:</label><br>
+                <label style="font-size: 35px;margin-top: 15pt;color: #2c466f;">Suivez-Nous sur nos plateformes:</label><br>
                 <div class="iconsCon">
                     <a href="https://www.facebook.com/cooperative.officiel/"><i class="fab fa-facebook-square" style="margin-right: 15pt;"></i></a>
                     <a style="color:black;" href="https://instagram.com/cooperativebabmansour?igshid=eh2xberwe4bn"><i class="fab fa-instagram" style="margin-left: 15pt;margin-right: 15pt;"></i></a>
@@ -67,6 +67,21 @@
             </div>
         </div>
         <div id="leftCon2">
+                <!--<input type="text" style="display: block;">
+                <input type="email" style="display: block;">
+                <textarea name="" id="" cols="30" rows="10" style="display:block;"></textarea>-->
+                <form id="emailUs">
+                    <h2 style="color: #2c466f;">Contactez-nous</h2>
+                    <label for="">E-mail:</label>
+                    <input id="email" type="email" placeholder="example@email.com" required>
+                    <label for="">Nom et prénom:</label>
+                    <input type="text" placeholder="Nom" required>
+                    <label>Message:</label>
+                    <textarea name="" id="" cols="30" rows="7" style="resize: none;"></textarea>
+                        <button id="bt" href="" style="color: white;border: 0px;margin-top: 15px;">
+                            Envoyez <i class="fas fa-envelope-open-text"></i>
+                        </button>
+                </form>
         </div>
     </div>
     <div class="pagination" style="background-color: #F9F9F9;width:100%;">
