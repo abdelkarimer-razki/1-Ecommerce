@@ -1,38 +1,52 @@
-img{
-    width: 100% !important;
-    height: 300px !important;
-    margin: 15pt auto;
-    border-radius: 15pt !important;
+carousel{
+  height: 300px !important;
+  margin-top: 20pt;
+  border-radius: 8pt;
+  margin-bottom: 20pt;
 }
-#carouselExampleIndicators{
-    width: 50% !important;
-    margin: 15pt auto;
-    margin-left: 15pt;
-    float: left;
-    border-radius: 15pt !important;
-    height: 300px !important; 
+.titles
+{
+  margin-top: 15pt;
+  margin-left: 20pt;
 }
-.carousel-indicators>li{
-    border-radius: 50%;
-    width: 10pt;
-    opacity: 1;
-    top: 30px;
-    height: 10pt;
-    background-color: white !important;
+#Miel{
+  border-left: none;
+  border-top-left-radius: 15pt;
+  border-bottom-left-radius: 15pt;
 }
-.carousel-indicators>li:active{
-    background-color: #FFBD61 !important;
+#Last{
+  border-top-right-radius: 15pt;
+  border-bottom-right-radius: 15pt;
 }
-#conPage{
-    width: 100%;
-    height: 100%;
-    background-color: #f4f4f4;
+#Miel:hover{
+  box-shadow: inset 0 150px 0 0 #FCDA42;
 }
-#SearchSp{
-    float: left;
-    width: 30%;
-    height: 100px;
-    border-radius: 15pt;
-    margin-left: 15pt;
-    background-color: black;
+#Huile:hover{
+  box-shadow: inset 0 150px 0 0 #859114;
+}
+.fa-tags{
+  position: relative;
+  top: 3pt !important;
+}
+.typesContainaire{
+  text-align: center;
+}
+.type{
+  margin-top: 20pt;
+  margin-bottom: 20pt;
+  width: 270px;
+  /*margin-left: 15pt;*/
+  border-left: 1px solid #c9c9c9;
+  display:inline-block;
+  background-color: #F2F2F2;
+  height: 150px;
+  -webkit-transition: ease-out 0.4s;
+  -moz-transition: ease-out 0.4s;
+  transition: ease-out 0.4s;
+  transition: 0.5s;
+  cursor: pointer;
+}
+
+.type>img{
+  margin-top: 8pt;
 }

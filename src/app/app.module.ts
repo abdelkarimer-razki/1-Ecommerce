@@ -7,6 +7,8 @@ import { TopMenuComponent } from './top-menu/top-menu.component';
 import { AproposComponent } from './apropos/apropos.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { PagenotfoundComponent } from './pagenotfound/pagenotfound.component';
+import {HttpClientModule} from '@angular/common/http';
+import {IvyCarouselModule} from 'angular-responsive-carousel';
 
 @NgModule({
   declarations: [
@@ -19,7 +21,9 @@ import { PagenotfoundComponent } from './pagenotfound/pagenotfound.component';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    NgbModule
+    HttpClientModule,
+    NgbModule,
+    IvyCarouselModule
   ],
   providers: [],
   bootstrap: [AppComponent]

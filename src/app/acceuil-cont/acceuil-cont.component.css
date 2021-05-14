@@ -24,14 +24,16 @@ img{
 #bt{
     margin: 0 auto;
     border-radius:18px;
-    background: linear-gradient(to bottom, #fca6aa 0%, #F3888E 100%);
+    /*background: linear-gradient(to bottom, #fca6aa 0%, #F3888E 100%);*/
+    background-color: #FD6868;
     padding: 15pt;
     width:fit-content;
     transition: 0.5s;
 }
 #bt:hover{
-    box-shadow: 0 4px 8px 0 #ffa0a5, 0px 10px 50px 0 #ffa0a5;
-    background: linear-gradient(to bottom, #ff999e 0%, #F3888E 100%);
+    /*box-shadow: 0 4px 8px 0 #ffa0a5, 0px 10px 50px 0 #ffa0a5;*/
+    /*background: linear-gradient(to bottom, #ff999e 0%, #F3888E 100%);*/
+    background-color: #ff8e8e;
     cursor: pointer;
 
 }
@@ -47,7 +49,8 @@ img{
 .page1{
     float: left;
     width: 100%;
-    height: 100%;
+    /*height: 80vh;*/
+    height:503px;
 }
 /*this is the code of the pagination that make's u surf inside the page*/
 .pagination{
@@ -84,6 +87,7 @@ img{
 }
 /*this is the code of the second page*/
 .page2{
+    /*height: 93vh;*/
     height:587px;
     background: linear-gradient(to bottom, #F9F9F9 0%, white 100%);
 }
@@ -102,7 +106,7 @@ img{
     float: left;
     background-color: white;
     margin-left:60pt;
-    border-radius: 15pt;
+    border-radius: 8pt;
 }
 #leftCon>img{
     width: 50%;
@@ -113,7 +117,7 @@ img{
     margin: 12pt auto;
     display: block;
     padding: 18pt;
-    border-radius: 15pt;
+    border-radius: 8pt;
     background: linear-gradient(to bottom, #ffbe63 0%, #ffb24f 100%);
    /* border: 1px solid #212529;*/
     color: #212529;
@@ -124,7 +128,7 @@ img{
     margin-right:60pt;
     background-color: white;
     text-align: center;
-    border-radius: 15pt;
+    border-radius: 8pt;
 }
 #rightCon>img{
     width: 50%;
@@ -135,7 +139,7 @@ img{
     display: block;
     width:80%;
     background: linear-gradient(to bottom, #AAD688 0%, #9ace6f 100%);
-    border-radius: 15pt;
+    border-radius: 8pt;
     padding: 18pt;
     color: #212529;
     /*border: 1px solid #212529;*/
@@ -148,8 +152,10 @@ img{
 }
 /*this is the code of the third page*/
 .page3{
+    /*height: 93vh;*/
     height:590px;
     background: linear-gradient(to bottom,white  0%, #F9F9F9 100%);
+    /*background-color: #F5F5F7;*/
 }
 #rightCon2{
     padding-top:25pt;
@@ -161,9 +167,10 @@ img{
 .oHCon{
     width: 35%;
     background-color: #f2f2f2;
+   /*background-color: #FFFFFF;*/
     margin-left: 15pt;
     margin-right: 15pt;
-    border-radius: 15pt;
+    border-radius: 8pt;
     margin: 0 auto;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
@@ -180,9 +187,10 @@ img{
 .ConBottom{
     width: 85%;
     background-color: #f2f2f2;
+    /*background-color: #FFFFFF;*/
     margin-left: 40pt;
     margin-top:30pt;
-    border-radius: 15pt;
+    border-radius: 8pt;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     height: 170pt;
     float: left;
@@ -190,7 +198,7 @@ img{
 }
 .fab{
     font-size: 55px;
-    
+
 }
 .iconsCon{
     margin-top: 15pt;
@@ -213,7 +221,8 @@ img{
 #emailUs{
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     background-color: #F2F2F2;
-    border-radius: 15pt;
+    /*background-color: #FFFFFF;*/
+    border-radius: 8pt;
     margin-right: 40pt;
     padding-top: 15pt;
     margin-left: 40pt;
@@ -242,7 +251,8 @@ img{
 #emailUs>button{
     margin: 0 auto;
     border-radius:18px;
-    background: linear-gradient(to bottom, #fca6aa 0%, #F3888E 100%);
+    /*background: linear-gradient(to bottom, #fca6aa 0%, #F3888E 100%);*/
+    background-color: #FD6868;
     padding: 15pt;
     width:fit-content;
     transition: 0.5s;

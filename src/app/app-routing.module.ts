@@ -9,7 +9,7 @@ const routes: Routes = [
   {path:'shopping',component:ShoppingComponent,},
   {path:'',component:AcceuilContComponent},
   {path:"Apropos",component:AproposComponent},
-  {path:"**",component:PagenotfoundComponent,data: {title: 'page not found'}}
+  {path:"**",component:PagenotfoundComponent}
 ];
 
 @NgModule({
