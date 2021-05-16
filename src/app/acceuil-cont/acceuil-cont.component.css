@@ -47,6 +47,7 @@ img{
     transition: 0.5s;
 }
 .page1{
+  background: linear-gradient(to bottom,white  0%, #F6F7FB 100%);
     float: left;
     width: 100%;
     /*height: 80vh;*/
@@ -55,6 +56,8 @@ img{
 /*this is the code of the pagination that make's u surf inside the page*/
 .pagination{
     width: 300px;
+    background:#F6F7FB;
+    width:100%;
     margin: 0 auto;
 }
 .paginationList{
@@ -89,7 +92,8 @@ img{
 .page2{
     /*height: 93vh;*/
     height:587px;
-    background: linear-gradient(to bottom, #F9F9F9 0%, white 100%);
+    /*background: linear-gradient(to bottom, #F9F9F9 0%, white 100%);*/
+    background-color: #F6F7FB;
 }
 #titlePage2{
     text-align: center;
@@ -154,8 +158,8 @@ img{
 .page3{
     /*height: 93vh;*/
     height:590px;
-    background: linear-gradient(to bottom,white  0%, #F9F9F9 100%);
-    /*background-color: #F5F5F7;*/
+    /*background: linear-gradient(to bottom,white  0%, #F9F9F9 100%);*/
+    background-color: #F6F7FB;
 }
 #rightCon2{
     padding-top:25pt;
@@ -166,8 +170,8 @@ img{
 }
 .oHCon{
     width: 35%;
-    background-color: #f2f2f2;
-   /*background-color: #FFFFFF;*/
+    /*background-color: #f2f2f2;*/
+   background-color: #FFFFFF;
     margin-left: 15pt;
     margin-right: 15pt;
     border-radius: 8pt;
@@ -186,8 +190,8 @@ img{
 }
 .ConBottom{
     width: 85%;
-    background-color: #f2f2f2;
-    /*background-color: #FFFFFF;*/
+    /*background-color: #f2f2f2;*/
+    background-color: #FFFFFF;
     margin-left: 40pt;
     margin-top:30pt;
     border-radius: 8pt;
@@ -220,8 +224,8 @@ img{
 }
 #emailUs{
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-    background-color: #F2F2F2;
-    /*background-color: #FFFFFF;*/
+    /*background-color: #F2F2F2;*/
+    background-color: #FFFFFF;
     border-radius: 8pt;
     margin-right: 40pt;
     padding-top: 15pt;

@@ -1,3 +1,8 @@
+#conPage{
+  /*background-color:#F6F7FB;*/
+  background: linear-gradient(to bottom,white  0%, #F6F7FB 100%);
+  padding-top:15pt;
+}
 carousel{
   height: 300px !important;
   margin-top: 20pt;
@@ -16,13 +21,21 @@ carousel{
 }
 #Last{
   border-top-right-radius: 15pt;
+  border-right: 1px solid #c9c9c9;
   border-bottom-right-radius: 15pt;
+}
+#Miel{
+  border-left: 1px solid #c9c9c9;
 }
 #Miel:hover{
   box-shadow: inset 0 150px 0 0 #FCDA42;
 }
 #Huile:hover{
   box-shadow: inset 0 150px 0 0 #859114;
+
+}
+#Cuisine:hover{
+  box-shadow: inset 0 150px 0 0 #FE8F33;
 }
 .fa-tags{
   position: relative;
@@ -37,8 +50,10 @@ carousel{
   width: 270px;
   /*margin-left: 15pt;*/
   border-left: 1px solid #c9c9c9;
+  border-top: 1px solid #c9c9c9;
+  border-bottom: 1px solid #c9c9c9;
   display:inline-block;
-  background-color: #F2F2F2;
+  background-color: #FFFFFF;
   height: 150px;
   -webkit-transition: ease-out 0.4s;
   -moz-transition: ease-out 0.4s;
@@ -49,4 +64,39 @@ carousel{
 
 .type>img{
   margin-top: 8pt;
+  position: relative;
+}
+.type:hover .type>img{
+  transform: translateY(100px);
+}
+
+.produitContainaire{
+  text-align: center;
+}
+.Products{
+  width:22%;
+  display: inline-block;
+  background-color: white;
+  padding:15pt;
+  margin: 8pt;
+  cursor: pointer;
+  border-radius: 8pt;
+  transition: 0.5s;
+  /*box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);*/
+}
+.Products:hover{
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.HUILE{
+  background-color:#859114;
+}
+.MIEL{
+  background-color:#FCDA42;
+}
+.titleProduit{
+  font-weight: bolder;
+  font-size: 20px;
+}
+.titlePrix{
+  font-size:18px;
 }

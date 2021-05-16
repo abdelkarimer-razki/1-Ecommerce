@@ -1,5 +1,5 @@
 <div id="conPage">
-  <h4 class="titles"><i class="fas fa-tags"></i> Recommandation:</h4>
+  <h4 class="titles"><i class="fas fa-tags"></i> Recommandations:</h4>
   <carousel [cellsToShow]="2" [autoplay]=true [dots]=true [borderRadius]=8 arrowsTheme="dark">
     <div class="carousel-cell">
         <img src="../../assets/produit21.jpg">
@@ -11,27 +11,31 @@
     <img src="../../assets/produit21.jpg">
 </div>
   </carousel>
-  <h4 class="titles"><i class="fas fa-gifts"></i> Catégorie:</h4>
+  <h4 class="titles" style="margin-top:0;"><i class="fas fa-gifts"></i> Catégories:</h4>
   <div class="typesContainaire">
-    <div class="type" id="Miel">
+    <div class="type" id="Miel" (click)='getProductsCategorie("MIEL")'>
       <img src="../../assets/honey3.png" alt="" width="100px">
       <h5 >Miel</h5>
     </div>
-    <div class="type" id="Huile">
+    <div class="type" id="Huile" (click)='getProductsCategorie("HUILE")'>
       <img src="../../assets/oil3.png" alt="" width="100px">
       <h5>Huile</h5>
     </div>
-    <div class="type">
-      <img src="../../assets/oil3.png" alt="" width="100px">
-      <h5>Huile</h5>
+    <div class="type" id="Cuisine" (click)='getProductsMangable(true)' >
+      <img src="../../assets/3.png" alt="" width="100px">
+      <h5>Cuisine</h5>
     </div>
     <div class="type" id="Last">
       <img src="../../assets/oil3.png" alt="" width="100px">
       <h5>Huile</h5>
     </div>
   </div>
+  <h4 class="titles"><i class="fas fa-shopping-cart"></i> Produits:</h4>
   <div class="produitContainaire">
-    <h4 class="titles"><i class="fas fa-shopping-cart"></i> Produits:</h4>
-
+    <div *ngFor='let item of products' class="Products">
+      <p class="titleProduit">{{item.name}}</p>
+      <img [src]="transform(item.picture)" alt="" width="250px">
+      <p class="titlePrix">{{item.prix}} DH</p>
+    </div>
   </div>
 </div>
