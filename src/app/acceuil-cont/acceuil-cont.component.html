@@ -49,12 +49,14 @@
             <div class="oHCon" style="float: left;margin-left: 40pt;">
                 <h3>Sortes de miels</h3>
                 <img src="../../assets/honey3.png" alt="" style="width: 120px;">
-                <p class="counter" style="font-size: 40px;">{{countO.count}}</p>
+                <p *ngIf="loading"><img class="loading" src="../../assets/loading.gif" alt=""></p>
+                <p class="counter" *ngIf="!loading" style="font-size: 40px;">{{countH}}</p>
             </div>
             <div class="oHCon" style="float: right;margin-right: 40pt;">
                 <h3>Sortes d'huiles</h3>
                 <img src="../../assets/oil3.png" alt="" style="width: 120px;">
-                <p class="counter" style="font-size: 40px;">{{countH.count}}</p>
+                <p *ngIf="loading"><img class="loading" src="../../assets/loading.gif" alt=""></p>
+                <p class="counter" *ngIf="!loading" style="font-size: 40px;">{{countO}}</p>
             </div>
             <!--<div class="counter">1356</div>-->
             <div class="ConBottom" >
@@ -92,3 +94,4 @@
         </ul>
     </div>
 </div>
+<p></p>

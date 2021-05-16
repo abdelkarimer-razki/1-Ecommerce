@@ -22,7 +22,7 @@ app.get('/',async(req,res)=>{
 
 app.get('/:categorie',async(req,res)=>{
   const {categorie}=req.params;
-  const query=await p1.query("SELECT COUNT(*) FROM products WHERE categorie=$1",[categorie]);
+  const query=await p1.query("SELECT * FROM products WHERE categorie=$1",[categorie]);
   res.json(query.rows);
 })
 

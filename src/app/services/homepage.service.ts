@@ -7,10 +7,14 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class HomepageService {
-  url="http://localhost:500/";
+  url="http://localhost:500/seachC/";
+  url1="http://localhost:500/";
   constructor(private http:HttpClient) { }
-  getCount(categorie:string):Observable<count>{
-    return this.http.get<count>(this.url+categorie);
+  getCountM(categorie:string):Observable<products[]>{
+    return this.http.get<products[]>(this.url+categorie);
+  }
+  getCountO(categorie:string):Observable<products[]>{
+    return this.http.get<products[]>(this.url1+categorie);
   }
 
 }

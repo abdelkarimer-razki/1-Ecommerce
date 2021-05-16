@@ -25,17 +25,18 @@
       <img src="../../assets/3.png" alt="" width="100px">
       <h5>Cuisine</h5>
     </div>
-    <div class="type" id="Last">
+    <div class="type" id="Last" (click)='getProductsMangable(false)'>
       <img src="../../assets/oil3.png" alt="" width="100px">
-      <h5>Huile</h5>
+      <h5>cosmétique</h5>
     </div>
   </div>
   <h4 class="titles"><i class="fas fa-shopping-cart"></i> Produits:</h4>
-  <div class="produitContainaire">
-    <div *ngFor='let item of products' class="Products">
+  <div  *ngIf="!loading" class="produitContainaire">
+    <div *ngFor='let item of products' class="Products" >
       <p class="titleProduit">{{item.name}}</p>
       <img [src]="transform(item.picture)" alt="" width="250px">
       <p class="titlePrix">{{item.prix}} DH</p>
     </div>
   </div>
+  <img *ngIf="loading" src="../../assets/loading2.gif" alt="" width="200px" style="margin: 0 auto;display: block;">
 </div>
