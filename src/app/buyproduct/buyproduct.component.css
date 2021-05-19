@@ -1,0 +1,71 @@
+#produit{
+  width: 70%;
+  height: 500px;
+  background-color: white;
+  border-radius: 15pt;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  margin: 0 auto;
+  position: relative;
+  top: 15pt;
+}
+#pagecont{
+  height: 100vh;
+  padding-top: 15pt;
+  width: 100%;
+  text-align: center;
+  background-color: #EFF1F5;
+}
+.con{
+  float: left;
+}
+.info{
+  width:50%;
+}
+.info>p{
+  font-size: 30px;
+  margin: 15pt 0pt 0pt 15pt;
+}
+.price{
+  border-radius: 15pt;
+  width: 300px;
+  height: auto;
+  padding: 8pt;
+  margin: 0 auto;
+background: #EDEFF3;
+box-shadow: 20px 20px 20px -20px rgba(0, 0, 0, 0.2);
+}
+.price>p{
+  font-size: 30px;
+  margin-bottom: 0;
+}
+.price>button{
+  background: #fd4d4d;
+  border-radius: 15pt;
+  border: none;
+  color: white;
+  margin: 8pt 0;
+  height: 50px;
+  width: 60%;
+  transition: 0.3s;
+}
+.price>button:hover{
+  background: #fd6868;
+}
+.picture>img{
+  border-radius: 15pt;
+  margin-left: 15pt;
+}
+
+#Quantite{
+  border-radius: 15pt;
+  border: 1px solid #cccccc;
+  width: 80px;
+  height: 40px;
+  font-size: 20px;
+  padding: 8pt;
+  outline: none !important;
+}
+#Qunatite:focus{
+  outline: none !important;
+  box-shadow: 0 0 10px blue !important;
+}

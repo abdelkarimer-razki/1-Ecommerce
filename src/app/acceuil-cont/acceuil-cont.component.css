@@ -25,7 +25,7 @@ img{
     margin: 0 auto;
     border-radius:18px;
     /*background: linear-gradient(to bottom, #fca6aa 0%, #F3888E 100%);*/
-    background-color: #FD6868;
+    background-color: #fd4d4d;
     padding: 15pt;
     width:fit-content;
     transition: 0.5s;
@@ -33,7 +33,7 @@ img{
 #bt:hover{
     /*box-shadow: 0 4px 8px 0 #ffa0a5, 0px 10px 50px 0 #ffa0a5;*/
     /*background: linear-gradient(to bottom, #ff999e 0%, #F3888E 100%);*/
-    background-color: #ff8e8e;
+    background-color: #fd6868;
     cursor: pointer;
 
 }
@@ -47,7 +47,8 @@ img{
     transition: 0.5s;
 }
 .page1{
-  background: linear-gradient(to bottom,white  0%, #F6F7FB 100%);
+  /*background: linear-gradient(to bottom,white  0%, #F6F7FB 100%);*/
+  background-color: white;
     float: left;
     width: 100%;
     /*height: 80vh;*/
@@ -56,7 +57,7 @@ img{
 /*this is the code of the pagination that make's u surf inside the page*/
 .pagination{
     width: 300px;
-    background:#F6F7FB;
+    background:#F9FBFC;
     width:100%;
     margin: 0 auto;
 }
@@ -93,7 +94,7 @@ img{
     /*height: 93vh;*/
     height:587px;
     /*background: linear-gradient(to bottom, #F9F9F9 0%, white 100%);*/
-    background-color: #F6F7FB;
+    background-color: #F9FBFC;
 }
 #titlePage2{
     text-align: center;
@@ -159,7 +160,7 @@ img{
     /*height: 93vh;*/
     height:590px;
     /*background: linear-gradient(to bottom,white  0%, #F9F9F9 100%);*/
-    background-color: #F6F7FB;
+    background-color: #F9FBFC;
 }
 #rightCon2{
     padding-top:25pt;
@@ -176,7 +177,8 @@ img{
     margin-right: 15pt;
     border-radius: 8pt;
     margin: 0 auto;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    /*box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);*/
+    box-shadow: 10px 10px 20px -10px rgba(0, 0, 0, 0.2);
 }
 .oHCon>h3{
     margin-top: 15pt;
@@ -195,7 +197,7 @@ img{
     margin-left: 40pt;
     margin-top:30pt;
     border-radius: 8pt;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    box-shadow: 10px 10px 20px -10px rgba(0, 0, 0, 0.2);
     height: 170pt;
     float: left;
 
@@ -215,8 +217,7 @@ img{
     width: 50%;
 }
 .counter{
-    background: linear-gradient(to bottom,#2c466f  0%, #224f8e 100%);
-    background-color: #1B3864;
+    background: linear-gradient(to bottom,#fd4d4d  0%, #fd6868 100%);
     width: 60px;
     margin: 0 auto 8px auto;
     border-radius: 15pt;
@@ -226,7 +227,8 @@ img{
   width: 60px;
 }
 #emailUs{
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    /*box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);*/
+    box-shadow: 10px 10px 20px -10px rgba(0, 0, 0, 0.2);
     /*background-color: #F2F2F2;*/
     background-color: #FFFFFF;
     border-radius: 8pt;
@@ -241,6 +243,7 @@ img{
     width: 80%;
     border-radius: 15pt;
     border:1px solid #e5e5e5;
+    background-color: #EFF1F5;
     margin-bottom: 15pt;
     padding-left: 8pt;
 }
@@ -259,7 +262,7 @@ img{
     margin: 0 auto;
     border-radius:18px;
     /*background: linear-gradient(to bottom, #fca6aa 0%, #F3888E 100%);*/
-    background-color: #FD6868;
+    background-color: #fd4d4d;
     padding: 15pt;
     width:fit-content;
     transition: 0.5s;
@@ -270,6 +273,21 @@ img{
     display: block;
     border:1px solid #e5e5e5;
     padding-left: 8pt;
+    background-color: #EFF1F5;
     padding-top: 8pt;
     border-radius: 15pt;
+}
+
+
+
+.reveal{
+  position: relative;
+  transform: translateY(150px);
+  opacity: 0;
+  transition: all 0.7s ease;
+}
+
+.reveal.active{
+  transform: translateY(0px);
+  opacity: 1;
 }

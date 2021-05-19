@@ -1,0 +1,18 @@
+<div id="pagecont">
+  <img *ngIf="loading" src="../../assets/loading.gif" alt="">
+  <div *ngFor='let item of product' id="produit" >
+    <div *ngIf="!loading">
+      <div class='picture con'>
+      <img [src]="transform(item.picture)" alt="" width="400px">
+    </div>
+    <div class="info con">
+      <p>{{item.name}}</p>
+      <p>{{item.description}}</p>
+      <label for="">Quantité: <input type="text" name="" id="Quantite"></label>
+      <div class="price">
+        <p>{{item.prix}} DH</p>
+        <button>acheter</button>
+      </div>
+    </div></div>
+  </div>
+</div>

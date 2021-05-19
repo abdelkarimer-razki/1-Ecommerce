@@ -37,3 +37,10 @@ app.get('/mange/:mangable',async(req,res)=>{
   const query=await p1.query("SELECT * FROM products WHERE mangable=$1",[mangable]);
   res.json(query.rows);
 })
+
+
+app.get('/buyProduct/:id',async(req,res)=>{
+  const {id}=req.params;
+  const query=await p1.query("SELECT * FROM products WHERE idproducts=$1",[id]);
+  res.json(query.rows);
+})

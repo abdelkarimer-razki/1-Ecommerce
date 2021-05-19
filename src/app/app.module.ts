@@ -9,6 +9,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { PagenotfoundComponent } from './pagenotfound/pagenotfound.component';
 import {HttpClientModule} from '@angular/common/http';
 import {IvyCarouselModule} from 'angular-responsive-carousel';
+import { BuyproductComponent } from './buyproduct/buyproduct.component';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import {IvyCarouselModule} from 'angular-responsive-carousel';
     TopMenuComponent,
     routingComponents,
     AproposComponent,
-    PagenotfoundComponent
+    PagenotfoundComponent,
+    BuyproductComponent
   ],
   imports: [
     BrowserModule,

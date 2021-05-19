@@ -4,3 +4,7 @@
     margin: 0;
     padding: 0;
 }
+#topMenu{
+  z-index: 2020;
+  background-color: white;
+}

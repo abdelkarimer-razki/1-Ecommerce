@@ -1,6 +1,7 @@
 import { getSafePropertyAccessString } from '@angular/compiler';
 import { Component, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { products } from '../backend/products';
 import { ShoppingserviceService } from '../services/shoppingservice.service';
@@ -15,7 +16,8 @@ export class ShoppingComponent implements OnInit {
   img:string[]=[];
   /*HUILE:Boolean=true;*/
   loading:boolean=true;
-  constructor(private shop:ShoppingserviceService,private sanitizer: DomSanitizer) { }
+  constructor(private shop:ShoppingserviceService,private sanitizer: DomSanitizer,private router:Router) {
+   }
   ngOnInit(): void {
     this.showAllData();
   }
@@ -50,5 +52,9 @@ export class ShoppingComponent implements OnInit {
       this.products=data;
       this.loading=false;
     })
+  }
+
+  routerBuyProduct(product:products){
+    this.router.navigate(['/produit',product.idproducts]);
   }
 }

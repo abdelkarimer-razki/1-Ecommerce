@@ -1,15 +1,16 @@
 <div id="conPage">
   <h4 class="titles"><i class="fas fa-tags"></i> Recommandations:</h4>
-  <carousel [cellsToShow]="2" [autoplay]=true [dots]=true [borderRadius]=8 arrowsTheme="dark">
+  <carousel [cellsToShow]="1" [autoplay]=true [dots]=true [borderRadius]=8 arrowsTheme="dark">
     <div class="carousel-cell">
-        <img src="../../assets/produit21.jpg">
+      <img src="../../assets/produit21.jpg">
+    </div>
+    <div class="carousel-cell">
+      <div style="width: 40%;height: 500px;background-color: black;float: left;"></div>
+      <img style="float: left;display: inline-block;" src="../../assets/produit21.jpg">
     </div>
     <div class="carousel-cell">
       <img src="../../assets/produit21.jpg">
-  </div>
-  <div class="carousel-cell">
-    <img src="../../assets/produit21.jpg">
-</div>
+    </div>
   </carousel>
   <h4 class="titles" style="margin-top:0;"><i class="fas fa-gifts"></i> Catégories:</h4>
   <div class="typesContainaire">
@@ -26,17 +27,18 @@
       <h5>Cuisine</h5>
     </div>
     <div class="type" id="Last" (click)='getProductsMangable(false)'>
-      <img src="../../assets/oil3.png" alt="" width="100px">
-      <h5>cosmétique</h5>
+      <img src="../../assets/4.png" alt="" width="100px">
+      <h5>Cosmétique</h5>
     </div>
   </div>
   <h4 class="titles"><i class="fas fa-shopping-cart"></i> Produits:</h4>
   <div  *ngIf="!loading" class="produitContainaire">
-    <div *ngFor='let item of products' class="Products" >
+    <div *ngFor='let item of products' class="Products reveal" (click)="routerBuyProduct(item)">
       <p class="titleProduit">{{item.name}}</p>
       <img [src]="transform(item.picture)" alt="" width="250px">
       <p class="titlePrix">{{item.prix}} DH</p>
+      <p style="color: #bfbfbf;">Livraison gratuite</p>
     </div>
   </div>
-  <img *ngIf="loading" src="../../assets/loading2.gif" alt="" width="200px" style="margin: 0 auto;display: block;">
+  <img *ngIf="loading" src="../../assets/loading.gif" alt="" width="200px" style="margin: 0 auto;display: block;">
 </div>

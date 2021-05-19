@@ -1,0 +1,7 @@
+app-top-menu{
+  z-index: 20020;
+  
+}
+router-outlet{
+  z-index: -1;
+}
