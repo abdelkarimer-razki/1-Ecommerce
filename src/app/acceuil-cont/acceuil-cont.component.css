@@ -249,11 +249,11 @@ img{
 }
 #emailUs>input:focus{
     outline: none !important;
-    box-shadow: 0 0 10px #ffa0a5;
+    box-shadow: 0 0 10px skyblue;
 }
 #emailUs>textarea:focus{
     outline: none !important;
-    box-shadow: 0 0 10px #ffa0a5;
+    box-shadow: 0 0 10px skyblue;
 }
 #emailUs>label{
     display: block;
@@ -291,3 +291,5 @@ img{
   transform: translateY(0px);
   opacity: 1;
 }
+
+

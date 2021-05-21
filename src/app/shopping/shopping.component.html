@@ -31,13 +31,22 @@
       <h5>Cosmétique</h5>
     </div>
   </div>
+
   <h4 class="titles"><i class="fas fa-shopping-cart"></i> Produits:</h4>
+  <input type="text" [(ngModel)]="pname" (ngModelChange)="change()" id="search" placeholder="Chercher votre produit">
   <div  *ngIf="!loading" class="produitContainaire">
     <div *ngFor='let item of products' class="Products reveal" (click)="routerBuyProduct(item)">
       <p class="titleProduit">{{item.name}}</p>
       <img [src]="transform(item.picture)" alt="" width="250px">
       <p class="titlePrix">{{item.prix}} DH</p>
       <p style="color: #bfbfbf;">Livraison gratuite</p>
+    </div>
+  </div>
+  <div  *ngIf="failed">
+    <div class="Products" style="margin: 15pt auto;display: block;text-align: center;">
+      <img src="../../assets/errorS.jpg" style="width: 150x;display: block;margin: 0 auto;" alt="">
+      <!--<i class="fas fa-exclamation-circle" style="font-size: 100px;color: #fd4d4d;width: 100px;display: block;margin: 0 auto;"></i>-->
+      <p class="errorP">Aucun produit portant ce nom n'a été trouvé</p>
     </div>
   </div>
   <img *ngIf="loading" src="../../assets/loading.gif" alt="" width="200px" style="margin: 0 auto;display: block;">

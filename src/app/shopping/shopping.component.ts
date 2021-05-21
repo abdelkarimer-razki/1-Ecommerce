@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 import { products } from '../backend/products';
 import { ShoppingserviceService } from '../services/shoppingservice.service';
 
+
 @Component({
   selector: 'app-shopping',
   templateUrl: './shopping.component.html',
@@ -15,6 +16,8 @@ export class ShoppingComponent implements OnInit {
   products:products[]=[{idproducts:0, name:"",picture:"",description:"",mangable:true,prix:0,categorie:""}];
   img:string[]=[];
   /*HUILE:Boolean=true;*/
+  pname:any="";
+  failed:boolean=false;
   loading:boolean=true;
   constructor(private shop:ShoppingserviceService,private sanitizer: DomSanitizer,private router:Router) {
    }
@@ -56,5 +59,23 @@ export class ShoppingComponent implements OnInit {
 
   routerBuyProduct(product:products){
     this.router.navigate(['/produit',product.idproducts]);
+  }
+  change(){
+    if(this.pname==""){
+      this.ngOnInit();
+      this.failed=false;
+    }
+    else
+    {
+      this.products=this.products.filter(res=>{
+        if(res.name.toLocaleUpperCase().match(this.pname.toLocaleUpperCase())==null){
+          this.failed=true;
+          return null;
+        }else{
+          this.failed=false;
+          return res.name.toLocaleUpperCase().match(this.pname.toLocaleUpperCase());
+        }
+      })
+    }
   }
 }
