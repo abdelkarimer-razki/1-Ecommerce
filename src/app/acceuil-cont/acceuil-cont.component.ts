@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { count, products } from '../backend/products';
 import { HomepageService } from '../services/homepage.service';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-acceuil-cont',
@@ -11,10 +12,11 @@ export class AcceuilContComponent implements OnInit {
    countO:Number=0;
    loading:boolean=true;
    countH:Number=0;
-  constructor(private HomepageService:HomepageService) { }
+  constructor(private HomepageService:HomepageService,private titleService:Title) { }
 
   ngOnInit(): void {
     this.getCountOil();
+    this.titleService.setTitle("COOP BABMANSOUR");
     this.getCountHoney();
   }
     getCountOil(){

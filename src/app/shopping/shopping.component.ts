@@ -4,6 +4,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { products } from '../backend/products';
+import { Title } from '@angular/platform-browser';
 import { ShoppingserviceService } from '../services/shoppingservice.service';
 
 
@@ -20,10 +21,11 @@ export class ShoppingComponent implements OnInit {
   categorieS:boolean=false;
   failed:boolean=false;
   loading:boolean=true;
-  constructor(private shop:ShoppingserviceService,private shop1:ShoppingserviceService,private sanitizer: DomSanitizer,private router:Router) {
+  constructor(private shop:ShoppingserviceService,private shop1:ShoppingserviceService,private sanitizer: DomSanitizer,private router:Router,private titleService:Title) {
    }
   ngOnInit(): void {
     this.showAllData();
+    this.titleService.setTitle("Shopping");
   }
   showAllData(){
     this.shop.getAllProducts().subscribe(data=>{

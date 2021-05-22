@@ -22,6 +22,7 @@ ul{
     margin-right: 20pt;
 }
 #sTopMenu>ul{
+  padding-bottom: 0px !important;
     list-style:none;
     margin-top: 0;
     padding: 8pt;
@@ -35,7 +36,7 @@ ul{
     transition: 0.3s;
 }
 .menuElements:hover{
-  background: #fff7f7;
+  background: #ffd1d1;
   border-radius: 8pt;
 }
 .menuElements>a{
@@ -116,7 +117,7 @@ ul{
   transition: 0.3s;
 }
 #menuMore>ul>li:hover{
-  background:#ffbcbc;
+  background:#ffd1d1;
   border-radius: 8pt;
   padding: 8pt;
 }
