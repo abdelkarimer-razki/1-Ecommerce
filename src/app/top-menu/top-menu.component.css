@@ -1,5 +1,5 @@
 #topMenu{
-    height: 73px;
+    height: 70px;
     transition: 1s;
 }
 
@@ -25,12 +25,18 @@ ul{
     list-style:none;
     margin-top: 0;
     padding: 8pt;
-    padding-top:4pt;
+    padding-top:1pt;
 }
 .menuElements{
     font-size: 16pt;
     display: inline-block;
-    margin:10pt 20pt;
+    margin:5pt 7pt;
+    padding: 8pt;
+    transition: 0.3s;
+}
+.menuElements:hover{
+  background: #fff7f7;
+  border-radius: 8pt;
 }
 .menuElements>a{
     text-decoration: none;
@@ -54,9 +60,9 @@ ul{
 /*.menuElements>a:hover .menuElements>a::after{
 
 }*/
-#Home>a:hover{
+/*#Home>a:hover{
     color: #FF3E22;
-}
+}*/
 /*#home>a::after{
   content: "";
   height: 2px;
@@ -74,9 +80,44 @@ ul{
   opacity: 1;
   transform: scaleX(1);
 }*/
-#Shopping>a:hover{
+/*#Shopping>a:hover{
     color: #FFBD61;
 }
 #Apropos>a:hover{
     color: #34B865;
+}*/
+#settings{
+  cursor: pointer;
 }
+
+#menuMore{
+  width: 200px;
+  background: white;
+  position: absolute;
+  border-radius: 8pt;
+  z-index: 20200;
+  margin-top: 8pt;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  left: 82%;
+}
+#menuMore>ul{
+  list-style: none;
+  width: 100%;
+  padding-left: 0px;
+}
+#menuMore>ul>li{
+  width: 100%;
+  display:block;
+  cursor: pointer;
+  margin: 5pt 0;
+  text-align: center;
+  padding: 5pt;
+  font-weight: bolder;
+  transition: 0.3s;
+}
+#menuMore>ul>li:hover{
+  background:#ffbcbc;
+  border-radius: 8pt;
+  padding: 8pt;
+}
+

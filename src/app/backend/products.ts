@@ -6,6 +6,7 @@ export interface products{
   prix:Number;
   categorie:string;
   mangable:boolean;
+  prixf:Number;
 }
 export interface count{
   count:Number;

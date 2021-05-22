@@ -5,8 +5,8 @@
       <img src="../../assets/produit21.jpg">
     </div>
     <div class="carousel-cell">
-      <div style="width: 40%;height: 500px;background-color: black;float: left;"></div>
-      <img style="float: left;display: inline-block;" src="../../assets/produit21.jpg">
+      <div style="height:330px;background-color: black;width: 300px;float: right !important;"></div>
+      <img style="float: left !important;width: 600px;display:block;height: 330px;" src="../../assets/huile5.jpeg">
     </div>
     <div class="carousel-cell">
       <img src="../../assets/produit21.jpg">
@@ -38,12 +38,12 @@
     <div *ngFor='let item of products' class="Products reveal" (click)="routerBuyProduct(item)">
       <p class="titleProduit">{{item.name}}</p>
       <img [src]="transform(item.picture)" alt="" width="250px">
-      <p class="titlePrix">{{item.prix}} DH</p>
+      <p class="titlePrix">{{item.prix}} DH</p>  <p class="titlePrixf">{{item.prixf}} DH</p>
       <p style="color: #bfbfbf;">Livraison gratuite</p>
     </div>
   </div>
   <div  *ngIf="failed">
-    <div class="Products" style="margin: 15pt auto;display: block;text-align: center;">
+    <div class="products1 Products">
       <img src="../../assets/errorS.jpg" style="width: 150x;display: block;margin: 0 auto;" alt="">
       <!--<i class="fas fa-exclamation-circle" style="font-size: 100px;color: #fd4d4d;width: 100px;display: block;margin: 0 auto;"></i>-->
       <p class="errorP">Aucun produit portant ce nom n'a été trouvé</p>

@@ -11,6 +11,8 @@ import {HttpClientModule} from '@angular/common/http';
 import {IvyCarouselModule} from 'angular-responsive-carousel';
 import { BuyproductComponent } from './buyproduct/buyproduct.component';
 import { FormsModule } from '@angular/forms';
+import { LoginComponent } from './login/login.component';
+import { RegistreComponent } from './registre/registre.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +21,9 @@ import { FormsModule } from '@angular/forms';
     routingComponents,
     AproposComponent,
     PagenotfoundComponent,
-    BuyproductComponent
+    BuyproductComponent,
+    LoginComponent,
+    RegistreComponent
   ],
   imports: [
     BrowserModule,

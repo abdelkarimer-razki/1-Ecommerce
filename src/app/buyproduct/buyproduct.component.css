@@ -37,6 +37,7 @@ box-shadow: 20px 20px 20px -20px rgba(0, 0, 0, 0.2);
 .price>p{
   font-size: 30px;
   margin-bottom: 0;
+  margin-top: 15pt;
 }
 .price>button{
   background: #fd4d4d;
@@ -68,4 +69,16 @@ box-shadow: 20px 20px 20px -20px rgba(0, 0, 0, 0.2);
 #Qunatite:focus{
   outline: none !important;
   box-shadow: 0 0 10px blue !important;
+}
+
+#description{
+  color: #a9a9aa;
+  font-size: 12px;
+  text-align: left;
+}
+.info>label{
+  margin-top: 15pt;
+}
+.picture>img{
+  margin-top: 25pt;
 }

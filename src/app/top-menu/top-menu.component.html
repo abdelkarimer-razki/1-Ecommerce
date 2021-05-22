@@ -4,9 +4,16 @@
     </ul>
     <div id="sTopMenu">
         <ul>
-            <li class="menuElements" id="Home"><a routerLink="/"><i class="fas fa-home"></i> Accueil</a></li>
-            <li class="menuElements" id="Shopping"><a routerLink="/shopping"><i class="fas fa-shopping-cart"></i> Shopping</a></li>
-            <li class="menuElements" id="Apropos"><a routerLink="/Apropos"><i class="fas fa-info-circle"></i> à propos</a></li>
+            <li class="menuElements" id="Home" (click)="disableMenu()"><a routerLink="/"><i class="fas fa-home"></i> Accueil</a></li>
+            <li class="menuElements" id="Shopping" (click)="disableMenu()"><a routerLink="/shopping"><i class="fas fa-shopping-cart"></i> Shopping</a></li>
+            <li class="menuElements" id="Apropos" (click)="disableMenu()"><a routerLink="/Apropos"><i class="fas fa-info-circle"></i> à propos</a></li>
+            <li class="menuElements"  id="settings" (click)="showMenu()"><a><i class="fas fa-cog"></i></a></li>
         </ul>
     </div>
+</div>
+<div id="menuMore" *ngIf="menuMore">
+  <ul>
+    <li routerLink="/connexion"><i class="fas fa-sign-in-alt"></i> Connexion</li>
+    <li routerLink="/inscrire"><i class="fas fa-user-plus"></i>  S'inscrire</li>
+  </ul>
 </div>

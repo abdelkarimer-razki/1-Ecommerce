@@ -13,13 +13,14 @@ import { ShoppingserviceService } from '../services/shoppingservice.service';
   styleUrls: ['./shopping.component.css']
 })
 export class ShoppingComponent implements OnInit {
-  products:products[]=[{idproducts:0, name:"",picture:"",description:"",mangable:true,prix:0,categorie:""}];
+  products:products[]=[{idproducts:0, name:"",picture:"",description:"",mangable:true,prix:0,categorie:"",prixf:0}];
   img:string[]=[];
   /*HUILE:Boolean=true;*/
   pname:any="";
+  categorieS:boolean=false;
   failed:boolean=false;
   loading:boolean=true;
-  constructor(private shop:ShoppingserviceService,private sanitizer: DomSanitizer,private router:Router) {
+  constructor(private shop:ShoppingserviceService,private shop1:ShoppingserviceService,private sanitizer: DomSanitizer,private router:Router) {
    }
   ngOnInit(): void {
     this.showAllData();
@@ -28,8 +29,15 @@ export class ShoppingComponent implements OnInit {
     this.shop.getAllProducts().subscribe(data=>{
       this.products=data;
       this.loading=false;
+      this.categorieS=false;
     })
   }
+ /* showDataSearch(){
+    this.shop1.getAllProducts().subscribe(data=>{
+      this.products=data;
+      this.loading=false;
+    })
+  }*/
   transform(pic:string){
     if(pic==null){
       return null;
@@ -44,6 +52,7 @@ export class ShoppingComponent implements OnInit {
     }else{
       this.HUILE=true;
     }*/
+    this.categorieS=true;
     this.shop.getProductsCategorie(categorie).subscribe(data=>{
       this.products=data;
       this.loading=false;
@@ -61,6 +70,10 @@ export class ShoppingComponent implements OnInit {
     this.router.navigate(['/produit',product.idproducts]);
   }
   change(){
+    if(this.categorieS==true){
+      this.showAllData();
+      this.categorieS=false;
+    }
     if(this.pname==""){
       this.ngOnInit();
       this.failed=false;

@@ -5,7 +5,7 @@
   height: 100%;
 }
 carousel{
-  height: 300px !important;
+  height: 330px !important;
   margin-top: 20pt;
   border-radius: 8pt;
   margin-bottom: 20pt;
@@ -14,24 +14,25 @@ carousel{
 {
   margin-top: 15pt;
   margin-left: 20pt;
+  color: #7c7c7c;
 }
 #Miel{
   border-left: none;
   border-top-left-radius: 15pt;
   border-bottom-left-radius: 15pt;
 }
-#Last{
-  /*border-top-right-radius: 15pt;
+/*#Last{
+  border-top-right-radius: 15pt;
   border-right: 1px solid #c9c9c9;
-  border-bottom-right-radius: 15pt;*/
-}
+  border-bottom-right-radius: 15pt;
+}*/
 #Last:hover{
   background:#FFB5C6;
   box-shadow: 20px 20px 20px -20px #FFB5C6;
 }
-#Miel{
- /* border-left: 1px solid #c9c9c9;*/
-}
+/*#Miel{
+  border-left: 1px solid #c9c9c9;
+}*/
 #Miel:hover{
   /*box-shadow: inset 0 150px 0 0 #FCDA42;*/
   background:#FCDA42;
@@ -98,6 +99,11 @@ carousel{
   transition: 0.5s;
   box-shadow: 20px 20px 20px -20px rgba(0, 0, 0, 0.2);
 }
+.products1{
+  margin: 15pt auto;
+  display: block;
+  text-align: center;
+}
 .Products:hover{
   box-shadow: 0 4px 500px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
@@ -112,7 +118,17 @@ carousel{
   font-size: 20px;
 }
 .titlePrix{
-  font-size:20px;
+  font-size:24px;
+  display: inline-block;
+  color: #fd4d4d;
+}
+.titlePrixf{
+  font-size:18px;
+  display: inline-block;
+  margin-left: 8pt;
+  font-style: oblique;
+  text-decoration: line-through;
+  color: #8e8e8e;
 }
 
 
@@ -131,19 +147,52 @@ carousel{
 
 #search{
   display: block;
-  width: 60%;
+  width: 40%;
   height: 50px;
   margin: 15pt auto;
   padding-left: 15pt;
   font-size: 20px;
   border-radius: 15pt;
   border: 1px solid #d6d6d6;
+  box-shadow: 20px 20px 20px -20px rgba(0, 0, 0, 0.2);
 }
 #search:focus{
   outline: none !important;
+  border: 1px solid skyblue;
   box-shadow: 0 0 10px skyblue;
+}
+#search::placeholder{
+  text-align: center;
 }
 .errorP{
   font-size: 20px;
   margin-top: 15pt;
 }
+
+
+/* Assign full width inputs*/
+input[type=text],
+input[type=password] {
+    width: 100%;
+    padding: 12px 40px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+.container {
+    padding: 16px;
+}
+
+.fontuser {
+    position: relative;
+}
+
+.fontuser i{
+    position: absolute;
+    left: 15px;
+    top: 40px;
+    color: gray;
+}
+
