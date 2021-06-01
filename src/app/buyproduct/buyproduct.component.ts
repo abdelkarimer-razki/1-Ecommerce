@@ -13,6 +13,10 @@ import { Title } from '@angular/platform-browser';
 export class BuyproductComponent implements OnInit {
    id:String=this.route.snapshot.params['idproducts'];
    loading:boolean=true;
+   prix:boolean=true;
+   prix2:boolean=false;
+   prix3:boolean=false;
+
    product:products[]=[];
   constructor(private route:ActivatedRoute,private buyService:BuyproductService,private sanitizer: DomSanitizer,private titleService:Title) {
    }
@@ -24,5 +28,19 @@ export class BuyproductComponent implements OnInit {
   transform(pic:string){
       return this.sanitizer.bypassSecurityTrustUrl(pic);
   }
-
+  change(){
+    this.prix=true;
+    this.prix2=false;
+    this.prix3=false;
+  }
+  change2(){
+    this.prix=false;
+    this.prix2=true;
+    this.prix3=false;
+  }
+  change3(){
+    this.prix=false;
+    this.prix2=false;
+    this.prix3=true;
+  }
 }

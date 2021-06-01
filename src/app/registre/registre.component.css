@@ -1,11 +1,11 @@
 .pageContanaire{
-  background-color: #EFF1F5;
+  background-color: #F3F3F3;
   width: 100%;
-  height: 100vh;
+  height: 89vh;
 }
 .connexionDetails{
   width: 50%;
-  height: 100vh;
+  height: 89vh;
   background-color: white;
  /* border-radius: 15pt;*/
   /*box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);*/
@@ -35,6 +35,10 @@
 }
 .connexionDetails>input::placeholder{
   font-weight: bold;
+}
+.connexionDetails>input:invalid{
+  border: 1px solid red;
+  box-shadow: 0 0 10px red;
 }
 .connexionDetails>input:focus{
   outline: none;

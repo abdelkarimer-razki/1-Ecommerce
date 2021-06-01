@@ -7,6 +7,11 @@ export interface products{
   categorie:string;
   mangable:boolean;
   prixf:Number;
+  taille:string;
+  taille2:string;
+  taille3:String;
+  prix2:Number;
+  prix3:Number;
 }
 export interface count{
   count:Number;

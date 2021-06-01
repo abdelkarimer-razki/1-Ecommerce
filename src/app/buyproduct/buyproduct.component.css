@@ -1,6 +1,6 @@
 #produit{
   width: 70%;
-  height: 500px;
+  height: 90%;
   background-color: white;
   border-radius: 15pt;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -58,9 +58,9 @@ box-shadow: 20px 20px 20px -20px rgba(0, 0, 0, 0.2);
 }
 
 #Quantite{
-  border-radius: 15pt;
+  border-radius: 8pt;
   border: 1px solid #cccccc;
-  width: 80px;
+  width: 60px;
   height: 40px;
   font-size: 20px;
   padding: 8pt;
@@ -81,4 +81,35 @@ box-shadow: 20px 20px 20px -20px rgba(0, 0, 0, 0.2);
 }
 .picture>img{
   margin-top: 25pt;
+}
+
+.taille
+{
+  width: 70px;
+  /*background-color: #f4f4f4;*/
+ color: #b5b5b5;
+  text-align: center;
+  margin: 0 8pt;
+  padding: 3pt;
+  cursor: pointer;
+  display: inline-block;
+  border-radius:1pt;
+  border: 1px solid #b5b5b5;
+  font-weight: bold;
+}
+input[type="number"] {
+  -webkit-appearance: textfield;
+     -moz-appearance: textfield;
+          appearance: textfield;
+}
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+}
+.kl{
+  border: 1px solid black;
+  color: black;
+}
+.taille:empty{
+  display: none !important;
 }

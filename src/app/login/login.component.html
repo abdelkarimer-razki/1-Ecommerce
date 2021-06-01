@@ -1,9 +1,10 @@
 <div class="pageContanaire">
   <div class="connexionDetails">
     <h3 class="title">Connexion</h3><br>
-    <input type="email" name="" id="email" placeholder="E-mail" required><br>
-    <input type="password" id="password" placeholder="Mot de pass"><br>
-    <button id="connecter">Connecter <i class="fas fa-sign-in-alt"></i></button>
+    <input type="email" [(ngModel)]="email"  name="" id="email" placeholder="E-mail"><br>
+    <input type="password" [(ngModel)]="password" id="password" placeholder="Mot de pass"><br>
+    <button id="connecter" (click)="connect()">Connecter <i class="fas fa-sign-in-alt"></i></button>
+    <p style="color: red;" *ngIf="incorect">l'email ou le mot de pass est incorrect</p>
     <hr style="height: 1px;">
     <p style="font-weight: bold;">vous avez pas de compte? <a routerLink="/inscrire">s'inscrire!</a></p>
   </div>

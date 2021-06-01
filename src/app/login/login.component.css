@@ -9,7 +9,7 @@
 }
 .connexionDetails{
   width: 40%;
-  height: 384px;
+  height: 400px;
   background-color: white;
   border-radius: 15pt;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -34,10 +34,11 @@
   border: 1px solid #c1c1c1;
   background-color: #EFF1F5;
 }
-.connexionDetails>label>input:focus{
+.connexionDetails>input:focus{
   outline: none;
   border: 1px solid skyblue;
   box-shadow: 0 0 10px skyblue;
+  background-color: white;
 }
 label{
   font-weight: bold;

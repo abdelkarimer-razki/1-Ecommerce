@@ -13,7 +13,7 @@
 </div>
 <div id="menuMore" *ngIf="menuMore">
   <ul>
-    <li routerLink="/connexion"><i class="fas fa-sign-in-alt"></i> Connexion</li>
-    <li routerLink="/inscrire"><i class="fas fa-user-plus"></i>  S'inscrire</li>
+    <li (click)="disableMenu()" routerLink="/connexion"><i class="fas fa-sign-in-alt"></i> Connexion</li>
+    <li (click)="disableMenu()" routerLink="/inscrire"><i class="fas fa-user-plus"></i>  S'inscrire</li>
   </ul>
 </div>

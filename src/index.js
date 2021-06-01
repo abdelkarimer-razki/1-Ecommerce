@@ -1,5 +1,6 @@
 const express=require("express");
 var cors = require('cors')
+const jwt=require('jsonwebtoken');
 const path = require("path");
 const p1=require('./app/backend/db');
 
@@ -44,3 +45,27 @@ app.get('/buyProduct/:id',async(req,res)=>{
   const query=await p1.query("SELECT * FROM products WHERE idproducts=$1 ORDER BY RANDOM()",[id]);
   res.json(query.rows);
 })
+
+
+//login authentification
+ app.get('/login/:mail&:password',async(req,res)=>{
+   const email= req.params.mail;
+   console.log(email);
+   const password=req.params.password;
+   console.log(password);
+   const query=await p1.query("SELECT * FROM users WHERE email=$1 AND password=$2",[email,password]);
+   /*if(query.rowCount<1){
+     console.log("error");
+   }else{
+    res.json(query.rows);
+   }*/
+   let payload={subject:query.rows[0].iduser};
+   let token=jwt.sign(payload,'secretkey');
+   /*res.json(query.rows);*/
+   res.send({token})
+
+ })
+
+ /*app.post('/registre',async(req,res)=>{
+   const fname=
+ })*/

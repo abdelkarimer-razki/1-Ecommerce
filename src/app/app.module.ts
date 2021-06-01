@@ -13,6 +13,8 @@ import { BuyproductComponent } from './buyproduct/buyproduct.component';
 import { FormsModule } from '@angular/forms';
 import { LoginComponent } from './login/login.component';
 import { RegistreComponent } from './registre/registre.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { AuthGuard } from './auth.guard';
 
 @NgModule({
   declarations: [
@@ -23,7 +25,8 @@ import { RegistreComponent } from './registre/registre.component';
     PagenotfoundComponent,
     BuyproductComponent,
     LoginComponent,
-    RegistreComponent
+    RegistreComponent,
+    DashboardComponent
   ],
   imports: [
     BrowserModule,
@@ -33,7 +36,7 @@ import { RegistreComponent } from './registre/registre.component';
     FormsModule,
     IvyCarouselModule
   ],
-  providers: [],
+  providers: [AuthGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

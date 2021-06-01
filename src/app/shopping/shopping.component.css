@@ -6,9 +6,8 @@
 }
 carousel{
   height: 330px !important;
-  margin-top: 20pt;
-  border-radius: 8pt;
-  margin-bottom: 20pt;
+  width: 72%;
+  margin:20pt auto;
 }
 .titles
 {
@@ -195,4 +194,30 @@ input[type=password] {
     top: 40px;
     color: gray;
 }
-
+.si1{
+  float: left;
+  width: 72% !important;
+}
+.sis1{
+  float: right;
+  width: 28%;
+  height: 330px !important;
+  z-index: 5000;
+  background-color: white;
+}
+.si2{
+  float: right;
+  width: 72% !important;
+}
+.sis2{
+  float: left;
+  width: 28%;
+  height: 330px !important;
+  z-index: 5000;
+  background-color: white;
+}
+/*.carousel-cell{
+  float: left !important;
+  text-align: none;
+}
+*/

@@ -14,7 +14,7 @@ import { ShoppingserviceService } from '../services/shoppingservice.service';
   styleUrls: ['./shopping.component.css']
 })
 export class ShoppingComponent implements OnInit {
-  products:products[]=[{idproducts:0, name:"",picture:"",description:"",mangable:true,prix:0,categorie:"",prixf:0}];
+  products:products[]=[{idproducts:0, name:"",picture:"",description:"",mangable:true,prix:0,categorie:"",prixf:0,taille:'',taille2:'',taille3:'',prix2:0,prix3:0}];
   img:string[]=[];
   /*HUILE:Boolean=true;*/
   pname:any="";

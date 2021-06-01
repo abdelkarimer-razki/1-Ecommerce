@@ -7,6 +7,8 @@ import { PagenotfoundComponent } from './pagenotfound/pagenotfound.component';
 import { BuyproductComponent } from './buyproduct/buyproduct.component';
 import { LoginComponent } from './login/login.component';
 import { RegistreComponent } from './registre/registre.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { AuthGuard } from './auth.guard';
 
 const routes: Routes = [
   {path:'shopping',component:ShoppingComponent,},
@@ -15,6 +17,7 @@ const routes: Routes = [
   {path:"produit/:idproducts",component:BuyproductComponent},
   {path:"connexion",component:LoginComponent},
   {path:"inscrire",component:RegistreComponent},
+  {path:"dashboard",component:DashboardComponent,canActivate:[AuthGuard]},
   {path:"**",component:PagenotfoundComponent}
 ];
 

@@ -8,9 +8,14 @@
     <div class="info con">
       <p>{{item.name}}</p>
       <p id="description">{{item.description}}</p>
-      <label for="">Quantité: <input type="text" name="" id="Quantite"></label>
+      <div class="taille" (click)="change()" [class.kl]="prix">{{item.taille}}</div>
+      <div class="taille"  (click)="change2()" [class.kl]="prix2">{{item.taille2}}</div>
+      <div class="taille" (click)="change3()" [class.kl]="prix3">{{item.taille3}}</div><br>
+      <label for="">Quantité: <input type="number" name="" id="Quantite" min="1" required></label>
       <div class="price">
-        <p>{{item.prix}} DH</p>
+        <p *ngIf="prix">{{item.prix}} DH</p>
+        <p *ngIf="prix2">{{item.prix2}} DH</p>
+        <p *ngIf="prix3">{{item.prix3}} DH</p>
         <button>acheter</button>
       </div>
     </div></div>
