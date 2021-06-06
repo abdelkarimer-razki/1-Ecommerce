@@ -16,9 +16,29 @@ app.use(cors());
 app.use(express.json());
 app.listen(500);
 
+function verifyToken(req, res, next) {
+  if(!req.headers.authorization) {
+    return res.status(401).send('Unauthorized request')
+  }
+  var K2hM$4PAWCeFV8 = req.headers.authorization.split(' ')[1];
+  if(K2hM$4PAWCeFV8 === 'null') {
+    return res.status(401).send('Unauthorized request')
+  }
+  let payload = jwt.verify(K2hM$4PAWCeFV8, 'wJ%Y24fH9UtVzYO')
+  if(!payload) {
+    return res.status(401).send('Unauthorized request')
+  }
+  next()
+}
+
 app.get('/',async(req,res)=>{
   const query=await p1.query("SELECT * FROM products ORDER BY RANDOM()");
   res.json(query.rows);
+})
+
+app.get('/dashboard',verifyToken,async(req,res)=>{
+    const query=await p1.query("SELECT * FROM public.commande");
+    res.json(query.rows);
 })
 
 app.get('/:categorie',async(req,res)=>{
@@ -46,23 +66,27 @@ app.get('/buyProduct/:id',async(req,res)=>{
   res.json(query.rows);
 })
 
-
 //login authentification
  app.get('/login/:mail&:password',async(req,res)=>{
    const email= req.params.mail;
-   console.log(email);
    const password=req.params.password;
-   console.log(password);
    const query=await p1.query("SELECT * FROM users WHERE email=$1 AND password=$2",[email,password]);
+   if(query.rows.length<1){
+    return res.status(401).send('Unauthorized request')
+   }else{
+    let payload={userId:query.rows[0].iduser};
+    let K2hM$4PAWCeFV8=jwt.sign(payload,'wJ%Y24fH9UtVzYO');
+    res.status(200).send({K2hM$4PAWCeFV8,"iduser":query.rows[0].iduser,"name":query.rows[0].fname+" "+query.rows[0].lname,"email":query.rows[0].email},);
+   }
    /*if(query.rowCount<1){
      console.log("error");
    }else{
     res.json(query.rows);
    }*/
-   let payload={subject:query.rows[0].iduser};
-   let token=jwt.sign(payload,'secretkey');
+   /*let payload={subject:query.rows[0].iduser};
+   let token=jwt.sign(payload,'secretkey');*/
    /*res.json(query.rows);*/
-   res.send({token})
+   /*res.send({token})*/
 
  })
 

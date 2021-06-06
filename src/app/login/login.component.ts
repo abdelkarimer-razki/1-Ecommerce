@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+import { HttpErrorResponse } from '@angular/common/http';
 import { LoginService } from '../services/login.service';
 
 @Component({
@@ -18,10 +19,15 @@ export class LoginComponent implements OnInit {
     this.titleService.setTitle("Connexion");
   }
   connect(){
-    this.login.connect(this.email,this.password).subscribe(data=>{
-      console.log(data);
-      localStorage.setItem('token',data.token);
+    this.login.connect(this.email,this.password).subscribe(
+      data=>{
+      localStorage.setItem('K2hM$4PAWCeFV8',data.K2hM$4PAWCeFV8);
       this.router.navigate(['/dashboard']);
+      /*if(data[0].admin==true){
+        this.router.navigate(['/dashboard']);
+      }else{
+        this.router.navigate(['/shopping']);
+      }*/
       /*if(data.length==0){
         this.incorect=true;
       }else{
@@ -35,6 +41,13 @@ export class LoginComponent implements OnInit {
         }
 
       }*/
+    },
+    err=>{
+      if( err instanceof HttpErrorResponse ) {
+        if (err.status === 401) {
+          this.incorect=true;
+        }
+      }
     }
     );
   }

@@ -12,7 +12,7 @@ export class AuthGuard implements CanActivate {
     if(this.login.isToken()){
       return true;
     }else{
-      this.router.navigate(['/**']);
+      this.router.navigate(['/connexion']);
       return false;
     }
   }
