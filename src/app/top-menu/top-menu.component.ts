@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { LoginService } from '../services/login.service';
 
 @Component({
@@ -8,7 +9,14 @@ import { LoginService } from '../services/login.service';
 })
 export class TopMenuComponent implements OnInit {
   menuMore:boolean=false;
-  constructor(public log:LoginService) { }
+  name:any;
+  email:any;
+  constructor(public log:LoginService,private route:Router) {
+    route.events.subscribe((val)=>{
+      this.name=localStorage.getItem("user");
+      this.email=localStorage.getItem("userE")
+    })
+   }
 
   ngOnInit(): void {
   }

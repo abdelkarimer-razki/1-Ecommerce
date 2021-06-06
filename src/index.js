@@ -30,6 +30,19 @@ function verifyToken(req, res, next) {
   }
   next()
 }
+function verifyToken2(req, res, next) {
+  if(req.headers.authorization) {
+    var K2hM$4PAWCeFV8 = req.headers.authorization.split(' ')[1];
+    if(K2hM$4PAWCeFV8 === 'null') {
+      return res.status(401).send('Unauthorized request')
+    }
+    let payload = jwt.verify(K2hM$4PAWCeFV8, 'wJ%Y24fH9UtVzYO')
+    if(!payload) {
+      return res.status(401).send('Unauthorized request')
+    }
+  }
+  next()
+}
 
 app.get('/',async(req,res)=>{
   const query=await p1.query("SELECT * FROM products ORDER BY RANDOM()");
@@ -76,7 +89,7 @@ app.get('/buyProduct/:id',async(req,res)=>{
    }else{
     let payload={userId:query.rows[0].iduser};
     let K2hM$4PAWCeFV8=jwt.sign(payload,'wJ%Y24fH9UtVzYO');
-    res.status(200).send({K2hM$4PAWCeFV8,"iduser":query.rows[0].iduser,"name":query.rows[0].fname+" "+query.rows[0].lname,"email":query.rows[0].email},);
+    res.status(200).send({K2hM$4PAWCeFV8,"iduser":query.rows[0].iduser,"name":query.rows[0].fname+" "+query.rows[0].lname,"email":query.rows[0].email,"admin":query.rows[0].admin},);
    }
    /*if(query.rowCount<1){
      console.log("error");

@@ -8,6 +8,9 @@ import { users } from '../backend/users';
   providedIn: 'root'
 })
 export class LoginService {
+  isAdmin:boolean=false;
+  name:any;
+  email:any;
   url="http://localhost:500/login/"
   constructor(private http:HttpClient,private route:Router) { }
   connect(email:string,password:string){
@@ -20,7 +23,16 @@ export class LoginService {
     return localStorage.getItem('K2hM$4PAWCeFV8');
   }
   logout(){
+    localStorage.removeItem('user');
+    localStorage.removeItem('userE');
     localStorage.removeItem('K2hM$4PAWCeFV8');
     this.route.navigate(["/connexion"]);
+    this.isAdmin=false;
+  }
+  isAdminn(){
+    this.isAdmin=true;
+  }
+  isntAdmin(){
+    return this.isAdmin;
   }
 }

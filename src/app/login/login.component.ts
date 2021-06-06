@@ -3,6 +3,7 @@ import { Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { LoginService } from '../services/login.service';
+import { AuthGuard } from '../auth.guard';
 
 @Component({
   selector: 'app-login',
@@ -22,7 +23,17 @@ export class LoginComponent implements OnInit {
     this.login.connect(this.email,this.password).subscribe(
       data=>{
       localStorage.setItem('K2hM$4PAWCeFV8',data.K2hM$4PAWCeFV8);
-      this.router.navigate(['/dashboard']);
+      localStorage.setItem('user',data.name);
+      localStorage.setItem('userE',data.email);
+      if(data.admin==true){
+        this.login.isAdminn();
+      }
+      if(data.admin==true){
+        this.router.navigate(['/dashboard']);
+      }else{
+        this.router.navigate(['/shopping']);
+      }
+
       /*if(data[0].admin==true){
         this.router.navigate(['/dashboard']);
       }else{
@@ -51,5 +62,4 @@ export class LoginComponent implements OnInit {
     }
     );
   }
-
 }

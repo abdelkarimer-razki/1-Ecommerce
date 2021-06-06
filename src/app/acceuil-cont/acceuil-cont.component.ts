@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { count, products } from '../backend/products';
 import { HomepageService } from '../services/homepage.service';
 import { Title } from '@angular/platform-browser';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-acceuil-cont',

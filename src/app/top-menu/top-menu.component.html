@@ -5,7 +5,7 @@
     <div id="sTopMenu">
         <ul>
             <li class="menuElements" id="Home" (click)="disableMenu()"><a routerLink="/"><i class="fas fa-home"></i> Accueil</a></li>
-            <li class="menuElements" id="Home" (click)="disableMenu()" *ngIf="log.isToken()"><a routerLink="/dashboard"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+            <li class="menuElements" id="Home" (click)="disableMenu()" *ngIf="log.isntAdmin()"><a routerLink="/dashboard"><i class="fas fa-chart-line"></i> Dashboard</a></li>
             <li class="menuElements" id="Shopping" (click)="disableMenu()"><a routerLink="/shopping"><i class="fas fa-shopping-cart"></i> Shopping</a></li>
             <li class="menuElements" id="Apropos" (click)="disableMenu()"><a routerLink="/Apropos"><i class="fas fa-info-circle"></i> à propos</a></li>
             <li class="menuElements"  id="settings" (click)="showMenu()"><a><i class="fas fa-cog"></i></a></li>
@@ -14,6 +14,8 @@
 </div>
 <div id="menuMore" *ngIf="menuMore">
   <ul>
+    <p *ngIf="log.isToken()" style="text-align: center;margin-top: 8pt;font-weight: bolder;font-size: 20px;">{{name}}</p>
+    <p *ngIf="log.isToken()" style="text-align: center;border-bottom: 1px solid gainsboro;padding-bottom: 8pt;font-size: 13px;color: gray;">{{email}}</p>
     <li (click)="disableMenu()" *ngIf="!log.isToken()" routerLink="/connexion"><i class="fas fa-sign-in-alt"></i> Connexion</li>
     <li (click)="disableMenu()" *ngIf="!log.isToken()" routerLink="/inscrire"><i class="fas fa-user-plus"></i>  S'inscrire</li>
     <li (click)="log.logout();disableMenu()" *ngIf="log.isToken()" routerLink="/inscrire"><i class="fas fa-sign-out-alt"></i> Se déconnecter</li>

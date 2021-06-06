@@ -9,14 +9,15 @@ import { LoginComponent } from './login/login.component';
 import { RegistreComponent } from './registre/registre.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { AuthGuard } from './auth.guard';
+import { CsGuard } from './cs.guard';
 
 const routes: Routes = [
   {path:'shopping',component:ShoppingComponent,},
   {path:'',component:AcceuilContComponent},
   {path:"Apropos",component:AproposComponent},
   {path:"produit/:idproducts",component:BuyproductComponent},
-  {path:"connexion",component:LoginComponent},
-  {path:"inscrire",component:RegistreComponent},
+  {path:"connexion",component:LoginComponent,canActivate:[CsGuard]},
+  {path:"inscrire",component:RegistreComponent,canActivate:[CsGuard]},
   {path:"dashboard",component:DashboardComponent,canActivate:[AuthGuard]},
   {path:"**",component:PagenotfoundComponent}
 ];
