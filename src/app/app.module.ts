@@ -16,6 +16,50 @@ import { RegistreComponent } from './registre/registre.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { AuthGuard } from './auth.guard';
 import { TokenInterceptorService } from './services/token-interceptor.service';
+import { NotifierModule, NotifierOptions } from 'angular-notifier';
+import { AdminComponent } from './admin/admin.component';
+import { CommandsComponent } from './commands/commands.component';
+import { UsersComponent } from './users/users.component';
+const customNotifierOptions: NotifierOptions = {
+  position: {
+		horizontal: {
+			position: 'left',
+			distance: 12
+		},
+		vertical: {
+			position: 'bottom',
+			distance: 12,
+			gap: 10
+		}
+	},
+  theme: 'material',
+  behaviour: {
+    autoHide: 5000,
+    onClick: 'hide',
+    onMouseover: 'pauseAutoHide',
+    showDismissButton: true,
+    stacking: 4
+  },
+  animations: {
+    enabled: true,
+    show: {
+      preset: 'slide',
+      speed: 300,
+      easing: 'ease'
+    },
+    hide: {
+      preset: 'fade',
+      speed: 300,
+      easing: 'ease',
+      offset: 50
+    },
+    shift: {
+      speed: 300,
+      easing: 'ease'
+    },
+    overlap: 150
+  }
+};
 
 @NgModule({
   declarations: [
@@ -27,7 +71,10 @@ import { TokenInterceptorService } from './services/token-interceptor.service';
     BuyproductComponent,
     LoginComponent,
     RegistreComponent,
-    DashboardComponent
+    DashboardComponent,
+    AdminComponent,
+    CommandsComponent,
+    UsersComponent
   ],
   imports: [
     BrowserModule,
@@ -35,7 +82,7 @@ import { TokenInterceptorService } from './services/token-interceptor.service';
     HttpClientModule,
     NgbModule,
     FormsModule,
-    IvyCarouselModule
+    IvyCarouselModule, NotifierModule.withConfig(customNotifierOptions)
   ],
   providers: [AuthGuard,
     {
@@ -45,4 +92,5 @@ import { TokenInterceptorService } from './services/token-interceptor.service';
   }],
   bootstrap: [AppComponent]
 })
+
 export class AppModule { }

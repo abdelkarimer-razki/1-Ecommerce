@@ -9,8 +9,9 @@ import { LoginService } from './services/login.service';
 })
 export class AuthGuard implements CanActivate {
   constructor(private router:Router,private login:LoginService ){}
+  isAdmin:Boolean=false;
   canActivate():boolean{
-    if(this.login.isToken()&&(this.login.isntAdmin()==true)){
+    if(this.login.isToken()&&this.login.isntAdmin()){
         return true;
     }else{
       this.router.navigate(['/connexion']);

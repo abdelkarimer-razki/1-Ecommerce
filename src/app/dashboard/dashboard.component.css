@@ -1,3 +1,4 @@
+
 .pageCon{
   width: 100%;
   background-color: #EFF1F5;
@@ -12,18 +13,24 @@
 }
 .rightCon{
   width: 80%;
-  height: 1000px;
+
+  background-color: #EFF1F5;
+  height: 100vh;
 }
 .con{
   float: left;
 }
-
+.routeDash:hover{
+  cursor: pointer;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
 
 
 /*
 this is the categorie code*/
 .type{
   box-shadow: 20px 20px 20px -20px rgba(0, 0, 0, 0.2);
+  font-family: Montserrat,"Helvetica Neue",Arial,sans-serif;
  /*text-align: center;
   /*margin-top: 20pt;
   margin-bottom: 20pt;*/
@@ -72,15 +79,17 @@ this is the categorie code*/
   margin-top: 10pt;
 }
 .fa-shopping-basket{
-  color: #FD4D4D;
+  color: #FF7376;
 }
 .fa-wallet{
-  color: green;
+  color: #54C144;
 }
 .titre{
   /*position: relative;
   left: 53pt;
+
   bottom: 28pt;*/
+  font-family:"open sans",Arial,sans-serif;
   font-size: 20px;
   color: #8e8e8e;
 }
@@ -92,10 +101,12 @@ this is the categorie code*/
 }
 .number{
   font-size: 28px;
+  font-family:"open sans",Arial,sans-serif;
 }
 .note{
   font-size: 20px;
   position: relative;
+  font-family:"open sans",Arial,sans-serif;
   font-weight: lighter;
   margin-left: 8pt;
   margin-top: 10pt;
@@ -115,3 +126,20 @@ this is the categorie code*/
   width: 500px;
   height: 500px;
 }
+
+.fa-search-dollar{
+  font-size: 22px;
+}
+
+.fa-tachometer-alt{
+  font-size: 22px;
+}
+
+h4{
+  margin-left: 15pt;
+  font-family:"open sans",Arial,sans-serif;
+}
+
+
+
+

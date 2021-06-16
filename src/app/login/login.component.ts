@@ -14,7 +14,8 @@ export class LoginComponent implements OnInit {
   email='';
   incorect:Boolean=false;
   password='';
-  constructor(private titleService:Title,private login:LoginService,private router:Router) { }
+  constructor(private titleService:Title,private login:LoginService,private router:Router,private auth:AuthGuard) {
+   }
 
   ngOnInit(): void {
     this.titleService.setTitle("Connexion");
@@ -26,10 +27,8 @@ export class LoginComponent implements OnInit {
       localStorage.setItem('user',data.name);
       localStorage.setItem('userE',data.email);
       if(data.admin==true){
-        this.login.isAdminn();
-      }
-      if(data.admin==true){
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/admin/dashboard']);
+        localStorage.setItem("#bsXpEcIouiz","UF7wcFy9rl&wv$adaLGkkJ@0KX$wWKTt*")
       }else{
         this.router.navigate(['/shopping']);
       }

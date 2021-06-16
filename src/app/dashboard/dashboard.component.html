@@ -1,57 +1,50 @@
-<div class="pageCon">
-  <div class="leftCon con">
-
-  </div>
+<notifier-container></notifier-container>
   <div class="rightCon con">
-    <h3>tableau de bord</h3>
-    <hr>
+    <h4><i class="fas fa-tachometer-alt"></i> Statistiques général</h4>
     <div class="typesContainaire">
       <div class="type" id="revenu">
         <div class="topData">
           <i class="fas fa-wallet"></i>
           <div class="infos">
             <label class="titre">Revenu</label>
-            <label class="number">53 DH</label>
+            <label class="number">{{revenuNb}} <label style="font-size: 15px;"> DH</label></label>
           </div>
         </div>
-        <p class="note">le mois dernier</p>
+        <p class="note"><i class="far fa-calendar-alt" style="font-size: 16px;"></i> Mois en cours</p>
       </div>
-      <div class="type" id="commands">
+      <div class="type routeDash" id="commands" (click)="showCommnads()">
         <div class="topData">
           <i class="fas fa-shopping-basket"></i>
           <div class="infos">
             <label class="titre">Commands</label>
-            <label class="number">+100</label>
+            <label class="number">{{commandNb}}</label>
           </div>
         </div>
-        <p class="note">le mois dernier</p>
+        <p class="note"><i class="far fa-calendar-alt" style="font-size: 16px;"></i> Mois en cours</p>
       </div>
       <div class="type" id="Miel">
         <div class="topData">
           <i class="fas fa-users" style="color: #FCDA42;"></i>
           <div class="infos">
-            <label class="titre">Visiteurs</label>
-            <label class="number">500</label>
+            <label class="titre">Visiteurs</label><br>
+            <label class="number">{{visitsNb}}</label>
           </div>
         </div>
-        <p class="note">le mois dernier</p>
+        <p class="note"><i class="far fa-clock" style="font-size: 16px;"></i> Aujourd'hui</p>
       </div>
-      <div class="type" id="Miel">
+      <div class="type routeDash" id="Users" (click)="showUsers()">
         <div class="topData">
-          <i class="fas fa-wallet"></i>
+          <i class="fas fa-house-user" style="color: #3F9CB8;"></i>
           <div class="infos">
-            <label class="titre">Visiteurs</label>
-            <label class="number">500</label>
+            <label class="titre">Utilisateurs</label>
+            <label class="number">{{usersNb}}</label>
           </div>
         </div>
-        <p class="note">le mois dernier</p>
+        <p class="note"><i class="fas fa-play-circle" style="font-size: 16px;"></i> Dès le début</p>
       </div>
     </div>
-
-  <canvas id="myChart" width="400" height="400" style="display: block;"></canvas>
+    <div id="divChart" style="display: block;width:97%;background-color: white;border-radius: 8pt;box-shadow: 20px 20px 20px -20px rgba(0, 0, 0, 0.2);margin: 0 auto;">
+      <h4><i class="fas fa-search-dollar"></i> Revenu annuel</h4>
+      <canvas id="myChart" width="400" height="100"></canvas>
+    </div>
   </div>
-
-
-
-</div>
-

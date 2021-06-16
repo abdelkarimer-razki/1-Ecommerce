@@ -4,15 +4,16 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { users } from '../backend/users';
 
+
 @Injectable({
   providedIn: 'root'
 })
 export class LoginService {
-  isAdmin:boolean=false;
   name:any;
   email:any;
   url="http://localhost:500/login/"
-  constructor(private http:HttpClient,private route:Router) { }
+  constructor(private http:HttpClient,private route:Router) {
+  }
   connect(email:string,password:string){
     return this.http.get<any>(this.url+email+"&"+password);
   }
@@ -26,13 +27,23 @@ export class LoginService {
     localStorage.removeItem('user');
     localStorage.removeItem('userE');
     localStorage.removeItem('K2hM$4PAWCeFV8');
+    localStorage.removeItem("#bsXpEcIouiz")
     this.route.navigate(["/connexion"]);
-    this.isAdmin=false;
-  }
-  isAdminn(){
-    this.isAdmin=true;
   }
   isntAdmin(){
-    return this.isAdmin;
+    if((localStorage.getItem("#bsXpEcIouiz")=="UF7wcFy9rl&wv$adaLGkkJ@0KX$wWKTt*")&&(this.isToken())){
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
+  isuser(){
+    if((localStorage.getItem("#bsXpEcIouiz")!="UF7wcFy9rl&wv$adaLGkkJ@0KX$wWKTt*")&&(this.isToken())){
+      return true;
+    }
+    else{
+      return false;
+    }
   }
 }

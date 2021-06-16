@@ -1,0 +1,32 @@
+<div style="width: 80%;background-color: #EFF1F5;height: 100vh;float: left;">
+  <div class="table">
+    <table>
+      <tr id="headerTable">
+        <th>Nom</th>
+        <th>Prenom</th>
+        <th>adress</th>
+        <th>Telephone/E-mail</th>
+        <th>Nom de Produit</th>
+        <th>Quantité</th>
+        <th>Date de Commande</th>
+        <th>Verifier la Commande</th>
+        <th>Achat effectuer?</th>
+        <th></th>
+      </tr>
+      <tr class="TableElement" *ngFor='let item of table'>
+        <td>{{item.lname}}</td>
+        <td>{{item.fname}}</td>
+        <td>{{item.adress}}</td>
+        <td><label id="phone">{{item.tel}}</label>
+          {{item.email}}
+        </td>
+        <td>{{item.name}}</td>
+        <td>{{item.qte}}</td>
+        <td>{{item.to_char}}</td>
+        <td>{{item.verifie}}</td>
+        <td><label class="etat">{{item.etat}}</label></td>
+        <td><i class="fas fa-ellipsis-v"></i></td>
+      </tr>
+    </table>
+  </div>
+</div>

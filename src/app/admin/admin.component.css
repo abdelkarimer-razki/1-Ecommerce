@@ -1,0 +1,28 @@
+
+.leftCon{
+  width: 20%;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  float: left;
+  background-color: white;
+}
+.listRoute{
+  list-style: none;
+  margin-top: 8pt;
+  padding-left: 0px !important;
+}
+.listRoute>li{
+  font-size: 20px;
+  padding: 15pt;
+  padding-left: 15pt;
+  transition: 0.5s;
+}
+.listRoute>li:hover{
+  padding: 15pt;
+  background-color:#ffd1d1;
+  cursor: pointer;
+}
+.listRoute>li>a{
+  font-family:"open sans",Arial,sans-serif;
+}

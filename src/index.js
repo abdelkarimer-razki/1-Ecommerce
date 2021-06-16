@@ -12,6 +12,10 @@ app.use(function(req, res, next) {
   next();
 });
 
+var i=0;
+var today = new Date();
+var dd = String(today.getDate()).padStart(2, '0');
+
 app.use(cors());
 app.use(express.json());
 app.listen(500);
@@ -45,13 +49,48 @@ function verifyToken2(req, res, next) {
 }
 
 app.get('/',async(req,res)=>{
+  var today1 = new Date();
+  var dd1 = String(today.getDate()).padStart(2, '0');
+  if(dd1==dd){
+    i++;
+  }else{
+    i=0;
+    dd=dd1;
+  }
   const query=await p1.query("SELECT * FROM products ORDER BY RANDOM()");
   res.json(query.rows);
 })
 
 app.get('/dashboard',verifyToken,async(req,res)=>{
-    const query=await p1.query("SELECT * FROM public.commande");
+    const query=await p1.query("SELECT * FROM public.commande WHERE EXTRACT(MONTH FROM datecommand)=EXTRACT(MONTH FROM now())");
     res.json(query.rows);
+})
+
+
+app.get('/visits',verifyToken,async(req,res)=>{
+  res.json(i);
+})
+
+
+app.get('/revenu',verifyToken,async(req,res)=>{
+  const query=await p1.query("SELECT sum(prix) FROM public.commande WHERE (etat=true)and(EXTRACT(MONTH FROM datecommand)=EXTRACT(MONTH FROM now()))");
+  res.json(parseInt(query.rows[0].sum));
+})
+
+app.get('/users',verifyToken,async(req,res)=>{
+  const query=await p1.query("SELECT * FROM public.users");
+  res.json(query.rowCount);
+})
+app.get('/revenu/:mois',verifyToken,async(req,res)=>{
+  const {mois}=req.params;
+  const query=await p1.query("SELECT SUM(prix) from public.commande where (EXTRACT(YEAR FROM datecommand)=EXTRACT(YEAR FROM now())) and (etat=true) and (EXTRACT(MONTH FROM datecommand)=$1)",[mois]);
+  res.json(parseInt(query.rows[0].sum));
+})
+
+
+app.get('/commandnonEffectuer',async(req,res)=>{
+  const query=await p1.query("SELECT u.lname,u.fname,u.adress,u.tel,p.name,u.email,c.qte,to_char(c.datecommand, 'DD/MM/YYYY'),c.verifie,c.etat FROM public.users u join public.commande c on u.iduser=c.iduser join public.products p on c.idproducts=p.idproducts where c.etat=false ORDER BY u.lname");
+  res.json(query.rows);
 })
 
 app.get('/:categorie',async(req,res)=>{

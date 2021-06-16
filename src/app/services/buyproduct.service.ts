@@ -13,4 +13,5 @@ export class BuyproductService {
   getProducts(id:String):Observable<products[]>{
     return this.http.get<products[]>(this.url+id);
   }
+  
 }

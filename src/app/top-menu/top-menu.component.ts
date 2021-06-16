@@ -13,6 +13,7 @@ export class TopMenuComponent implements OnInit {
   email:any;
   constructor(public log:LoginService,private route:Router) {
     route.events.subscribe((val)=>{
+      this.disableMenu();
       this.name=localStorage.getItem("user");
       this.email=localStorage.getItem("userE")
     })

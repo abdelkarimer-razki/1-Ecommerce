@@ -1,8 +1,12 @@
 /* You can add global styles to this file, and also import other style files */
+@import "~angular-notifier/styles";
 *{
     font-family: "Trebuchet MS";
     margin: 0;
     padding: 0;
+}
+.fas{
+  font-family: "Font Awesome 5 Free" !important;
 }
 #topMenu{
   z-index: 2020;
