@@ -1,18 +1,79 @@
 *{
   font-family:"open sans",Arial,sans-serif;
 }
+table{
+  word-wrap: break-word;
+  width: 100%;
+  border-radius: 8pt;
+  margin: 0 auto;
+}
+td,th{
+  text-align: center;
+  font-size: 15px;
+}
+
+.choice{
+  background-color: white;
+  width: fit-content;
+  box-shadow: 20px 20px 20px -20px rgba(0, 0, 0, 0.2);
+  height: 50px;
+  margin: 0 auto;
+  margin-top: 20pt;
+  border-radius: 8pt;
+}
+.choice>label{
+  cursor: pointer;
+  color: #FD4D4D;
+}
+.effectuer{
+  height: 50px;
+  border-top-left-radius: 8pt;
+  border-bottom-left-radius: 8pt;
+  padding: 8pt;
+  transition: 0.3s;
+  text-align: center;
+  border-right: 1px solid #bcbcbc;
+}
+.Noneffectuer{
+  padding: 8pt;
+  height: 50px;
+  transition: 0.3s;
+  border-top-right-radius: 8pt;
+  border-bottom-right-radius: 8pt;
+  text-align: center;
+  height: 100%;
+}
+
 table,td,tr,th{
   border-top: 1px solid #bcbcbc;
   border-bottom: 1px solid #bcbcbc;
   border-collapse: collapse;
 }
+.fa-ellipsis-v:hover{
+  border-radius: 50%;
+  background-color: #d1d1d1;
+  text-align: center;
+  transition: 0.3s;
+}
+
+.fa-ellipsis-v{
+  width: 30px;
+  margin-top:10px;
+  padding-top: 7px;
+  height: 30px;
+  text-align: center;
+}
+
 .table{
-  padding: 20pt;
+  padding: 0pt;
   margin: 0 auto;
-  margin-top: 40pt;
+  height: 483px;
+  margin-top: 20pt;
   background-color: white;
   border-radius: 8pt;
   width: 97%;
+  padding: 15pt;
+  overflow: scroll;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 .etat{
@@ -22,11 +83,35 @@ table,td,tr,th{
   width: 50px;
   border-radius: 15pt;
 }
+
+.false{
+  text-align: center;
+  background-color: #ffd8d8;
+  color: red;
+  width: 80px;
+  border-radius: 15pt;
+}
+
+.colorback{
+  background-color: #FD4D4D;
+  color: white !important;
+}
+
+.true{
+  text-align: center;
+  background-color: #c5ffbc;
+  color: green;
+  width: 80px;
+  border-radius: 15pt;
+}
+
 td{
-  color: #707070;
+  color: #3f3f3f;
+
 }
 th{
-  color: #3f3f3f;
+  color: #707070;
+
 }
 #phone{
   color: #FD4D4D;
@@ -36,8 +121,44 @@ th{
 }
 .TableElement{
   transition: 0.3s;
+  position: relative;
 }
 .TableElement:hover{
   background-color: #f7f7f7;
+  cursor: pointer;
+}
+.more
+{
+  position: absolute;
+  z-index: 2020;
+  padding: 3pt 0pt 3pt 0pt;
+  border-radius: 8pt;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  background-color: white;
+  right: 5px;
+  margin-top: 30px;
+}
+
+.more>ul
+{
+  margin-bottom: 0px;
+  padding-left: 0px;
+  list-style: none;
+}
+
+.more>ul>li
+{
+  transition: 0.3s;
+  padding: 5pt;
+}
+
+
+.more>ul>li:hover
+{
+  padding: 8pt;
+  background-color: #FFD1D1;
+}
+
+.more>ul>li>label:hover{
   cursor: pointer;
 }

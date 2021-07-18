@@ -27,10 +27,14 @@ export class LoginComponent implements OnInit {
       localStorage.setItem('user',data.name);
       localStorage.setItem('userE',data.email);
       if(data.admin==true){
-        this.router.navigate(['/admin/dashboard']);
+        this.router.navigate(['/admin/dashboard']).then(()=>{
+          window.location.reload();
+        });
         localStorage.setItem("#bsXpEcIouiz","UF7wcFy9rl&wv$adaLGkkJ@0KX$wWKTt*")
       }else{
-        this.router.navigate(['/shopping']);
+        this.router.navigate(['/shopping']).then(()=>{
+          window.location.reload();
+        });
       }
 
       /*if(data[0].admin==true){

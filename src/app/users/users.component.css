@@ -1,0 +1,9 @@
+.choice{
+  background-color: white;
+  width: fit-content;
+  box-shadow: 20px 20px 20px -20px rgba(0, 0, 0, 0.2);
+  height: 50px;
+  margin: 0 auto;
+  margin-top: 20pt;
+  border-radius: 8pt;
+}

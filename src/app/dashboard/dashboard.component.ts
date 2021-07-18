@@ -170,18 +170,11 @@ export class DashboardComponent implements OnInit {
   commnads(){
     this.dash.RouterHere().subscribe(
       res =>{
-        if(this.commandNb==0){
-          this.commandNb=res.length
-        }
-        else if(this.commandNb!=res.length){
-          this.notifier.notify('error', 'Vous avez une nouveau commande');
-        }
         this.commandNb=res.length;
       },
       err=>{
         if(err){
           localStorage.clear();
-          this._router.navigate(["/connexion"]);
         }
       }
     )
@@ -190,17 +183,10 @@ export class DashboardComponent implements OnInit {
     this.dash.Vistis().subscribe(
 
       data=>{
-        if(this.visitsNb==0){
-          this.visitsNb=data
-        }
-        else if(this.visitsNb!=data){
-          this.notifier.notify('success', 'un nouveau visiteur a visite le site');
-        }
       this.visitsNb=data},
       err=>{
         if(err){
         localStorage.clear();
-        this._router.navigate(["/connexion"]);
       }}
       )
   }
@@ -210,22 +196,14 @@ export class DashboardComponent implements OnInit {
     err=>{
       if(err){
       localStorage.clear();
-      this._router.navigate(["/connexion"]);
     }})
   }
   users(){
     this.dash.users().subscribe(data=>{
-      if(this.usersNb==0){
-        this.usersNb=data
-      }
-      else if(this.usersNb!=data){
-        this.notifier.notify('info', 'Vous avez un nouveau utilisateur');
-      }
     this.usersNb=data},
     err=>{
       if(err){
       localStorage.clear();
-      this._router.navigate(["/connexion"]);
     }})
   }
 

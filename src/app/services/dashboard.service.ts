@@ -25,7 +25,22 @@ export class DashboardService {
   revenuMois(mois:Number):Observable<Number>{
     return this.http.get<Number>(this.url1+'revenu/'+mois);
   }
-  allCommands(){
+  allCommandsE(){
     return this.http.get(this.url1+'commandnonEffectuer');
+  }
+  allCommandsN(){
+    return this.http.get(this.url1+'commandEffectuer');
+  }
+  verfieCommande(id:Number,command:commands):Observable<commands>{
+    return this.http.put<commands>(this.url1+"v/"+id,command);
+  }
+  unverfiedCommande(id:Number,command:commands):Observable<commands>{
+    return this.http.put<commands>(this.url1+"v1/"+id,command);
+  }
+  effectueCommande(id:Number,commande:commands):Observable<commands>{
+    return this.http.put<commands>(this.url1+"effectue/"+id,commande);
+  }
+  deeffectueCommande(id:Number,commande:commands):Observable<commands>{
+    return this.http.put<commands>(this.url1+"effectue1/"+id,commande);
   }
 }

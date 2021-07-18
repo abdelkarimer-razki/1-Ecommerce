@@ -20,6 +20,7 @@ import { NotifierModule, NotifierOptions } from 'angular-notifier';
 import { AdminComponent } from './admin/admin.component';
 import { CommandsComponent } from './commands/commands.component';
 import { UsersComponent } from './users/users.component';
+import { ProductsComponent } from './products/products.component';
 const customNotifierOptions: NotifierOptions = {
   position: {
 		horizontal: {
@@ -74,7 +75,8 @@ const customNotifierOptions: NotifierOptions = {
     DashboardComponent,
     AdminComponent,
     CommandsComponent,
-    UsersComponent
+    UsersComponent,
+    ProductsComponent
   ],
   imports: [
     BrowserModule,

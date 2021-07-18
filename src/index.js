@@ -48,6 +48,7 @@ function verifyToken2(req, res, next) {
   next()
 }
 
+
 app.get('/',async(req,res)=>{
   var today1 = new Date();
   var dd1 = String(today.getDate()).padStart(2, '0');
@@ -72,15 +73,20 @@ app.get('/visits',verifyToken,async(req,res)=>{
 })
 
 
-app.get('/revenu',verifyToken,async(req,res)=>{
+app.get('/revenu',/*verifyToken,*/async(req,res)=>{
   const query=await p1.query("SELECT sum(prix) FROM public.commande WHERE (etat=true)and(EXTRACT(MONTH FROM datecommand)=EXTRACT(MONTH FROM now()))");
-  res.json(parseInt(query.rows[0].sum));
+  if(query.rows[0].sum==null){
+    res.json(0);
+  }else{
+    res.json(parseInt(query.rows[0].sum));
+  }
 })
 
 app.get('/users',verifyToken,async(req,res)=>{
   const query=await p1.query("SELECT * FROM public.users");
   res.json(query.rowCount);
 })
+
 app.get('/revenu/:mois',verifyToken,async(req,res)=>{
   const {mois}=req.params;
   const query=await p1.query("SELECT SUM(prix) from public.commande where (EXTRACT(YEAR FROM datecommand)=EXTRACT(YEAR FROM now())) and (etat=true) and (EXTRACT(MONTH FROM datecommand)=$1)",[mois]);
@@ -89,14 +95,20 @@ app.get('/revenu/:mois',verifyToken,async(req,res)=>{
 
 
 app.get('/commandnonEffectuer',async(req,res)=>{
-  const query=await p1.query("SELECT u.lname,u.fname,u.adress,u.tel,p.name,u.email,c.qte,to_char(c.datecommand, 'DD/MM/YYYY'),c.verifie,c.etat FROM public.users u join public.commande c on u.iduser=c.iduser join public.products p on c.idproducts=p.idproducts where c.etat=false ORDER BY u.lname");
+  const query=await p1.query("SELECT u.lname||' '||u.fname as fullname,c.idcommande,u.adress,u.tel,p.name,u.email,c.qte,to_char(c.datecommand, 'DD/MM/YYYY'),c.verifie,c.etat FROM public.users u join public.commande c on u.iduser=c.iduser join public.products p on c.idproducts=p.idproducts where c.etat=false ORDER BY c.idcommande");
   res.json(query.rows);
 })
+
+app.get('/commandEffectuer',async(req,res)=>{
+  const query=await p1.query("SELECT u.lname||' '||u.fname as fullname,c.idcommande,u.adress,u.tel,p.name,u.email,c.qte,to_char(c.datecommand, 'DD/MM/YYYY'),c.verifie,c.etat FROM public.users u join public.commande c on u.iduser=c.iduser join public.products p on c.idproducts=p.idproducts where c.etat=true ORDER BY c.idcommande");
+  res.json(query.rows);
+})
+
 
 app.get('/:categorie',async(req,res)=>{
   const {categorie}=req.params;
   const query=await p1.query("SELECT * FROM products WHERE categorie=$1 ORDER BY RANDOM()",[categorie]);
-  res.json(query.rows);
+  res.json(1);
 })
 
 app.get('/seachC/:categorie',async(req,res)=>{
@@ -115,6 +127,34 @@ app.get('/mange/:mangable',async(req,res)=>{
 app.get('/buyProduct/:id',async(req,res)=>{
   const {id}=req.params;
   const query=await p1.query("SELECT * FROM products WHERE idproducts=$1 ORDER BY RANDOM()",[id]);
+  res.json(query.rows);
+})
+
+//verifier la commande dashboard
+
+app.put('/v/:id',async(req,res)=>{
+  const {id}=req.params;
+    const query=await p1.query("UPDATE commande SET verifie=false WHERE idcommande=$1 ",[id]);
+  res.json(query.rows);
+})
+
+app.put('/v1/:id',async(req,res)=>{
+  const {id}=req.params;
+  const query=await p1.query("UPDATE commande SET verifie=true WHERE idcommande=$1 ",[id]);
+  res.json(query.rows);
+})
+
+//effectuer la commande
+
+app.put("/effectue/:id",async(req,res)=>{
+  const {id}=req.params;
+  const query=await p1.query("UPDATE commande set etat=true WHERE idcommande=$1",[id]);
+  res.json(query.rows);
+})
+
+app.put("/effectue1/:id",async(req,res)=>{
+  const {id}=req.params;
+  const query=await p1.query("UPDATE commande set etat=false WHERE idcommande=$1",[id]);
   res.json(query.rows);
 })
 

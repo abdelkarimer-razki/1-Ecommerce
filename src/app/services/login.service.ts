@@ -24,11 +24,16 @@ export class LoginService {
     return localStorage.getItem('K2hM$4PAWCeFV8');
   }
   logout(){
-    localStorage.removeItem('user');
+    localStorage.clear();
+    this.route.navigate(["/connexion"]).then(()=>{
+      window.location.reload();
+    });
+   /* localStorage.removeItem('user');
     localStorage.removeItem('userE');
     localStorage.removeItem('K2hM$4PAWCeFV8');
-    localStorage.removeItem("#bsXpEcIouiz")
-    this.route.navigate(["/connexion"]);
+    localStorage.removeItem("#bsXpEcIouiz")*/
+
+
   }
   isntAdmin(){
     if((localStorage.getItem("#bsXpEcIouiz")=="UF7wcFy9rl&wv$adaLGkkJ@0KX$wWKTt*")&&(this.isToken())){

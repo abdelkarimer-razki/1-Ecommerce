@@ -8,6 +8,9 @@
 .fas{
   font-family: "Font Awesome 5 Free" !important;
 }
+.far{
+  font-family: "Font Awesome 5 Free" !important;
+}
 #topMenu{
   z-index: 2020;
   background-color: white;

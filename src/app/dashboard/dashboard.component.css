@@ -12,10 +12,14 @@
   background-color: white;
 }
 .rightCon{
-  width: 80%;
+  width: 85%;
 
   background-color: #EFF1F5;
   height: 100vh;
+}
+.typesContainaire{
+  width: fit-content;
+  margin: 0 auto;
 }
 .con{
   float: left;

@@ -1,32 +1,73 @@
-<div style="width: 80%;background-color: #EFF1F5;height: 100vh;float: left;">
-  <div class="table">
-    <table>
+<div style="width: 85%;background-color: #EFF1F5;height: 100vh;float: left;" >
+  <div class="choice">
+    <label class="effectuer" (click)="changeEtatN()" [ngClass]="{colorback: !isEffectuer}"><i class="far fa-check-circle"></i> Achat Effectuer</label>
+    <label class="Noneffectuer" (click)="changeEtatP()" [ngClass]="{colorback: isEffectuer}"><i class="far fa-times-circle"></i> Achat Non-Effectuer</label>
+  </div>
+  <div class="table" *ngIf="isEffectuer">
+    <div *ngIf="voidNE" style="text-align:center;font-size: 30px;padding-top: 120px;"><img src="../../assets/smallbee.png" alt=""> Il n'y a pas de Commande Non-effectuer</div>
+    <table *ngIf="!voidNE">
       <tr id="headerTable">
-        <th>Nom</th>
-        <th>Prenom</th>
-        <th>adress</th>
-        <th>Telephone/E-mail</th>
-        <th>Nom de Produit</th>
-        <th>Quantité</th>
-        <th>Date de Commande</th>
-        <th>Verifier la Commande</th>
-        <th>Achat effectuer?</th>
+        <th><i class="fas fa-address-card"></i> Nom</th>
+        <th><i class="fas fa-home"></i> adress</th>
+        <th><i class="fas fa-phone-square-alt"></i> Telephone/E-mail</th>
+        <th><i class="fas fa-store-alt"></i> Produit</th>
+        <th><i class="far fa-calendar-alt"></i> Date de Commande</th>
+        <th>Verifié?</th>
+        <th>Effectué?</th>
         <th></th>
       </tr>
-      <tr class="TableElement" *ngFor='let item of table'>
-        <td>{{item.lname}}</td>
-        <td>{{item.fname}}</td>
+      <tr class="TableElement" *ngFor="let item of table;index as i">
+        <td>{{item.fullname}}</td>
         <td>{{item.adress}}</td>
-        <td><label id="phone">{{item.tel}}</label>
+        <td><label id="phone">{{item.tel}}</label><br>
           {{item.email}}
         </td>
-        <td>{{item.name}}</td>
-        <td>{{item.qte}}</td>
+        <td>{{item.name}} ({{item.qte}})</td>
         <td>{{item.to_char}}</td>
-        <td>{{item.verifie}}</td>
-        <td><label class="etat">{{item.etat}}</label></td>
-        <td><i class="fas fa-ellipsis-v"></i></td>
+        <td><label class="true" *ngIf="item.verifie">Verifié</label><label class="false" *ngIf="!item.verifie">En attent</label></td>
+        <td><label class="true" *ngIf="item.etat">Effecuter</label><label class="false" *ngIf="!item.etat">En attent</label></td>
+        <td><i (click)="showmor(i);disable(i)" class="fas fa-ellipsis-v"></i></td><br>
+        <div [id]="i" style="display: none;" class="more">
+          <ul>
+            <li><i class="far fa-edit"></i> Modifier</li>
+            <li (click)="verifie(item.idcommande,item,item.verifie);showComNo()"><i class="far fa-play-circle"></i>  <label for="" *ngIf="!item.verifie">  Verifié</label>  <label for="" *ngIf="item.verifie">  Falsifier</label></li>
+            <li (click)="effectue(item.idcommande,item,item.etat);showComNo()"><i class="far fa-stop-circle"></i> Effectué</li>
+          </ul>
+      </div>
       </tr>
     </table>
-  </div>
+</div>
+<div class="table" *ngIf="!isEffectuer">
+  <div *ngIf="voidE" style="text-align:center;font-size: 30px;padding-top: 120px;"><img src="../../assets/smallbee.png" alt=""> Il n'y a pas de Commande effectuer</div>
+  <table *ngIf="!voidE">
+    <tr id="headerTable">
+      <th><i class="fas fa-address-card"></i> Nom</th>
+      <th><i class="fas fa-home"></i> adress</th>
+      <th><i class="fas fa-phone-square-alt"></i> Telephone/E-mail</th>
+      <th><i class="fas fa-store-alt"></i> Produit</th>
+      <th><i class="far fa-calendar-alt"></i> Date de Commande</th>
+      <th>Verifié?</th>
+      <th>Effectué?</th>
+      <th></th>
+    </tr>
+    <tr class="TableElement" *ngFor="let item of table2;index as i">
+      <td>{{item.fullname}}</td>
+      <td>{{item.adress}}</td>
+      <td><label id="phone">{{item.tel}}</label>
+        {{item.email}}
+      </td>
+      <td>{{item.name}} ({{item.qte}})</td>
+      <td>{{item.to_char}}</td>
+      <td><label class="true" *ngIf="item.verifie">Verifié</label><label class="false" *ngIf="!item.verifie">En attent</label></td>
+      <td><label class="true" *ngIf="item.etat">Effecuter</label><label class="false" *ngIf="!item.etat">En attent</label></td>
+      <td><i (click)="showmor(i);disable(i)" class="fas fa-ellipsis-v"></i></td><br>
+      <div [id]="i" style="display: none;" class="more">
+        <ul>
+          <li><i class="far fa-edit"></i> Modifier</li>
+          <li (click)="verifie(item.idcommande,item,item.verifie);showComNo()"><i class="far fa-play-circle"></i>  <label for="" *ngIf="!item.verifie">  Verifié</label>  <label for="" *ngIf="item.verifie">  Falsifier</label></li>
+          <li (click)="effectue(item.idcommande,item,item.etat);showComNo()"><i class="far fa-stop-circle"></i> Abandonner</li>
+        </ul>
+    </div>
+    </tr>
+  </table>
 </div>

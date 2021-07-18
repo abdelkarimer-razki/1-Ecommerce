@@ -1,28 +1,50 @@
 
 .leftCon{
-  width: 20%;
+  width: 15%;
   height: 100vh;
   position: sticky;
   top: 0;
   float: left;
   background-color: white;
 }
+
+.clicked{
+  cursor: pointer;
+  background-color: #EFF1F5;
+  border-top-left-radius: 20pt;
+  border-bottom-left-radius: 20pt;
+}
+
 .listRoute{
   list-style: none;
-  margin-top: 8pt;
   padding-left: 0px !important;
 }
 .listRoute>li{
   font-size: 20px;
   padding: 15pt;
   padding-left: 15pt;
-  transition: 0.5s;
+  transition: 0.7s;
 }
 .listRoute>li:hover{
-  padding: 15pt;
-  background-color:#ffd1d1;
   cursor: pointer;
+  padding: 15pt;
+  background-color: #EFF1F5;
+  border-top-left-radius: 20pt;
+  border-bottom-left-radius: 20pt;
 }
 .listRoute>li>a{
   font-family:"open sans",Arial,sans-serif;
+  color: #8c8c8c;
+}
+.element{
+  transition: 0.5s;
+}
+.element:hover{
+  text-decoration: none;
+}
+.listRoute>li:hover .element{
+  color: black;
+}
+.color{
+  color: black !important;
 }

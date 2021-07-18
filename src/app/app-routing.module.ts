@@ -14,6 +14,7 @@ import { AdminComponent } from './admin/admin.component';
 import { Command } from 'protractor';
 import { CommandsComponent } from './commands/commands.component';
 import { UsersComponent } from './users/users.component';
+import { ProductsComponent } from './products/products.component';
 
 const routes: Routes = [
   {path:'shopping',component:ShoppingComponent,},
@@ -26,7 +27,8 @@ const routes: Routes = [
   children:[
     {path:"dashboard",component:DashboardComponent,canActivate:[AuthGuard]},
     {path:"commands",component:CommandsComponent,canActivate:[AuthGuard]},
-    {path:"users",component:UsersComponent,canActivate:[AuthGuard]}
+    {path:"users",component:UsersComponent,canActivate:[AuthGuard]},
+    {path:"products",component:ProductsComponent,canActivate:[AuthGuard]}
   ]},
   {path:"**",component:PagenotfoundComponent}
 ];
