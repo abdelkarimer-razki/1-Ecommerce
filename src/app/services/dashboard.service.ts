@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {commands} from '../backend/commands'
 import {HttpClient} from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { users } from '../backend/users';
 
 
 @Injectable({
@@ -42,5 +43,26 @@ export class DashboardService {
   }
   deeffectueCommande(id:Number,commande:commands):Observable<commands>{
     return this.http.put<commands>(this.url1+"effectue1/"+id,commande);
+  }
+  commandEffectueSearch(date:Date)
+  {
+    return this.http.get(this.url1+'commandEffectuer/'+date);
+  }
+
+  productCombobox()
+  {
+    return this.http.get(this.url1);
+  }
+
+//modfier commande
+
+  changeAdressUser(id:Number,adress:string)
+  {
+    return this.http.get(this.url1+"userM/"+id+"&"+adress);
+  }
+
+  changeQteProduit(idcommande:Number,idProduit:Number,qte:Number)
+  {
+    return this.http.get(this.url1+"commandeChange/"+qte+"&"+idcommande+"&"+idProduit);
   }
 }

@@ -25,6 +25,56 @@ td,th{
   cursor: pointer;
   color: #FD4D4D;
 }
+#d
+{
+  width: 100px;
+  height: 50px;
+  background-color: black;
+}
+#search{
+  width: fit-content;
+  margin: 0 auto;
+  background-color: #f7f7f7;
+  padding: 15pt;
+  box-shadow: 20px 20px 20px -20px rgba(0, 0, 0, 0.2);
+  border-bottom-left-radius: 8pt;
+  border-bottom-right-radius: 8pt;
+}
+#search>button
+{
+  color: white!important;
+  width:120px;
+  height: 40px;
+  border-radius: 8pt;
+  border: none !important;
+  margin-left: 10pt;
+  background-color: #FD4D4D;
+}
+#search>input
+{
+  height: 40px;
+  border:1px solid tomato !important;
+  border-top-right-radius: 8pt;
+  padding-left: 4pt;
+  border-bottom-right-radius: 8pt;
+}
+.calender
+{
+  font-size: 24px;
+  height: 40px;
+  width: 40px;
+  color: white;
+  background-color: #FD4D4D;
+  /*margin-right:8pt;*/
+  text-align: center;
+  padding-top: 4pt;
+  border-top-left-radius:8pt;
+  border-bottom-left-radius:8pt;
+}
+#search>input:active
+{
+  border:1px solid tomato !important;
+}
 .effectuer{
   height: 50px;
   border-top-left-radius: 8pt;
@@ -75,6 +125,33 @@ table,td,tr,th{
   padding: 15pt;
   overflow: scroll;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.edits
+{
+  border-top:none;
+  border-bottom:none;
+}
+.editers
+{
+  outline: none;
+  border:1px solid #dbdbdb;
+  border-radius:8pt;
+  height:34px;
+  margin-top:9px;
+  text-align:center
+}
+.optionP
+{
+  background-color:white;
+  border-radius:8pt;
+  height:34px;
+  border:1px solid #dbdbdb;
+  text-align:center;
+}
+.editers:focus
+{
+  border: 1px solid #FD4D4D;
+  box-shadow: 0 0 10px #FD4D4D;
 }
 .etat{
   text-align: center;

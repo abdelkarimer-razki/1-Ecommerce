@@ -13,8 +13,4 @@ export class HomepageService {
   getCountM(categorie:string):Observable<products[]>{
     return this.http.get<products[]>(this.url+categorie);
   }
-  getCountO(categorie:string):Observable<products[]>{
-    return this.http.get<products[]>(this.url1+categorie);
-  }
-
 }

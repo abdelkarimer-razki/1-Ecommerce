@@ -3,8 +3,9 @@
     <label class="effectuer" (click)="changeEtatN()" [ngClass]="{colorback: !isEffectuer}"><i class="far fa-check-circle"></i> Achat Effectuer</label>
     <label class="Noneffectuer" (click)="changeEtatP()" [ngClass]="{colorback: isEffectuer}"><i class="far fa-times-circle"></i> Achat Non-Effectuer</label>
   </div>
+  <div *ngIf="!isEffectuer" id="search"><i class="far fa-calendar-alt calender" ></i> <input type="date" [(ngModel)]="date" name="" id=""><button (click)="search(date)" ><i class="fas fa-search"></i> Chercher</button></div>
   <div class="table" *ngIf="isEffectuer">
-    <div *ngIf="voidNE" style="text-align:center;font-size: 30px;padding-top: 120px;"><img src="../../assets/smallbee.png" alt=""> Il n'y a pas de Commande Non-effectuer</div>
+    <div *ngIf="voidNE" style="text-align:center;font-size: 30px;padding-top: 120px;"><img src="../../assets/smallbee.png" alt=""> Tous les commandes sont effectue</div>
     <table *ngIf="!voidNE">
       <tr id="headerTable">
         <th><i class="fas fa-address-card"></i> Nom</th>
@@ -18,20 +19,24 @@
       </tr>
       <tr class="TableElement" *ngFor="let item of table;index as i">
         <td>{{item.fullname}}</td>
-        <td>{{item.adress}}</td>
-        <td><label id="phone">{{item.tel}}</label><br>
+        <td style="display:block" class = "edits" [id]="i + 'c'">{{item.adress}}</td>
+        <td style="display:none" [id]="i + 'b'" class = "edits"><input type="text" class="editers"  name="" id="" value={{item.adress}} [(ngModel)]="item.adress"></td>
+        <td><label id="phone">{{item.tel}}</label>
           {{item.email}}
         </td>
-        <td>{{item.name}} ({{item.qte}})</td>
+        <td style="display:block" [id]="i + 'd'" class = "edits">{{item.name}} ({{item.qte}})</td>
+        <td style="display:none" class = "edits" [id]="i + 'a'"><select  class="optionP" [(ngModel)]="item.idproducts"><option *ngFor="let item of combobox" value={{item.idproducts}}>{{item.name}}</option></select> <input type="text" class="editers" style="width:45px;" [(ngModel)]="item.qte" value={{item.qte}}></td>
         <td>{{item.to_char}}</td>
         <td><label class="true" *ngIf="item.verifie">Verifié</label><label class="false" *ngIf="!item.verifie">En attent</label></td>
         <td><label class="true" *ngIf="item.etat">Effecuter</label><label class="false" *ngIf="!item.etat">En attent</label></td>
         <td><i (click)="showmor(i);disable(i)" class="fas fa-ellipsis-v"></i></td><br>
         <div [id]="i" style="display: none;" class="more">
           <ul>
-            <li><i class="far fa-edit"></i> Modifier</li>
-            <li (click)="verifie(item.idcommande,item,item.verifie);showComNo()"><i class="far fa-play-circle"></i>  <label for="" *ngIf="!item.verifie">  Verifié</label>  <label for="" *ngIf="item.verifie">  Falsifier</label></li>
-            <li (click)="effectue(item.idcommande,item,item.etat);showComNo()"><i class="far fa-stop-circle"></i> Effectué</li>
+            <li [id]="i + '1'" style="display: none;" (click)="validChange(item.adress,item.iduser,item.qte,item.idcommande,item.idproducts);showmor(i);showmor(i+'a');showmor(i+'b');showmor(i+'c');showmor(i+'d')"><i class="fas fa-check"></i> Valider</li>
+            <li [id]="i + '2'" style="display: none;" (click)="showmor(i + '1');showmor(i + '2');showmor(i + '3');showmor(i + '4');showmor(i + '5');showmor(i+'a');showmor(i+'b');showmor(i+'c');showmor(i);showmor(i+'d')"><i class="fas fa-times"></i> Annuler</li>
+            <li [id]="i + '3'" style="display: block;" (click)="Edit();showmor(i + '1');showmor(i + '2');showmor(i + '3');showmor(i + '4');showmor(i + '5');showmor(i+'a');showmor(i+'b');showmor(i+'c');showmor(i);showmor(i+'d')"><i class="far fa-edit"></i> Modifier</li>
+            <li [id]="i + '4'" style="display: block;" (click)="verifie(item.idcommande,item,item.verifie);showmor(i);showComNo()"><i class="far fa-play-circle"></i>  <span for="" *ngIf="!item.verifie">  Verifié</span>  <span for="" *ngIf="item.verifie">  Falsifier</span></li>
+            <li [id]="i + '5'" style="display: block;" (click)="effectue(item.idcommande,item,item.etat);showmor(i);showComNo()"><i class="far fa-stop-circle"></i> Effectué</li>
           </ul>
       </div>
       </tr>
@@ -52,20 +57,24 @@
     </tr>
     <tr class="TableElement" *ngFor="let item of table2;index as i">
       <td>{{item.fullname}}</td>
-      <td>{{item.adress}}</td>
+      <td style="display:block" class ="edits" [id]="i + 'c'">{{item.adress}}</td>
+      <td style="display:none" [id]="i + 'b'" class = "edits"><input class="editers" type="text" name="" id="" value={{item.adress}} [(ngModel)]="item.adress"></td>
       <td><label id="phone">{{item.tel}}</label>
         {{item.email}}
       </td>
-      <td>{{item.name}} ({{item.qte}})</td>
+      <td style="display:block" [id]="i + 'd'" class = "edits">{{item.name}} ({{item.qte}})</td>
+      <td style="display:none" class = "edits" [id]="i + 'a'"><select class="optionP" [(ngModel)]="item.idproducts"><option select *ngFor="let item of combobox" value={{item.idproducts}}>{{item.name}}</option></select> <input type="text" class="editers" style="width:45px;" [(ngModel)]="item.qte" value={{item.qte}}></td>
       <td>{{item.to_char}}</td>
       <td><label class="true" *ngIf="item.verifie">Verifié</label><label class="false" *ngIf="!item.verifie">En attent</label></td>
       <td><label class="true" *ngIf="item.etat">Effecuter</label><label class="false" *ngIf="!item.etat">En attent</label></td>
       <td><i (click)="showmor(i);disable(i)" class="fas fa-ellipsis-v"></i></td><br>
       <div [id]="i" style="display: none;" class="more">
         <ul>
-          <li><i class="far fa-edit"></i> Modifier</li>
-          <li (click)="verifie(item.idcommande,item,item.verifie);showComNo()"><i class="far fa-play-circle"></i>  <label for="" *ngIf="!item.verifie">  Verifié</label>  <label for="" *ngIf="item.verifie">  Falsifier</label></li>
-          <li (click)="effectue(item.idcommande,item,item.etat);showComNo()"><i class="far fa-stop-circle"></i> Abandonner</li>
+          <li [id]="i + '1'" style="display: none;" (click)="validChange(item.adress,item.iduser,item.qte,item.idcommande,item.idproducts);showmor(i);showmor(i+'a');showmor(i+'b');showmor(i+'c');showmor(i+'d')"><i class="fas fa-check"></i> Valider</li>
+          <li [id]="i + '2'" style="display: none;" (click)="showmor(i + '1');showmor(i + '2');showmor(i + '3');showmor(i + '4');showmor(i + '5');showmor(i+'a');showmor(i+'b');showmor(i+'c');showmor(i);showmor(i+'d')"><i class="fas fa-times"></i> Annuler</li>
+          <li [id]="i + '3'" style="display: block;" (click)="Edit();showmor(i + '1');showmor(i + '2');showmor(i + '3');showmor(i + '4');showmor(i + '5');showmor(i+'a');showmor(i+'b');showmor(i+'c');showmor(i);showmor(i+'d')"><i class="far fa-edit"></i> Modifier</li>
+          <li [id]="i + '4'" style="display: block;" (click)="verifie(item.idcommande,item,item.verifie);showmor(i);showComNo()"><i class="far fa-play-circle"></i>  <span for="" *ngIf="!item.verifie">  Verifié</span>  <span for="" *ngIf="item.verifie">  Falsifier</span></li>
+          <li [id]="i + '5'" style="display: block;" (click)="effectue(item.idcommande,item,item.etat);showmor(i);showComNo()"><i class="far fa-stop-circle"></i> Abandonner</li>
         </ul>
     </div>
     </tr>

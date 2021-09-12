@@ -20,8 +20,8 @@ export class AcceuilContComponent implements OnInit {
     this.titleService.setTitle("COOP BABMANSOUR");
     this.getCountHoney();
   }
-    getCountOil(){
-    this.HomepageService.getCountO("HUILE").subscribe(data=>{
+   getCountOil(){
+    this.HomepageService.getCountM("HUILE").subscribe(data=>{
       this.countO=data.length;
       this.loading=false;
     })
