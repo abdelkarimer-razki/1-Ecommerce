@@ -1,0 +1,272 @@
+.table{
+  padding: 0pt;
+  margin: 0 auto;
+  height: 483px;
+  margin-top: 15pt;
+  background-color: white;
+  border-radius: 8pt;
+  width: 97%;
+  padding: 15pt;
+  overflow: scroll;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+table{
+  word-wrap: break-word;
+  width: 100%;
+  border-radius: 8pt;
+  margin: 0 auto;
+}
+td,th{
+  text-align: center;
+  font-size: 15px;
+}
+#headerTable{
+  box-shadow: 0px 20px 10px -20px rgba(0, 0, 0, 0.2);
+}
+td{
+  color: #3f3f3f
+}
+th{
+  color: #707070;
+
+}
+.TableElement{
+  transition: 0.3s;
+  position: relative;
+}
+.TableElement:hover{
+  background-color: #f7f7f7;
+  cursor: pointer;
+}
+table,td,tr,th{
+  border-top: 1px solid #bcbcbc;
+  border-bottom: 1px solid #bcbcbc;
+  border-collapse: collapse;
+}
+.tickets
+{
+  display: block;
+  border-radius: 15pt;
+  margin: 0 auto;
+  height: 27px;
+}
+.nmangable
+{
+  background-color: #FFD8D8;
+  color: #FD4D4D;
+  width: 120px;
+}
+.mangable
+{
+  background-color: #C5FFBC;
+  color: #00C454;
+  width: 120px;
+}
+.huile
+{
+  background-color: #f4ffad;
+  color: #9cb500;
+}
+.miel
+{
+  background-color: #ffdba3;
+  color: orange;
+}
+.rien
+{
+  background-color: #dddddd;
+  color: gray;
+}
+.price
+{
+  color:#FD4D4D;
+}
+.fa-ellipsis-v:hover{
+  border-radius: 50%;
+  background-color: #d1d1d1;
+  text-align: center;
+  transition: 0.3s;
+}
+
+.fa-ellipsis-v{
+  width: 30px;
+  margin-top:10px;
+  padding-top: 7px;
+  height: 30px;
+  text-align: center;
+}
+.more
+{
+  position: absolute;
+  z-index: 2022;
+  padding: 3pt 0pt 3pt 0pt;
+  border-radius: 8pt;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  background-color: white;
+  right: 5px;
+  margin-top: 30px;
+}
+
+.more>ul
+{
+  margin-bottom: 0px;
+  padding-left: 0px;
+  list-style: none;
+}
+
+.more>ul>li
+{
+  transition: 0.3s;
+  padding: 5pt;
+}
+
+
+.more>ul>li:hover
+{
+  padding: 8pt;
+  background-color: #FFD1D1;
+}
+
+.more>ul>li>label:hover{
+  cursor: pointer;
+}
+.text
+{
+  outline: none;
+  border:1px solid #dbdbdb;
+  border-radius:8pt;
+  height:34px;
+  margin-top:9px;
+  text-align:center
+}
+.text:focus
+{
+  border: 1px solid #3f9cb8;
+  box-shadow: 0 0 10px #3f9cb8;
+}
+.text:invalid
+{
+  border: 1px solid #FD6868;
+  box-shadow: 0 0 10px #FD6868;
+}
+.prices
+{
+  width: 70px;
+}
+.optionP
+{
+  background-color:white;
+  border-radius:8pt;
+  height:34px;
+  border:1px solid #dbdbdb;
+  text-align:center;
+  margin-top: 9px;
+}
+.details
+{
+  position: absolute;
+  z-index: 2021;
+  padding: 3pt 0pt 3pt 0pt;
+  border-radius: 8pt;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  background-color: white;
+  right: 70px;
+  margin-top: 30px;
+  width: 260px;
+  padding-left: 0px !important;
+}
+#imageb
+{
+  outline: none;
+  color: white;
+  display: none;
+  width: 200px;
+  border-radius: 5pt;
+  background-color:#FD4D4D;
+}
+#imageb::-webkit-file-upload-button
+{
+  background-color: hsl(0, 98%, 65%) ;
+  color: white !important;
+  display: none;
+  visibility: hidden;
+}
+.imageb1
+{
+  color: white;
+  background-color:#FD4D4D;
+  cursor: pointer;
+  height: 30px;
+  width: 200px;
+  border-radius: 5pt;
+  margin-top:10px;
+}
+.textarea
+{
+  resize: none;
+  height: 400px;
+  font-size: 12px;
+  text-align: left;
+  width: 260px;
+}
+.search
+{
+  width: 97%;
+  background-color: #FFFFFF;
+  margin: 0 auto;
+  height: 40px;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2), 0 1px 10px 0 rgba(0, 0, 0, 0.19);
+  border-radius: 8pt;
+  margin-top: 15pt;
+}
+#categorie
+{
+  width:12%;
+  height: 30px;
+  background-color: white;
+  border: none;
+  border-right: 1px solid #DDDDDD;
+}
+.fa-search
+{
+  height: 40px;
+  width: 4%;
+  font-size: 16px;
+  text-align: center;
+}
+#textsearch
+{
+  width: 71%;
+  height: 40px;
+  border: none;
+  font-family: "Trebuchet MS";
+  font-size: 18px;
+  border-bottom-right-radius: 8pt;
+  border-top-right-radius: 8pt;
+  outline: none;
+}
+.title
+{
+  margin-left: 18px;
+  width: 201px;
+  font-family: "open sans",Arial,sans-serif;
+  display: inline-block;
+}
+.fa-cash-register
+{
+  font-size: 33px;
+}
+#buttonid
+{
+  width: 220px;
+  font-size: 20px;
+  text-align: center;
+  color: white;
+  display: inline-block;
+  margin-left: 691px;
+  background-color: #FD6868;
+  height: 48px;
+  padding-top: 6px;
+  cursor: pointer;
+  border-radius: 8pt;
+}

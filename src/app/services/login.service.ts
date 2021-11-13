@@ -14,8 +14,8 @@ export class LoginService {
   url="http://localhost:500/login/"
   constructor(private http:HttpClient,private route:Router) {
   }
-  connect(email:string,password:string){
-    return this.http.get<any>(this.url+email+"&"+password);
+  connect(user:users){
+    return this.http.post<users>(this.url,user);
   }
   isToken(){
     return !!localStorage.getItem('K2hM$4PAWCeFV8');

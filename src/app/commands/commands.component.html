@@ -13,6 +13,7 @@
         <th><i class="fas fa-phone-square-alt"></i> Telephone/E-mail</th>
         <th><i class="fas fa-store-alt"></i> Produit</th>
         <th><i class="far fa-calendar-alt"></i> Date de Commande</th>
+        <th><i class="fas fa-shopping-bag"></i> Taille/Prix</th>
         <th>Verifié?</th>
         <th>Effectué?</th>
         <th></th>
@@ -27,6 +28,9 @@
         <td style="display:block" [id]="i + 'd'" class = "edits">{{item.name}} ({{item.qte}})</td>
         <td style="display:none" class = "edits" [id]="i + 'a'"><select  class="optionP" [(ngModel)]="item.idproducts"><option *ngFor="let item of combobox" value={{item.idproducts}}>{{item.name}}</option></select> <input type="text" class="editers" style="width:45px;" [(ngModel)]="item.qte" value={{item.qte}}></td>
         <td>{{item.to_char}}</td>
+        <td>{{item.prix}} DH/
+          {{item.taille}}
+        </td>
         <td><label class="true" *ngIf="item.verifie">Verifié</label><label class="false" *ngIf="!item.verifie">En attent</label></td>
         <td><label class="true" *ngIf="item.etat">Effecuter</label><label class="false" *ngIf="!item.etat">En attent</label></td>
         <td><i (click)="showmor(i);disable(i)" class="fas fa-ellipsis-v"></i></td><br>
@@ -51,6 +55,7 @@
       <th><i class="fas fa-phone-square-alt"></i> Telephone/E-mail</th>
       <th><i class="fas fa-store-alt"></i> Produit</th>
       <th><i class="far fa-calendar-alt"></i> Date de Commande</th>
+      <th><i class="fas fa-shopping-bag"></i> Taille/Prix</th>
       <th>Verifié?</th>
       <th>Effectué?</th>
       <th></th>
@@ -65,6 +70,9 @@
       <td style="display:block" [id]="i + 'd'" class = "edits">{{item.name}} ({{item.qte}})</td>
       <td style="display:none" class = "edits" [id]="i + 'a'"><select class="optionP" [(ngModel)]="item.idproducts"><option select *ngFor="let item of combobox" value={{item.idproducts}}>{{item.name}}</option></select> <input type="text" class="editers" style="width:45px;" [(ngModel)]="item.qte" value={{item.qte}}></td>
       <td>{{item.to_char}}</td>
+      <td>{{item.prix}} DH/
+        {{item.taille}}
+      </td>
       <td><label class="true" *ngIf="item.verifie">Verifié</label><label class="false" *ngIf="!item.verifie">En attent</label></td>
       <td><label class="true" *ngIf="item.etat">Effecuter</label><label class="false" *ngIf="!item.etat">En attent</label></td>
       <td><i (click)="showmor(i);disable(i)" class="fas fa-ellipsis-v"></i></td><br>

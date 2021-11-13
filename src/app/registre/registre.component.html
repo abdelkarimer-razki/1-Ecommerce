@@ -1,14 +1,14 @@
 <div class="pageContanaire">
   <img src="../../assets/backLogReg.webp" alt="">
-  <form class="connexionDetails">
+  <form class="connexionDetails"  #userForm="ngForm" novalidate (ngSubmit)="registre()">
     <h3 class="title">S'inscrire</h3><br>
-    <input type="text" name="" id="email" required placeholder="Nom">
-    <input type="text" id="password" required placeholder="Prenom"><br>
-    <input type="tel" id="password" required placeholder="Telephone">
-    <input type="text" name="" id="email" required placeholder="Adress">
-    <input type="email" name="" id="email" required placeholder="E-mail">
-    <input type="password" id="password" required placeholder="Mot de pass"><br>
-    <input type="password" id="password" required placeholder="Confirmer le mot de pass"><br>
-    <button id="connecter">S'inscrire <i class="fas fa-user-plus"></i></button>
+    <input type="text" [(ngModel)]="user.fname" name="fname" id="email"  placeholder="Nom">
+    <input type="text"  [(ngModel)]="user.lname" name="lname" id="password"  placeholder="Prénom"><br>
+    <div class="input"><input type="tel" (keyup)="testtel()"  [(ngModel)]="user.tel" name="tel" id="password"  placeholder="Telephone"><br><small *ngIf="testtel1">Ce numéro de téléphone existe déjà.</small></div>
+    <input type="text" [(ngModel)]="user.adress" name="adress" id="email" placeholder="Adress">
+    <div class="input" style="text-align: left;"><input  type="email" (keyup)="testtel()" [(ngModel)]="user.email" name="email" id="email"  placeholder="E-mail"><br><small *ngIf="testemail">Cet email existe déjà.</small></div>
+    <input type="password"  [(ngModel)]="password" name="password" id="password"  placeholder="Mot de pass"><br>
+    <button type="submit" class="connecter" [ngClass]="{buttoninv: (testemail||testtel1||vein)}">S'inscrire <i class="fas fa-user-plus"></i></button><br>
+    <small style="color: green;margin-top: 15pt;font-size: 27px;" *ngIf="unmatch">Vous êtes inscrit avec succès</small>
   </form>
 </div>

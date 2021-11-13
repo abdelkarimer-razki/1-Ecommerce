@@ -12,7 +12,7 @@
   margin: 0 auto;
   line-height: 0;
   position: relative;
-  text-align: center;
+  text-align: left;
   float: left;
   padding: 15pt;
   /*top: 15pt;*/
@@ -33,6 +33,37 @@
   background-color: #EFF1F5;
   font-weight: bold;
 }
+.input>input
+{
+  width: 250px;
+  height: 40px;
+  border-radius: 8pt;
+  margin: 7pt;
+  padding: 8pt;
+  border: 1px solid #c1c1c1;
+  background-color: #EFF1F5;
+  font-weight: bold;
+}
+.input>small
+{
+  margin-left: 15px;
+  color: red;
+  margin-top: 15pt;
+  font-size: 15px;
+}
+.input>input::placeholder{
+  font-weight: bold;
+}
+.input>input:invalid{
+  border: 1px solid red;
+  box-shadow: 0 0 10px red;
+}
+.input>input:focus{
+  outline: none;
+  border: 1px solid skyblue;
+  box-shadow: 0 0 10px skyblue;
+  background-color: white;
+}
 .connexionDetails>input::placeholder{
   font-weight: bold;
 }
@@ -49,7 +80,7 @@
 label{
   font-weight: bold;
 }
-#connecter{
+.connecter{
   width: 200px;
   box-shadow: 20px 20px 20px -20px rgba(0, 0, 0, 0.2);
   border-radius: 8pt;
@@ -74,12 +105,17 @@ label{
   width:fit-content;
   transition: 0.5s;
 }*/
-#connecter:hover{
+.connecter:hover{
   box-shadow: 20px 20px 20px -20px #FD4D4D;
-  color: white;
 }
-#connecter{
+.connecter{
   margin-top: 8pt;
+}
+.buttoninv
+{
+  background-color: #EFF1F5;
+  color: #FD4D4D;
+  cursor: auto;
 }
 img{
   width: 50%;

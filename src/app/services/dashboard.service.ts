@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import {commands} from '../backend/commands'
 import {HttpClient} from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { users } from '../backend/users';
-
+import { products } from '../backend/products';
+import { importType } from '@angular/compiler/src/output/output_ast';
 
 @Injectable({
   providedIn: 'root'
@@ -64,5 +64,45 @@ export class DashboardService {
   changeQteProduit(idcommande:Number,idProduit:Number,qte:Number)
   {
     return this.http.get(this.url1+"commandeChange/"+qte+"&"+idcommande+"&"+idProduit);
+  }
+
+//modifier produit
+  updateProduct(product:products)
+  {
+    return this.http.post<products>(this.url1+"p12/",product);
+  }
+//ajouter produit
+  addproduct(product:products)
+  {
+    return this.http.post<products>(this.url1+"addpro/",product);
+  }
+  showproducts()
+  {
+    return this.http.get(this.url1+"productshow");
+  }
+//show all products in cart
+  allcart(id:any,cart:any)
+  {
+    return this.http.get(this.url1+"allcart/"+id+"&"+cart);
+  }
+//delete commande
+  deletecommande(id:any)
+  {
+    return this.http.get(this.url1+"deletecommande/"+id);
+  }
+//delete products
+  deleteproduct(id:any)
+  {
+    return this.http.get(this.url1+"deletepro/"+id);
+  }
+//updatecommande user
+  updatecommande(taille:any,qte:any,cart:any,id:any,prix:any)
+  {
+    return this.http.get(this.url1+"updatecommande/"+id+"&"+taille+"&"+qte+"&"+cart+"&"+prix);
+  }
+//transfer a cart to achat
+  cartotachat(id:any)
+  {
+    return this.http.get(this.url1+"cartotachat/"+id);
   }
 }

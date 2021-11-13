@@ -43,7 +43,7 @@
 label{
   font-weight: bold;
 }
-#connecter{
+.connecter{
   width: 200px;
   box-shadow: 20px 20px 20px -20px rgba(0, 0, 0, 0.2);
   border-radius: 8pt;
@@ -56,6 +56,12 @@ label{
   font-size: 20px;
   background-color: #FD4D4D;
   color: white;
+}
+.buttoninv
+{
+  background-color: #EFF1F5;
+  color: #FD4D4D;
+  cursor: auto;
 }
 .title{
   margin-top: 15pt;
@@ -72,4 +78,13 @@ label{
 #connecter:hover{
   box-shadow: 20px 20px 20px -20px #FD4D4D;
   color: white;
+}
+.connexionDetails>input{
+  height: 40px;
+  border-radius: 8pt;
+  margin: 7pt;
+  padding: 8pt;
+  border: 1px solid #c1c1c1;
+  background-color: #EFF1F5;
+  font-weight: bold;
 }

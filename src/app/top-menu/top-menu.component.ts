@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { LoginService } from '../services/login.service';
+import { HomepageService } from '../services/homepage.service';
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-top-menu',
@@ -11,7 +13,8 @@ export class TopMenuComponent implements OnInit {
   menuMore:boolean=false;
   name:any;
   email:any;
-  constructor(public log:LoginService,private route:Router) {
+  cart:Number=0;
+  constructor(public log:LoginService,private route:Router,private homepage:HomepageService) {
     route.events.subscribe((val)=>{
       this.disableMenu();
       this.name=localStorage.getItem("user");
@@ -20,6 +23,12 @@ export class TopMenuComponent implements OnInit {
    }
 
   ngOnInit(): void {
+    if(!!localStorage.getItem("userId")==true)
+    {
+      this.homepage.cartcount(localStorage.getItem("userId")).subscribe((data:any)=>{this.cart=data[0].count;
+      localStorage.setItem('count',data[0].count)})
+      setInterval(()=>{this.homepage.cartcount(localStorage.getItem("userId")).subscribe((data:any)=>{this.cart=data[0].count;localStorage.setItem('count',data[0].count)})},1000);
+    }
   }
   showMenu(){
     /*if(this.menuMore==true)

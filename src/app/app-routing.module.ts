@@ -15,11 +15,12 @@ import { Command } from 'protractor';
 import { CommandsComponent } from './commands/commands.component';
 import { UsersComponent } from './users/users.component';
 import { ProductsComponent } from './products/products.component';
+import { ConnectedGuard } from './connected.guard';
 
 const routes: Routes = [
   {path:'shopping',component:ShoppingComponent,},
   {path:'',component:AcceuilContComponent},
-  {path:"Apropos",component:AproposComponent},
+  {path:"cart",component:AproposComponent,canActivate:[ConnectedGuard]},
   {path:"produit/:idproducts",component:BuyproductComponent},
   {path:"connexion",component:LoginComponent,canActivate:[CsGuard]},
   {path:"inscrire",component:RegistreComponent,canActivate:[CsGuard]},

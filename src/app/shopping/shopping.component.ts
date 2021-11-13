@@ -41,10 +41,12 @@ export class ShoppingComponent implements OnInit {
     })
   }*/
   transform(pic:string){
-    if(pic==null){
+    var re = /kigmfhhh/gi;
+    var pic1=pic.replace(re,"/");
+    if(pic1==null){
       return null;
     }else{
-      return this.sanitizer.bypassSecurityTrustUrl(pic);
+      return this.sanitizer.bypassSecurityTrustUrl(pic1);
     }
   }
 

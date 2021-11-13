@@ -1,14 +1,14 @@
 <div id="topMenu">
     <ul id="logo" style="list-style: none;display: inline-block;">
-        <a routerLink="/"><img src="../../assets/logo31.png" width="50px" alt=""> COOPERATIVE BABMANSOUR</a>
+        <li routerLink="/"><img src="../../assets/logo31.png" width="50px" alt=""><a > COOPERATIVE BABMANSOUR</a></li>
     </ul>
     <div id="sTopMenu">
         <ul>
-            <li class="menuElements" id="Home" (click)="disableMenu()"><a routerLink="/"><i class="fas fa-home"></i> Accueil</a></li>
-            <li class="menuElements" id="Home" (click)="disableMenu()" *ngIf="log.isntAdmin()"><a routerLink="/admin/dashboard"><i class="fas fa-chart-line"></i> Dashboard</a></li>
-            <li class="menuElements" id="Shopping" (click)="disableMenu()"><a routerLink="/shopping"><i class="fas fa-shopping-cart"></i> Shopping</a></li>
-            <li class="menuElements" id="Apropos" (click)="disableMenu()"><a routerLink="/Apropos"><i class="fas fa-info-circle"></i> à propos</a></li>
-            <li class="menuElements"  id="settings" (click)="showMenu()"><a><i class="fas fa-cog"></i></a></li>
+            <li class="menuElements" routerLink="/" id="Home" (click)="disableMenu()"><i class="fas fa-home"></i><a> Accueil</a></li>
+            <li class="menuElements" routerLink="/shopping" id="Shopping" (click)="disableMenu()"><i class="fas fa-shopping-cart"></i><a> Shopping</a></li>
+            <li class="menuElements" routerLink="/admin/dashboard" id="Home" (click)="disableMenu()" *ngIf="log.isntAdmin()"><i class="fas fa-chart-line"></i><a> Dashboard</a></li>
+            <!--<li class="menuElements" id="Apropos" (click)="disableMenu()"><a routerLink="/Apropos"><i class="fas fa-info-circle"></i> à propos</a></li>-->
+            <li class="menuElements"  id="settings" (click)="showMenu()"><i class="fas fa-cog"></i><span *ngIf="cart!=0" class="not not1">{{cart}}</span></li>
         </ul>
     </div>
 </div>
@@ -18,7 +18,7 @@
     <p *ngIf="log.isToken()" style="text-align: center;border-bottom: 1px solid gainsboro;padding-bottom: 8pt;font-size: 13px;color: gray;">{{email}}</p>
     <li (click)="disableMenu()" *ngIf="!log.isToken()" routerLink="/connexion"><i class="fas fa-sign-in-alt"></i> Connexion</li>
     <li (click)="disableMenu()" *ngIf="!log.isToken()" routerLink="/inscrire"><i class="fas fa-user-plus"></i>  S'inscrire</li>
-    <li (click)="disableMenu()" *ngIf="log.isuser()"><i class="fas fa-shopping-bag"></i> Commands</li>
+    <li (click)="disableMenu()" routerLink="/cart" *ngIf="log.isuser()"><i class="fas fa-shopping-bag"></i> Commands <span *ngIf="cart!=0" class="not">{{cart}}</span></li>
     <li (click)="log.logout();disableMenu()" *ngIf="log.isToken()" routerLink="/inscrire"><i class="fas fa-sign-out-alt"></i> Se déconnecter</li>
   </ul>
 </div>

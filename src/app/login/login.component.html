@@ -1,11 +1,11 @@
 <div class="pageContanaire">
-  <div class="connexionDetails">
+  <form class="connexionDetails" #userForm="ngForm" novalidate (ngSubmit)="connect()">
     <h3 class="title">Connexion</h3><br>
-    <input type="email" [(ngModel)]="email"  name="" id="email" placeholder="E-mail"><br>
-    <input type="password" [(ngModel)]="password" id="password" placeholder="Mot de pass"><br>
-    <button id="connecter" (click)="connect()">Connecter <i class="fas fa-sign-in-alt"></i></button>
+    <input type="email" [(ngModel)]="user.email" (ngModelChange)="test()"  name="email" id="email" placeholder="E-mail,Telephone"><br>
+    <input type="password" [(ngModel)]="password" (ngModelChange)="test()" name="password"  id="password" placeholder="Mot de pass"><br>
+    <button type="submit" class="connecter" [ngClass]="{buttoninv: emailinv}"><span *ngIf="!loading"><i class="fas fa-sign-in-alt"></i> Connecter</span> <img *ngIf="loading" src="../../assets/j1.gif" width="46px" style="position: relative;top:-7px" alt=""></button>
     <p style="color: red;" *ngIf="incorect">l'email ou le mot de pass est incorrect</p>
     <hr style="height: 1px;">
     <p style="font-weight: bold;">vous avez pas de compte? <a routerLink="/inscrire">s'inscrire!</a></p>
-  </div>
+  </form>
 </div>

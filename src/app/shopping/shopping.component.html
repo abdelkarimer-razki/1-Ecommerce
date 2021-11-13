@@ -53,7 +53,7 @@
     <div *ngFor='let item of products' class="Products reveal" (click)="routerBuyProduct(item)">
       <p class="titleProduit">{{item.name}}</p>
       <img [src]="transform(item.picture)" alt="" width="250px">
-      <p class="titlePrix">{{item.prix}} DH</p>  <p class="titlePrixf">{{item.prixf}} DH</p>
+      <p class="titlePrix">{{item.prix}} DH</p>  <p class="titlePrixf" *ngIf="item.prixf!=0">{{item.prixf}} DH</p>
       <p style="color: #bfbfbf;">Livraison gratuite</p>
     </div>
   </div>

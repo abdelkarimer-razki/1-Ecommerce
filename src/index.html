@@ -29,36 +29,39 @@
 </head>
 <body>
   <app-root></app-root>
-</body>
-<script>
-//the counter up code
-  $(function(){
-    setTimeout(function(){     $('.counter').counterUp({
-    delay: 10,
-    time: 1000
-}); }, 250);
-  })
+  <script>
+    window.onload = function(){
+      //the counter up code
 
-//scroll appear code
-    window.addEventListener('scroll', reveal);
+    $(function(){
+      setTimeout(function(){     $('.counter').counterUp({
+      delay: 10,
+      time: 1000
+  }); }, 250);
+    })
 
-    function reveal(){
-      var reveals = document.querySelectorAll('.reveal');
+  //scroll appear code
+      window.addEventListener('scroll', reveal);
 
-      for(var i = 0; i < reveals.length; i++){
+      function reveal(){
+        var reveals = document.querySelectorAll('.reveal');
 
-        var windowheight = window.innerHeight;
-        var revealtop = reveals[i].getBoundingClientRect().top;
-        var revealpoint = 0;
+        for(var i = 0; i < reveals.length; i++){
 
-        if(revealtop < windowheight - revealpoint){
-          reveals[i].classList.add('active');
+          var windowheight = window.innerHeight;
+          var revealtop = reveals[i].getBoundingClientRect().top;
+          var revealpoint = 0;
+
+          if(revealtop < windowheight - revealpoint){
+            reveals[i].classList.add('active');
+          }
+          /*else{
+            reveals[i].classList.remove('active');
+          }*/
         }
-        /*else{
-          reveals[i].classList.remove('active');
-        }*/
       }
-    }
-</script>
+  }
+  </script>
+</body>
 
 </html>

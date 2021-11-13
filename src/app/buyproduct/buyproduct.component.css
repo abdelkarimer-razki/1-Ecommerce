@@ -20,6 +20,7 @@
 }
 .info{
   width:50%;
+  text-align: left;
 }
 .info>p{
   font-size: 30px;
@@ -30,18 +31,19 @@
   width: 300px;
   height: auto;
   padding: 8pt;
+  text-align: center;
   margin: 0 auto;
-background: #EDEFF3;
-box-shadow: 20px 20px 20px -20px rgba(0, 0, 0, 0.2);
+  background: #EDEFF3;
+  box-shadow: 20px 20px 20px -20px rgba(0, 0, 0, 0.2);
 }
 .price>p{
   font-size: 30px;
   margin-bottom: 0;
   margin-top: 15pt;
 }
-.price>button{
+.acheter{
   background: #fd4d4d;
-  border-radius: 15pt;
+  border-radius: 10pt;
   border: none;
   color: white;
   margin: 8pt 0;
@@ -49,8 +51,18 @@ box-shadow: 20px 20px 20px -20px rgba(0, 0, 0, 0.2);
   width: 60%;
   transition: 0.3s;
 }
-.price>button:hover{
+.acheter:hover{
   background: #fd6868;
+}
+.cart
+{
+  height: 50px;
+  border: none;
+  width: 50px;
+  margin-left: 6px;
+  background: white;
+  transition: 0.3s;
+  border-radius: 10pt;
 }
 .picture>img{
   border-radius: 15pt;
@@ -64,6 +76,7 @@ box-shadow: 20px 20px 20px -20px rgba(0, 0, 0, 0.2);
   height: 40px;
   font-size: 20px;
   padding: 8pt;
+  text-align: center;
   outline: none !important;
 }
 #Qunatite:focus{

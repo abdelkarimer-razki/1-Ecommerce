@@ -1,1 +1,39 @@
-<p>apropos works!</p>
+<div style="width: 100%;background-color: #EFF1F5;height: 100vh;float: left;" >
+  <div class="choice">
+    <label class="effectuer" (click)="change(1)" [ngClass]="{colorback: !isEffectuer}"><i class="fas fa-shopping-bag"></i> Achats</label>
+    <label class="Noneffectuer" (click)="change(2)" [ngClass]="{colorback: isEffectuer}"><i class="fas fa-shopping-cart"></i> Panier <span *ngIf="cartcount!=0" [ngClass]="{not1: !isEffectuer}" class="not">{{cartcount}}</span></label>
+  </div>
+  <div class="table" [ngClass]="{tableachat: !isEffectuer}">
+    <div *ngFor="let cart of carts;index as i" class="cards" style="width: 100%;float: left;">
+      <div style="float:left">
+        <img [src]="transform(cart.picture)" alt="" class="imm" width="250px">
+      </div>
+      <div style="float: left;width: 300px;">
+        <p class="proname">{{cart.name}}</p><br>
+        <label for="">Qté: <label *ngIf="!isEffectuer" for="">{{cart.qte}}</label><input *ngIf="isEffectuer" class="proqte text" id="Quantite" type="number" [(ngModel)]="cart.qte"  min="1" [value]="cart.qte" (change)="change1(cart.idcommande,cart.taille1,cart.qte,cart.taille,cart.taille2,cart.taille3,cart.prix1,cart.prix2,cart.prix3)"></label>
+        <br>
+        <label for="">Taille: <label for="" *ngIf="!isEffectuer">{{cart.taille1}}</label><select *ngIf="isEffectuer" class="protaille text" name="" id="" [(ngModel)]="cart.taille1" (change)="change1(cart.idcommande,cart.taille1,cart.qte,cart.taille,cart.taille2,cart.taille3,cart.prix1,cart.prix2,cart.prix3)">
+          <option value="{{cart.taille}}" *ngIf="cart.taille!='0'">{{cart.taille}}</option>
+          <option value="{{cart.taille2}}" *ngIf="cart.taille2!='0'">{{cart.taille2}}</option>
+          <option value="{{cart.taille3}}" *ngIf="cart.taille3!='0'">{{cart.taille3}}</option>
+        </select></label>
+      </div>
+      <div style="float: left;margin-top: 56px;margin-left: 150px;">
+        <p class="proprix">{{cart.prix}} Dh</p><br>
+        <a (click)="deletecommande(cart.idcommande,false)" style="text-decoration: underline;cursor:pointer">Supprimer</a>
+        <a (click)="achetercart(cart.idcommande)" *ngIf="isEffectuer" style="text-decoration: underline;cursor:pointer">Acheter</a>
+      </div>
+    </div>
+    <div *ngIf="nocart" style="text-align:center;height: 100%;font-size:39px;display: flex;align-items:center;justify-content:center;"><p><span style="font-size: 47px;" *ngIf="!isEffectuer">Vous n'avez encore rien acheté !</span><span *ngIf="isEffectuer">Votre panier ne contient aucun objet !</span><button class="acheter" (click)="achetertous()" style="font-size: 17px;width: 200px;" routerLink="/shopping">Commencer vos achats </button></p></div>
+  </div>
+  <div class="billets" style="position: relative;" *ngIf="isEffectuer">
+    <h3 style="position: sticky;top:0;padding-top: 15pt;background-color: white;"><i class="fas fa-file-invoice-dollar"></i> Billet</h3>
+    <p *ngFor="let cart1 of carts" style="width: 100%;">{{cart1.qte}} x {{cart1.name}} <label for="" style="float: right;">{{cart1.prix}} DH</label></p>
+    <div style="position: sticky;bottom: 15px;width: 100%;background-color: white;">
+      <hr>
+      <h4>Totale:<label style="float: right;">{{total}} DH</label></h4>
+      <button class="acheter" (click)="achetertous()" style="font-size: 18px;"><span style="cursor: pointer;" *ngIf="!achate">Finaliser l'achat </span><img *ngIf="achate" src="../../assets/j1.gif" width="46px" alt=""></button>
+    </div>
+  </div>
+  <!--(change)="change1(cart.taille1,cart.qte,cart.taille,cart.taille2,cart.taille3,cart.prix,cart.prix2,cart.prix3)"-->
+</div>

@@ -1,1 +1,118 @@
-<p>products works!</p>
+<div style="width: 85%;background-color: #EFF1F5;height: 100vh;float: left;" >
+  <div style="margin-top: 15px;">
+      <h1 class="title"><i class="fas fa-cash-register"></i> Produits</h1>
+    <div id="buttonid" (click)="this.add=!this.add;"><p *ngIf="!add"><i class="fas fa-plus"></i> Ajouter un produit</p><p *ngIf="add"><i class="fas fa-times"></i> Annuler</p></div>
+  </div>
+  <div class="search">
+    <label for="categorie" style="width: 13%;text-align: right;">Catégorie:</label>
+    <select name="" id="categorie">
+      <option value="HUILE">HUILE</option>
+      <option value="MIEL">MIEL</option>
+    </select>
+    <i class="fas fa-search"></i>
+    <input type="text" id="textsearch" placeholder="chercher par nom" [(ngModel)]="pname" (ngModelChange)="change()">
+  </div>
+  <div class="table" >
+    <img *ngIf="loading" src="../../assets/loading.gif" alt="" width="150" style="margin-top: 14%;margin-left: 44%;">
+    <table *ngIf="!loading">
+      <tr id="headerTable">
+        <th><i class="fas fa-gifts"></i> Nom du produit</th>
+        <th><i class="fas fa-receipt"></i> Catégorie</th>
+        <th><i class="fas fa-cookie-bite"></i> Comestible ?</th>
+        <th><i class="fas fa-dollar-sign"></i> P.Taille (prix)</th>
+        <th><i class="fas fa-dollar-sign"></i> M.Taille (prix)</th>
+        <th><i class="fas fa-dollar-sign"></i> G.Taille (prix)</th>
+      </tr>
+      <tr class="TableElement" *ngIf="this.add">
+          <td  ><input required type="text" name="name" [(ngModel)]="product.name" class="text" ></td>
+          <td ><select class="optionP" name="categorie" [(ngModel)]="product.categorie"><option value="HUILE">HUILE</option><option value="MIEL">MIEL</option><option value="">DIVERS</option></select></td>
+          <td ><select class="optionP" name="mangeable" [(ngModel)]="product.mangable"><option value="false">Non-comestible</option><option value="true">Comestible</option></select></td>
+          <td ><input type="text" name="taille1" [(ngModel)]="product.taille" class="text prices" required ><br><input [(ngModel)]="product.prix" type="number" class="text prices" required></td>
+          <td ><input type="text" name="taille2" [(ngModel)]="product.taille2" class="text prices" required ><br><input [(ngModel)]="product.prix2" type="number" class="text prices" required></td>
+          <td ><input type="text" name="taille3" [(ngModel)]="product.taille3" class="text prices" required ><br><input [(ngModel)]="product.prix3" type="number" class="text prices" required></td>
+          <td (click)="details[0]=!details[0];turnoff(0)" style="color: #6b6bff;font-weight: bolder;cursor: pointer;">détails</td>
+          <td><i (click)="more[0]=!more[0];turnoff(0)" class="fas fa-ellipsis-v" ></i></td><br>
+          <div *ngIf="more[0]" class="more">
+            <ul>
+              <li type="submit" (click)="addproduct()" ><i class="fas fa-check"></i> Valider</li>
+            </ul>
+          </div>
+          <div *ngIf="details[0]" class="details" >
+            <ul style="list-style: none;text-align: center;padding-left: 0px;">
+              <li ><input id="imageb" type="file" (change)="onChange($event)"><label for="imageb" class="imageb1">Telecharger image</label></li>
+              <li ><textarea class="text textarea" [(ngModel)]="product.description" required style="resize: none;height:fit-content;"></textarea></li>
+              <li ><input required class="text" [(ngModel)]="product.prixf" type="text"></li>
+            </ul>
+          </div>
+      </tr>
+
+     <tr class="TableElement" *ngFor="let produit of produits;index as i"  >
+      <!--<td [id]="i + 'a4'">{{produit.name}}</td>
+        <td style="display: none;" [id]="i + 'a5'"><input type="text" class="text" required value="{{produit.name}}" [(ngModel)]="produit.name"></td>
+        <td [id]="i + 'a6'"><label class="tickets huile"  *ngIf="produit.categorie == 'HUILE'">HUILE</label><label class="tickets miel"  *ngIf="produit.categorie == 'MIEL'">MIEL</label><label class="tickets rien" *ngIf="produit.categorie == 'null'">DIVERS</label></td>
+        <td [id]="i + 'a7'" style="display: none;"><select class="optionP" [(ngModel)]="produit.categorie"><option value="HUILE">HUILE</option><option value="MIEL">MIEL</option><option value="">DIVERS</option></select></td>
+        <td [id]="i + 'a8'"><label class="tickets nmangable"  *ngIf="!produit.mangable">Non-comestible</label><label class="tickets mangable"  *ngIf="produit.mangable">Comestible</label></td>
+        <td [id]="i + 'a9'" style="display: none;"><select class="optionP" [(ngModel)]="produit.mangable"><option value="false">Non-comestible</option><option value="true">Comestible</option></select></td>
+        <td [id]="i + 'a10'"><label *ngIf="produit.prix != 0">{{produit.taille}}<br><label class="price" *ngIf="produit.prix != 0">({{produit.prix}} DH)</label></label><label *ngIf="produit.prix == 0">.</label></td>
+        <td [id]="i + 'a11'"><label *ngIf="produit.prix2 != 0">{{produit.taille2}}<br><label class="price" *ngIf="produit.prix2 != 0">({{produit.prix2}} DH)</label></label><label *ngIf="produit.prix2 == 0">.</label></td>
+        <td [id]="i + 'a12'"><label *ngIf="produit.prix3 != 0">{{produit.taille3}}<br><label class="price" *ngIf="produit.prix3 != 0">({{produit.prix3}} DH)</label></label><label *ngIf="produit.prix3 == 0">.</label></td>
+        <td [id]="i + 'a13'" style="display: none;"><input type="text" class="text prices" value="{{produit.taille}}" required [(ngModel)]="produit.taille"><br><input type="text" class="text prices" value="{{produit.prix}}" required [(ngModel)]="produit.prix"></td>
+        <td [id]="i + 'a14'" style="display: none;"><input type="text" class="text prices" value="{{produit.taille2}}" required [(ngModel)]="produit.taille2"><br><input type="text" class="text prices" value="{{produit.prix2}}" required [(ngModel)]="produit.prix2"></td>
+        <td [id]="i + 'a15'" style="display: none;"><input type="text" class="text prices" value="{{produit.taille3}}" required [(ngModel)]="produit.taille3"><br><input type="text" class="text prices" value="{{produit.prix3}}" required [(ngModel)]="produit.prix3"></td>
+        <td (click)="showmor(i + 'a');disableD(i + 'a');disable(i)" style="color: #6b6bff;font-weight: bolder;cursor: pointer;">détails</td>
+        <td><i class="fas fa-ellipsis-v" (click)="showmor(i);disable(i);disableD(i + 'a');"></i></td><br>
+        <div [id]="i" style="display: none;" class="more">
+          <ul>
+            <li [id]="i + 'a1'" style="display: none;" (click)="showmor(i);valider(produit.idproducts,produit.name,produit.prixf,produit.description,produit.categorie,produit.mangable,produit,produit.prix,produit.prix2,produit.prix3,produit.taille,produit.taille2,produit.taille3)"><i class="fas fa-check"></i> Valider</li>
+            <li [id]="i + 'a2'" style="display: none;" (click)="showmor(i);showmor(i + 'a1');showmor(i + 'a2');showmor(i + 'a3');showmor(i + 'a4');showmor(i + 'a5');showmor(i+'a6');showmor(i+'a7');showmor(i+'a8');showmor(i+'a9');showmor(i+'a10');showmor(i+'a11');showmor(i+'a12');showmor(i+'a13');showmor(i+'a14');showmor(i+'a15');showmor(i+'a16');showmor(i+'a17');showmor(i+'a18');showmor(i+'a19');showmor(i+'a20');showmor(i+'a21');"><i class="fas fa-times"></i> Annuler</li>
+            <li [id]="i + 'a3'" style="display: block;"(click)="pic(produit.picture);showmor(i);showmor(i + 'a1');showmor(i + 'a2');showmor(i + 'a3');showmor(i + 'a4');showmor(i + 'a5');showmor(i+'a6');showmor(i+'a7');showmor(i+'a8');showmor(i+'a9');showmor(i+'a10');showmor(i+'a11');showmor(i+'a12');showmor(i+'a13');showmor(i+'a14');showmor(i+'a15');showmor(i+'a16');showmor(i+'a17');showmor(i+'a18');showmor(i+'a19');showmor(i+'a20');showmor(i+'a21');"><i class="far fa-edit"></i> Modifier</li>
+          </ul>
+        </div>
+        <div class="details" style="display: none;" [id]="i + 'a'">
+          <ul style="list-style: none;text-align: center;padding-left: 0px;">
+            <li [id] ="i + 'a15'" style="font-size: 15px;color: #8e8e8e;">{{produit.name}}</li>
+            <li [id] ="i + 'a16'"><img [src]="transform(produit.picture)" alt="" width="200px"></li>
+            <li [id] ="i + 'a17'" style="font-size: 12px;width: 240px;margin: 0 auto;"><label *ngIf="produit.description == ''" style="margin-top: 15px;">Il n'y a pas de description</label>{{produit.description}}</li>
+            <li [id] ="i + 'a18'" style="margin-top:10px;color:red">{{produit.prixf}} DH</li>
+            <li [id] ="i + 'a19'" style="display:none;"><input id="imageb" type="file" (change)="onChange($event)"><label for="imageb" class="imageb1">Telecharger image</label></li>
+            <li [id] ="i + 'a20'" style="display:none;"><textarea class="text textarea" required style="resize: none;height:fit-content;" [(ngModel)]="produit.description">{{produit.description}}</textarea></li>
+            <li [id] ="i + 'a21'" style="display:none;"><input  class="text" type="text" required value="{{produit.prixf}}" [(ngModel)]="produit.prixf"></li>
+          </ul>
+        </div>-->
+        <td *ngIf="!is[i+1]" >{{produit.name}}</td>
+        <td *ngIf="is[i+1]"><input type="text" class="text" required value="{{produit.name}}" [(ngModel)]="produit.name"></td>
+        <td *ngIf="!is[i+1]"><label class="tickets huile"  *ngIf="produit.categorie == 'HUILE'">HUILE</label><label class="tickets miel"  *ngIf="produit.categorie == 'MIEL'">MIEL</label><label class="tickets rien" *ngIf="produit.categorie == 'null'">DIVERS</label></td>
+        <td  *ngIf="is[i+1]"><select class="optionP" [(ngModel)]="produit.categorie"><option value="HUILE">HUILE</option><option value="MIEL">MIEL</option><option value="">DIVERS</option></select></td>
+        <td *ngIf="!is[i+1]"><label class="tickets nmangable"  *ngIf="!produit.mangable">Non-comestible</label><label class="tickets mangable"  *ngIf="produit.mangable">Comestible</label></td>
+        <td *ngIf="is[i+1]" ><select class="optionP" [(ngModel)]="produit.mangable"><option value="false">Non-comestible</option><option value="true">Comestible</option></select></td>
+        <td *ngIf="!is[i+1]"><label *ngIf="produit.prix != 0">{{produit.taille}}<br><label class="price" *ngIf="produit.prix != 0">({{produit.prix}} DH)</label></label><label *ngIf="produit.prix == 0">.</label></td>
+        <td *ngIf="!is[i+1]"><label *ngIf="produit.prix2 != 0">{{produit.taille2}}<br><label class="price" *ngIf="produit.prix2 != 0">({{produit.prix2}} DH)</label></label><label *ngIf="produit.prix2 == 0">.</label></td>
+        <td *ngIf="!is[i+1]"><label *ngIf="produit.prix3 != 0">{{produit.taille3}}<br><label class="price" *ngIf="produit.prix3 != 0">({{produit.prix3}} DH)</label></label><label *ngIf="produit.prix3 == 0">.</label></td>
+        <td *ngIf="is[i+1]"><input type="text" class="text prices" value="{{produit.taille}}" required [(ngModel)]="produit.taille"><br><input type="number" class="text prices" value="{{produit.prix}}" required [(ngModel)]="produit.prix"></td>
+        <td *ngIf="is[i+1]" ><input type="text" class="text prices" value="{{produit.taille2}}" required [(ngModel)]="produit.taille2"><br><input type="number" class="text prices" value="{{produit.prix2}}" required [(ngModel)]="produit.prix2"></td>
+        <td *ngIf="is[i+1]" ><input type="text" class="text prices" value="{{produit.taille3}}" required [(ngModel)]="produit.taille3"><br><input type="number" class="text prices" value="{{produit.prix3}}" required [(ngModel)]="produit.prix3"></td>
+        <td style="color: #6b6bff;font-weight: bolder;cursor: pointer;" (click)="details[i+1]=!details[i+1];turnoff(i+1)">détails</td>
+        <td ><i class="fas fa-ellipsis-v" (click)="more[i+1]=!more[i+1];turnoff(i+1)"></i></td><br>
+        <div *ngIf="more[i+1]" class="more">
+          <ul>
+            <li *ngIf="is[i+1]" (click)="is[i+1]=!is[i+1];more[i+1]=false;details[i+1]=false;valider(produit)"><i class="fas fa-check"></i> Valider</li>
+            <li *ngIf="is[i+1]" (click)="is[i+1]=!is[i+1];more[i+1]=false;details[i+1]=false"><i class="fas fa-times"></i> Annuler</li>
+            <li *ngIf="!is[i+1]"(click)="pic(produit.picture);is[i+1]=!is[i+1];more[i+1]=false;"><i class="far fa-edit"></i> Modifier</li>
+            <li *ngIf="!is[i+1]"(click)="deletepro(produit.idproducts);more[i+1]=false;"><i class="far fa-trash-alt"></i> Supprimer</li>
+          </ul>
+        </div>
+        <div class="details" *ngIf="details[i+1]" >
+          <ul style="list-style: none;text-align: center;padding-left: 0px;">
+            <li style="font-size: 15px;color: #8e8e8e;">{{produit.name}}</li>
+            <li *ngIf="!is[i+1]"><img [src]="transform(produit.picture)" alt="" width="200px"></li>
+            <li *ngIf="!is[i+1]" style="font-size: 12px;width: 240px;margin: 0 auto;"><label *ngIf="produit.description == ''" style="margin-top: 15px;">Il n'y a pas de description</label>{{produit.description}}</li>
+            <li *ngIf="!is[i+1]" style="margin-top:10px;color:red">{{produit.prixf}} DH</li>
+            <li *ngIf="is[i+1]"><input id="imageb" type="file" (change)="onChange($event)"><label for="imageb" class="imageb1">Telecharger image</label></li>
+            <li *ngIf="is[i+1]"><textarea class="text textarea" required style="resize: none;height:fit-content;" [(ngModel)]="produit.description">{{produit.description}}</textarea></li>
+            <li  *ngIf="is[i+1]"><input  class="text" type="text" required value="{{produit.prixf}}" [(ngModel)]="produit.prixf"></li>
+          </ul>
+        </div>
+      </tr>
+    </table>
+  </div>
+</div>

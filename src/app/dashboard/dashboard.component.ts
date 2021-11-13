@@ -105,47 +105,52 @@ export class DashboardComponent implements OnInit {
     this.canvas = document.getElementById("myChart");
     this.ctx = this.canvas.getContext("2d");
     setTimeout(() => {
-      var myChart = new Chart(this.ctx, {
-        type: 'bar',
-        data: {
-            labels: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'],
-            datasets: [{
-                label: 'Revenu mensuel/DH',
-                data: [this.janvier, this.fevrier, this.mars, this.april, this.may, this.juin,this.juilet,this.aout,this.septembre,this.octobre,this.novombre,this.decembre],
-                backgroundColor: [
-                    '#FF8484',
-                    '#B6DDFC',
-                    '#FFBE6D',
-                    '#FFD503',
-                    '#E2E0E3',
-                    '#90EE90',
-                    '#FFD8DD',
-                    '#3F9CB8',
-                    '#FFBE6D',
-                    '#FFD503',
-                    '#E2E0E3',
-                    '#90EE90'
-                ],
-                borderColor: [
-                  '#F17E5D',
+      this.dataChart()
+      this.fillchart()
+    },1000);
+  }
+  fillchart()
+  {
+    var myChart = new Chart(this.ctx, {
+      type: 'bar',
+      data: {
+          labels: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'],
+          datasets: [{
+              label: 'Revenu mensuel/DH',
+              data: [this.janvier, this.fevrier, this.mars, this.april, this.may, this.juin,this.juilet,this.aout,this.septembre,this.octobre,this.novombre,this.decembre],
+              backgroundColor: [
+                  '#FF8484',
                   '#B6DDFC',
-                  '#FCC468',
+                  '#FFBE6D',
+                  '#FFD503',
+                  '#E2E0E3',
+                  '#90EE90',
+                  '#FFD8DD',
+                  '#3F9CB8',
+                  '#FFBE6D',
                   '#FFD503',
                   '#E2E0E3',
                   '#90EE90'
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-    },1000);
+              ],
+              borderColor: [
+                '#F17E5D',
+                '#B6DDFC',
+                '#FCC468',
+                '#FFD503',
+                '#E2E0E3',
+                '#90EE90'
+              ],
+              borderWidth: 1
+          }]
+      },
+      options: {
+          scales: {
+              y: {
+                  beginAtZero: true
+              }
+          }
+      }
+  });
   }
   dataChart(){
     this.dash.revenuMois(1).subscribe(data=>this.janvier=data)

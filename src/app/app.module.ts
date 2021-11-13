@@ -20,6 +20,7 @@ import { NotifierModule, NotifierOptions } from 'angular-notifier';
 import { AdminComponent } from './admin/admin.component';
 import { CommandsComponent } from './commands/commands.component';
 import { UsersComponent } from './users/users.component';
+import { EncrDecrService } from './services/encr-decr.service';
 import { ProductsComponent } from './products/products.component';
 const customNotifierOptions: NotifierOptions = {
   position: {
@@ -91,7 +92,7 @@ const customNotifierOptions: NotifierOptions = {
     provide: HTTP_INTERCEPTORS,
     useClass: TokenInterceptorService,
     multi: true
-  }],
+  },EncrDecrService],
   bootstrap: [AppComponent]
 })
 
