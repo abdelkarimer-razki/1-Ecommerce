@@ -149,24 +149,34 @@ export class AproposComponent implements OnInit {
   }
   achetertous()
   {
-    this.achate=true;
-    for(var i=0;i<this.carts.length;i++)
-    {
-      this.dash.cartotachat(this.carts[i].idcommande).subscribe();
-    }
-    setTimeout(()=>{this.dash.allcart(localStorage.getItem("userId"),true).subscribe(data=>{this.carts=data;
-      this.total=0;
-    for(var i=0;i<this.carts.length;i++)
-    {
-      this.total=this.carts[i].prix+this.total;
-    }
-  this.achate=false;
-  if(this.carts.length == 0)
-  {
-    this.nocart=true;
-  }else
-  {
-    this.nocart=false
-  }})},1000);
+    this.achate = true;
+    const userId = localStorage.getItem("userId");
+    this.dash.cartotachatAll(userId).subscribe(
+      () => {
+        this.dash.allcart(userId, true).subscribe(
+          data => {
+            this.carts = data;
+            this.total = 0;
+            for (var i = 0; i < this.carts.length; i++) {
+              this.total = this.carts[i].prix + this.total;
+            }
+            this.achate = false;
+            if (this.carts.length == 0) {
+              this.nocart = true;
+            } else {
+              this.nocart = false;
+            }
+          },
+          err => {
+            console.error(err);
+            this.achate = false;
+          }
+        );
+      },
+      err => {
+        console.error(err);
+        this.achate = false;
+      }
+    );
   }
 }

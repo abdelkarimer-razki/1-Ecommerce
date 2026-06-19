@@ -1,4 +1,17 @@
 <div class="checkout-page">
+  <!-- EMPTY CART STATE -->
+  <div class="empty-cart-screen" *ngIf="items.length === 0 && !submitted">
+    <div class="empty-icon">
+      <span class="material-symbols-outlined">shopping_cart</span>
+    </div>
+    <h1>Votre panier est vide</h1>
+    <p>Ajoutez des produits depuis notre boutique pour passer commande.</p>
+    <button class="btn-primary" routerLink="/shopping">
+      <span class="material-symbols-outlined">storefront</span>
+      Voir la boutique
+    </button>
+  </div>
+
   <!-- SUCCESS STATE -->
   <div class="success-screen" *ngIf="submitted">
     <div class="success-icon">
@@ -13,7 +26,7 @@
   </div>
 
   <!-- CHECKOUT FORM -->
-  <div class="checkout-layout" *ngIf="!submitted">
+  <div class="checkout-layout" *ngIf="items.length > 0 && !submitted">
     <!-- Left: Order Summary -->
     <div class="checkout-summary">
       <div class="section-header">

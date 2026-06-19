@@ -685,9 +685,82 @@ app.get('/updatecommande/:id&:taille&:qte&:cart&:prix',async(req,res)=>{
   res.json({success:true});
 })
 app.get('/cartotachat/:idcommande',async(req,res)=>{
-  const id=req.params.idcommande;
-  await p1.query("UPDATE commande SET cart=false WHERE idcommande=$1",[id]);
-  res.json({success:true});
+  try {
+    const id = req.params.idcommande;
+    const cmdResult = await p1.query("SELECT iduser, prix, qte FROM commande WHERE idcommande=$1", [id]);
+    if (cmdResult.rows.length === 0) {
+      return res.status(404).json({ success: false, error: 'Command not found' });
+    }
+    const { iduser, prix } = cmdResult.rows[0];
+
+    const userResult = await p1.query("SELECT fname, lname, tel, email, adress FROM public.users WHERE iduser=$1", [iduser]);
+    let fullname = 'Client Connecté';
+    let tel = '';
+    let email = '';
+    let adress = '';
+    if (userResult.rows.length > 0) {
+      const u = userResult.rows[0];
+      fullname = `${u.fname || ''} ${u.lname || ''}`.trim() || 'Client Connecté';
+      tel = u.tel || '';
+      email = u.email || '';
+      adress = u.adress || '';
+    }
+
+    const grpResult = await p1.query(
+      `INSERT INTO order_group (iduser, fullname, tel, email, adress, source, etat, verifie, datecommand, prix_total)
+       VALUES ($1, $2, $3, $4, $5, 'site', false, false, CURRENT_DATE, $6) RETURNING idgroup`,
+      [iduser, fullname, tel, email, adress, Number(prix)]
+    );
+    const idgroup = grpResult.rows[0].idgroup;
+
+    await p1.query("UPDATE commande SET cart=false, idgroup=$1 WHERE idcommande=$2", [idgroup, id]);
+    res.json({ success: true, idgroup });
+  } catch (err) {
+    console.error("cartotachat error:", err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+})
+
+app.get('/cartotachatall/:iduser',async(req,res)=>{
+  try {
+    const iduser = req.params.iduser;
+    if (!iduser || iduser === 'null' || isNaN(parseInt(iduser))) {
+      return res.status(400).json({ success: false, error: 'Invalid user ID' });
+    }
+
+    const cmdResult = await p1.query("SELECT idcommande, prix FROM commande WHERE iduser=$1 AND cart=true", [iduser]);
+    if (cmdResult.rows.length === 0) {
+      return res.json({ success: true, message: 'Cart already empty' });
+    }
+
+    const userResult = await p1.query("SELECT fname, lname, tel, email, adress FROM public.users WHERE iduser=$1", [iduser]);
+    let fullname = 'Client Connecté';
+    let tel = '';
+    let email = '';
+    let adress = '';
+    if (userResult.rows.length > 0) {
+      const u = userResult.rows[0];
+      fullname = `${u.fname || ''} ${u.lname || ''}`.trim() || 'Client Connecté';
+      tel = u.tel || '';
+      email = u.email || '';
+      adress = u.adress || '';
+    }
+
+    const total = cmdResult.rows.reduce((sum, row) => sum + Number(row.prix), 0);
+
+    const grpResult = await p1.query(
+      `INSERT INTO order_group (iduser, fullname, tel, email, adress, source, etat, verifie, datecommand, prix_total)
+       VALUES ($1, $2, $3, $4, $5, 'site', false, false, CURRENT_DATE, $6) RETURNING idgroup`,
+      [iduser, fullname, tel, email, adress, total]
+    );
+    const idgroup = grpResult.rows[0].idgroup;
+
+    await p1.query("UPDATE commande SET cart=false, idgroup=$1 WHERE iduser=$2 AND cart=true", [idgroup, iduser]);
+    res.json({ success: true, idgroup });
+  } catch (err) {
+    console.error("cartotachatall error:", err);
+    res.status(500).json({ success: false, error: err.message });
+  }
 })
 app.get('/checkcart/:iduser&:idproduit',async(req,res)=>{
   const {iduser,idproduit}=req.params;

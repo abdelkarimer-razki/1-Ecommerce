@@ -10,7 +10,7 @@
       <p class="proname">{{item.name}}</p>
       <p id="description">{{item.description}}</p>
       
-      <div class="inputGroup">
+      <div class="inputGroup" *ngIf="item.sizes && item.sizes.length > 0">
         <label>Taille :</label>
         <div class="sizesContainer">
           <div *ngFor="let sizeOpt of item.sizes" class="taille" (click)="selectSize(sizeOpt)" [class.kl]="selectedSize === sizeOpt">

@@ -52,6 +52,9 @@ export class BuyproductComponent implements OnInit {
         }
         if (this.product[0].sizes && this.product[0].sizes.length > 0) {
           this.selectedSize = this.product[0].sizes[0];
+        } else {
+          // Fallback: use prix directly from product even if no sizes configured
+          this.selectedSize = { taille: '', prix: Number(this.product[0].prix) || 0 };
         }
         this.titleService.setTitle(this.product[0].name);
       }
@@ -83,13 +86,16 @@ export class BuyproductComponent implements OnInit {
   }
 
   addToCart(item: any) {
-    if (!this.selectedSize) return;
+    // Use selectedSize if available, otherwise fall back to product price
+    const taille = this.selectedSize ? this.selectedSize.taille : '';
+    const prix = this.selectedSize ? Number(this.selectedSize.prix) : Number(item.prix) || 0;
+
     this.cartService.addItem({
       idproducts: Number(item.idproducts),
       name: item.name,
       picture: item.picture,
-      taille: this.selectedSize.taille,
-      prix: Number(this.selectedSize.prix),
+      taille: taille,
+      prix: prix,
       qte: Number(this.qte) || 1
     });
     this.addedToCart = true;

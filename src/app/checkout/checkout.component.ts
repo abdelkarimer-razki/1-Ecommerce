@@ -41,10 +41,7 @@ export class CheckoutComponent implements OnInit {
     const email = localStorage.getItem('userE');
     if (user) this.form.fullname = user;
     if (email) this.form.email = email;
-
-    if (this.items.length === 0) {
-      this.router.navigate(['/shopping']);
-    }
+    // No auto-redirect — show empty cart message instead
   }
 
   updateQte(item: CartItem, delta: number) {
@@ -56,14 +53,12 @@ export class CheckoutComponent implements OnInit {
     }
     this.items = this.cart.getItems();
     this.total = this.cart.getTotal();
-    if (this.items.length === 0) this.router.navigate(['/shopping']);
   }
 
   removeItem(item: CartItem) {
     this.cart.removeItem(item.idproducts, item.taille);
     this.items = this.cart.getItems();
     this.total = this.cart.getTotal();
-    if (this.items.length === 0) this.router.navigate(['/shopping']);
   }
 
   transform(pic: string): any {

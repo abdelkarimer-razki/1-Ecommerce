@@ -9,6 +9,8 @@
   background-color: var(--color-bg-nav);
   border-bottom: 1px solid var(--border-color);
   box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
   z-index: 1000;
 }
 
@@ -122,17 +124,22 @@
 
 /* User Account Overlay Dropdown Menu */
 #menuMore {
-  position: absolute;
+  position: fixed;
+  top: 80px;
   width: 250px;
   background: var(--color-bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-lg);
   z-index: 2000;
-  margin-top: 8px;
   box-shadow: var(--shadow-lg);
   right: 5%;
   overflow: hidden;
   animation: fadeInUp 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 #menuMore > ul {
@@ -205,6 +212,11 @@
   #topMenu {
     padding: 0 5%;
     height: 70px;
+  }
+  #menuMore {
+    top: 70px;
+    right: 2%;
+    width: calc(100% - 4%);
   }
   .menuElements > a {
     display: none;

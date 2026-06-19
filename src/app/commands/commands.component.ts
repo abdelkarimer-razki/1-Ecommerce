@@ -190,7 +190,11 @@ export class CommandsComponent implements OnInit {
         }
       }
       this.manualSizesList = sizes;
-      this.manualSelectedSize = sizes.length > 0 ? sizes[0] : null;
+      if (sizes.length > 0) {
+        this.manualSelectedSize = sizes[0];
+      } else {
+        this.manualSelectedSize = { taille: '', prix: Number(this.manualSelectedProduct.prix) || 0 };
+      }
     }
   }
 

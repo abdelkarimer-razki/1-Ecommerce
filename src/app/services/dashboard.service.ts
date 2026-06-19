@@ -105,4 +105,7 @@ export class DashboardService {
   cartotachat(id:any){
     return this.http.get(this.url1+"cartotachat/"+id);
   }
+  cartotachatAll(iduser:any){
+    return this.http.get(this.url1+"cartotachatall/"+iduser);
+  }
 }
