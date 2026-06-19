@@ -41,42 +41,36 @@
   color: white !important;
 }
 
-/* Search bar */
 #search {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 0;
-  margin: 0 auto;
   background-color: var(--color-bg-card);
-  padding: 16px;
-  border-radius: var(--border-radius-lg);
   border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
   box-shadow: var(--shadow-sm);
-  max-width: 500px;
+  max-width: 480px;
   width: 100%;
+  height: 46px;
+  overflow: hidden;
+  padding: 0;
+  margin: 0 auto 24px auto;
 }
 
-#search > input[type="date"] {
-  height: 42px;
-  border: 1px solid var(--border-color);
-  border-right: none;
-  border-top-left-radius: var(--border-radius-md);
-  border-bottom-left-radius: var(--border-radius-md);
-  padding: 0 16px;
-  font-family: var(--font-sans);
-  font-size: 0.9rem;
-  color: var(--color-text-main);
-  background-color: var(--color-bg-main);
-  outline: none;
+#search > input[type="month"] {
   flex-grow: 1;
+  height: 100%;
+  border: none;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  padding: 0 12px;
+  outline: none;
+  color: var(--color-text-main);
+  background-color: transparent;
 }
 
 #search > button {
   color: white;
-  height: 42px;
-  border-top-right-radius: var(--border-radius-md);
-  border-bottom-right-radius: var(--border-radius-md);
+  height: 100%;
   border: none;
   padding: 0 24px;
   background-color: var(--color-primary);
@@ -85,6 +79,9 @@
   font-size: 0.9rem;
   cursor: pointer;
   transition: var(--transition-smooth);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 #search > button:hover {

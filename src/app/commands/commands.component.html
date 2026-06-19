@@ -3,7 +3,11 @@
     <label class="effectuer" (click)="changeEtatN()" [ngClass]="{colorback: !isEffectuer}"><span class="material-symbols-outlined">check_circle</span> Achat Effectuer</label>
     <label class="Noneffectuer" (click)="changeEtatP()" [ngClass]="{colorback: isEffectuer}"><span class="material-symbols-outlined">cancel</span> Achat Non-Effectuer</label>
   </div>
-  <div *ngIf="!isEffectuer" id="search"><input type="date" [(ngModel)]="date" name="" id=""><button (click)="search(date)" ><span class="material-symbols-outlined" style="font-size: 18px; margin-right: 4px;">search</span> Chercher</button></div>
+  <div *ngIf="!isEffectuer" id="search">
+    <span class="material-symbols-outlined search-calendar-icon" style="color: var(--color-text-light); padding-left: 16px; font-size: 1.25rem; display: inline-flex; align-items: center;">calendar_month</span>
+    <input type="month" [(ngModel)]="date" (ngModelChange)="search(date)" name="month-picker" id="month-picker">
+    <button (click)="search(date)"><span class="material-symbols-outlined" style="font-size: 18px; margin-right: 4px;">search</span> Chercher</button>
+  </div>
   <div class="table" *ngIf="isEffectuer">
     <div *ngIf="voidNE" style="text-align:center;font-size: 30px;padding-top: 120px;"><img src="../../assets/smallbee.png" alt=""> Tous les commandes sont effectue</div>
     <table *ngIf="!voidNE">

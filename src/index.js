@@ -226,7 +226,7 @@ app.get('/commandnonEffectuer',verifyToken,async(req,res)=>{
 })
 
 app.get('/commandEffectuer',verifyToken,async(req,res)=>{
-  const query=await p1.query("SELECT u.lname||' '||u.fname as fullname,c.idcommande,c.cart,u.adress,u.tel,p.name,u.email,c.qte,to_char(c.datecommand, 'DD/MM/YYYY'),c.verifie,c.taille,c.prix,c.etat FROM public.users u join public.commande c on u.iduser=c.iduser join public.products p on c.idproducts=p.idproducts where c.etat=true and datecommand=current_date and c.cart=false ORDER BY c.idcommande");
+  const query=await p1.query("SELECT u.lname||' '||u.fname as fullname,c.idcommande,c.cart,u.adress,u.tel,p.name,u.email,c.qte,to_char(c.datecommand, 'DD/MM/YYYY'),c.verifie,c.taille,c.prix,c.etat FROM public.users u join public.commande c on u.iduser=c.iduser join public.products p on c.idproducts=p.idproducts where c.etat=true and to_char(c.datecommand, 'YYYY-MM') = to_char(current_date, 'YYYY-MM') and c.cart=false ORDER BY c.idcommande");
   res.json(query.rows);
 })
 
@@ -234,7 +234,12 @@ app.get('/commandEffectuer',verifyToken,async(req,res)=>{
 
 app.get('/commandEffectuer/:date',async(req,res)=>{
   const {date}=req.params;
-  const query=await p1.query("SELECT u.lname||' '||u.fname as fullname,p.idproducts,c.idcommande,c.cart,u.iduser,u.adress,u.tel,p.name,u.email,c.qte,to_char(c.datecommand, 'DD/MM/YYYY'),c.verifie,c.taille,c.prix,c.etat FROM public.users u join public.commande c on u.iduser=c.iduser join public.products p on c.idproducts=p.idproducts where c.etat=true and datecommand=$1 and c.cart=false ORDER BY c.idcommande",[date]);
+  let query;
+  if (date && date.length === 7) { // YYYY-MM format
+    query = await p1.query("SELECT u.lname||' '||u.fname as fullname,p.idproducts,c.idcommande,c.cart,u.iduser,u.adress,u.tel,p.name,u.email,c.qte,to_char(c.datecommand, 'DD/MM/YYYY'),c.verifie,c.taille,c.prix,c.etat FROM public.users u join public.commande c on u.iduser=c.iduser join public.products p on c.idproducts=p.idproducts where c.etat=true and to_char(c.datecommand, 'YYYY-MM')=$1 and c.cart=false ORDER BY c.idcommande",[date]);
+  } else { // YYYY-MM-DD or other format
+    query = await p1.query("SELECT u.lname||' '||u.fname as fullname,p.idproducts,c.idcommande,c.cart,u.iduser,u.adress,u.tel,p.name,u.email,c.qte,to_char(c.datecommand, 'DD/MM/YYYY'),c.verifie,c.taille,c.prix,c.etat FROM public.users u join public.commande c on u.iduser=c.iduser join public.products p on c.idproducts=p.idproducts where c.etat=true and datecommand=$1 and c.cart=false ORDER BY c.idcommande",[date]);
+  }
   res.json(query.rows);
 })
 

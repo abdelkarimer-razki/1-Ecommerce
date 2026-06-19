@@ -15,10 +15,16 @@ export class CommandsComponent implements OnInit {
   combobox:any;
   isEdit:boolean=false;
   table2:any;
-  date:any;
+  date: string = this.getCurrentMonth();
   isEffectuer:boolean=true
   constructor(private dash:DashboardService) {
    }
+
+  getCurrentMonth(): string {
+    const d = new Date();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    return `${d.getFullYear()}-${month}`;
+  }
 
   ngOnInit(): void {
     this.chargeTables();
@@ -38,9 +44,9 @@ export class CommandsComponent implements OnInit {
     })
   }
 
-  search(date:Date)
+  search(date: any)
   {
-    if(date==undefined)
+    if(date == undefined || date === '')
     {
       this.dash.allCommandsN().subscribe(data=>{
         this.table2=data;
@@ -54,7 +60,7 @@ export class CommandsComponent implements OnInit {
         }
       })
     }
-    else if(date!=undefined)
+    else
     {
       this.dash.commandEffectueSearch(date).subscribe(data=>{
         this.table2=data;
