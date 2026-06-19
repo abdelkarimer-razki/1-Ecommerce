@@ -1,0 +1,134 @@
+<div class="checkout-page">
+  <!-- SUCCESS STATE -->
+  <div class="success-screen" *ngIf="submitted">
+    <div class="success-icon">
+      <span class="material-symbols-outlined">check_circle</span>
+    </div>
+    <h1>Commande confirmée !</h1>
+    <p>Merci pour votre commande. Nous vous contacterons bientôt pour confirmer la livraison.</p>
+    <button class="btn-primary" routerLink="/shopping">
+      <span class="material-symbols-outlined">storefront</span>
+      Continuer mes achats
+    </button>
+  </div>
+
+  <!-- CHECKOUT FORM -->
+  <div class="checkout-layout" *ngIf="!submitted">
+    <!-- Left: Order Summary -->
+    <div class="checkout-summary">
+      <div class="section-header">
+        <span class="material-symbols-outlined">shopping_cart</span>
+        <h2>Votre panier</h2>
+        <span class="badge">{{items.length}} article(s)</span>
+      </div>
+
+      <div class="cart-items">
+        <div class="cart-item" *ngFor="let item of items">
+          <div class="item-image">
+            <img [src]="transform(item.picture)" [alt]="item.name" onerror="this.src='assets/smallbee.png'">
+          </div>
+          <div class="item-info">
+            <div class="item-name">{{item.name}}</div>
+            <div class="item-taille" *ngIf="item.taille && item.taille !== '0'">
+              <span class="material-symbols-outlined" style="font-size:0.9rem">straighten</span> {{item.taille}}
+            </div>
+            <div class="item-price">{{item.prix | number:'1.2-2'}} DH / unité</div>
+          </div>
+          <div class="item-controls">
+            <div class="qte-stepper">
+              <button type="button" (click)="updateQte(item, -1)">
+                <span class="material-symbols-outlined">remove</span>
+              </button>
+              <span class="qte-val">{{item.qte}}</span>
+              <button type="button" (click)="updateQte(item, 1)">
+                <span class="material-symbols-outlined">add</span>
+              </button>
+            </div>
+            <div class="item-subtotal">{{(item.prix * item.qte) | number:'1.2-2'}} DH</div>
+            <button type="button" class="remove-btn" (click)="removeItem(item)" title="Supprimer">
+              <span class="material-symbols-outlined">delete_outline</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="order-total">
+        <span>Total de la commande</span>
+        <strong>{{total | number:'1.2-2'}} DH</strong>
+      </div>
+    </div>
+
+    <!-- Right: Customer Info Form -->
+    <div class="checkout-form-panel">
+      <div class="section-header">
+        <span class="material-symbols-outlined">person</span>
+        <h2>Vos coordonnées</h2>
+      </div>
+
+      <div class="checkout-form">
+        <div class="input-group">
+          <label for="fullname">
+            Nom complet <span class="required">*</span>
+          </label>
+          <input id="fullname" class="inp" type="text" [(ngModel)]="form.fullname"
+                 placeholder="Ex: Ahmed Benali" required>
+        </div>
+
+        <div class="form-row">
+          <div class="input-group">
+            <label for="tel">
+              Téléphone <span class="required">*</span>
+            </label>
+            <input id="tel" class="inp" type="tel" [(ngModel)]="form.tel"
+                   placeholder="Ex: 0612345678" required>
+          </div>
+          <div class="input-group">
+            <label for="email">E-mail <span class="optional">(facultatif)</span></label>
+            <input id="email" class="inp" type="email" [(ngModel)]="form.email"
+                   placeholder="Ex: client@gmail.com">
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="adress">Adresse de livraison <span class="optional">(facultatif)</span></label>
+          <textarea id="adress" class="inp" rows="3" [(ngModel)]="form.adress"
+                    placeholder="Ex: Quartier Al Mansour, Rue 5, Meknès"></textarea>
+        </div>
+
+        <div class="error-msg" *ngIf="error">
+          <span class="material-symbols-outlined">error</span>
+          {{error}}
+        </div>
+
+        <div class="checkout-actions">
+          <button type="button" class="btn-back" routerLink="/shopping">
+            <span class="material-symbols-outlined">arrow_back</span>
+            Continuer mes achats
+          </button>
+          <button type="button" class="btn-submit" [disabled]="loading" (click)="submitOrder()">
+            <span *ngIf="!loading">
+              <span class="material-symbols-outlined">check_circle</span>
+              Confirmer la commande
+            </span>
+            <span *ngIf="loading" class="loading-dots">Traitement...</span>
+          </button>
+        </div>
+
+        <div class="trust-badges">
+          <div class="badge-item">
+            <span class="material-symbols-outlined">lock</span>
+            <span>Sécurisé</span>
+          </div>
+          <div class="badge-item">
+            <span class="material-symbols-outlined">local_shipping</span>
+            <span>Livraison rapide</span>
+          </div>
+          <div class="badge-item">
+            <span class="material-symbols-outlined">verified</span>
+            <span>Produits 100% naturels</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -14,3 +14,108 @@
   </div>
 </div>
 
+<!-- Floating Quick Access Button -->
+<button type="button" class="admin-fab-quick-add" (click)="openAddModal()" title="Créer une commande manuelle">
+  <span class="material-symbols-outlined">add_shopping_cart</span>
+</button>
+
+<!-- Modal Backdrop -->
+<div class="modal-backdrop" *ngIf="addModalActive" (click)="closeAddModal()"></div>
+
+<!-- Manual Command Modal (multi-product) -->
+<div class="modal-window" *ngIf="addModalActive" style="max-width: 600px;">
+  <div class="modal-header">
+    <h3>Nouvelle commande manuelle</h3>
+    <button class="modal-close-btn" (click)="closeAddModal()"><span class="material-symbols-outlined">close</span></button>
+  </div>
+
+  <div class="modal-body">
+    <!-- Customer Info -->
+    <div class="section-label"><span class="material-symbols-outlined">person</span> Informations client</div>
+    <div class="modal-form-grid">
+      <div class="input-group full">
+        <label>Nom complet *</label>
+        <input class="text" type="text" [(ngModel)]="manualCustomer.fullname" placeholder="Ex: Karim Bensouda">
+      </div>
+      <div class="input-group">
+        <label>Téléphone *</label>
+        <input class="text" type="tel" [(ngModel)]="manualCustomer.tel" placeholder="Ex: 0612345678">
+      </div>
+      <div class="input-group">
+        <label>E-mail (facultatif)</label>
+        <input class="text" type="email" [(ngModel)]="manualCustomer.email" placeholder="Ex: client@gmail.com">
+      </div>
+      <div class="input-group full">
+        <label>Adresse (facultatif)</label>
+        <input class="text" type="text" [(ngModel)]="manualCustomer.adress" placeholder="Ex: Riad El Mansour, Meknès">
+      </div>
+      <div class="input-group full">
+        <label>Statut initial</label>
+        <select class="optionP" [(ngModel)]="manualCustomer.etat">
+          <option [ngValue]="false">En attente</option>
+          <option [ngValue]="true">Livrée / Effectuée</option>
+        </select>
+      </div>
+    </div>
+
+    <hr style="border:0; border-top: 1px dashed var(--border-color); margin: 16px 0;">
+
+    <!-- Product Adder -->
+    <div class="section-label"><span class="material-symbols-outlined">add_shopping_cart</span> Ajouter un produit</div>
+    <div class="modal-form-grid">
+      <div class="input-group full">
+        <label>Produit</label>
+        <select class="optionP" [ngModel]="manualProductSelect.idproducts" (ngModelChange)="manualProductSelect.idproducts = $event; onManualProductSelect($event)">
+          <option value="" disabled>-- Choisir un produit --</option>
+          <option *ngFor="let p of productsList" [value]="p.idproducts">{{p.name}}</option>
+        </select>
+      </div>
+      <div class="input-group" *ngIf="manualSizesList.length > 0">
+        <label>Taille</label>
+        <select class="optionP" [ngModel]="manualSelectedSize" (ngModelChange)="manualSelectedSize = $event">
+          <option *ngFor="let s of manualSizesList" [ngValue]="s">{{s.taille}} — {{s.prix}} DH</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>Quantité</label>
+        <input class="text" type="number" [(ngModel)]="manualProductSelect.qte" min="1">
+      </div>
+      <div class="input-group full">
+        <button class="btn-add-item" [disabled]="!manualSelectedProduct || !manualSelectedSize" (click)="addItemToManualCart()">
+          <span class="material-symbols-outlined">add_circle</span>
+          Ajouter au panier de la commande
+        </button>
+      </div>
+    </div>
+
+    <!-- Manual Cart Preview -->
+    <div *ngIf="manualCartItems.length > 0" style="margin-top: 16px;">
+      <div class="section-label"><span class="material-symbols-outlined">shopping_cart</span> Panier ({{manualCartItems.length}} article(s))</div>
+      <div class="manual-items">
+        <div class="manual-item" *ngFor="let it of manualCartItems; let i = index">
+          <div class="mi-info">
+            <span class="mi-name">{{it.name}}</span>
+            <span class="mi-taille" *ngIf="it.taille">{{it.taille}}</span>
+          </div>
+          <div class="mi-right">
+            <span class="mi-qte">×{{it.qte}}</span>
+            <span class="mi-prix">{{(it.prix * it.qte) | number:'1.0-0'}} DH</span>
+            <button class="mi-del" (click)="removeManualItem(i)"><span class="material-symbols-outlined">close</span></button>
+          </div>
+        </div>
+      </div>
+      <div class="cart-total-row">
+        <span>Total estimé</span>
+        <strong>{{getManualTotal() | number:'1.0-0'}} DH</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn-cancel" (click)="closeAddModal()">Annuler</button>
+    <button class="btn-save" (click)="submitManualCommand()" [disabled]="manualCartItems.length === 0">
+      <span class="material-symbols-outlined">save</span>
+      Enregistrer
+    </button>
+  </div>
+</div>

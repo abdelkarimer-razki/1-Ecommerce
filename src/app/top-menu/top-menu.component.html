@@ -1,14 +1,18 @@
 <div id="topMenu">
     <ul id="logo" style="list-style: none;display: inline-block;">
-        <li routerLink="/"><img src="../../assets/logo31.png" width="50px" alt=""><a > COOPERATIVE BABMANSOUR</a></li>
+        <li routerLink="/"><img src="../../assets/logo31.png" width="50px" alt=""><a> COOPERATIVE BABMANSOUR</a></li>
     </ul>
     <div id="sTopMenu">
         <ul>
             <li class="menuElements" routerLink="/" id="Home" (click)="disableMenu()"><span class="material-symbols-outlined">storefront</span><a> Accueil</a></li>
             <li class="menuElements" routerLink="/shopping" id="Shopping" (click)="disableMenu()"><span class="material-symbols-outlined">shopping_bag</span><a> Shopping</a></li>
-            <li class="menuElements" routerLink="/admin/dashboard" id="Home" (click)="disableMenu()" *ngIf="log.isntAdmin()"><span class="material-symbols-outlined">analytics</span><a> Dashboard</a></li>
-            <!--<li class="menuElements" id="Apropos" (click)="disableMenu()"><a routerLink="/Apropos"><span class="material-symbols-outlined">info</span> à propos</a></li>-->
-            <li class="menuElements"  id="settings" (click)="showMenu()"><span class="material-symbols-outlined">account_circle</span><span *ngIf="cart!=0" class="not not1">{{cart}}</span></li>
+            <li class="menuElements" routerLink="/admin/dashboard" id="AdminDash" (click)="disableMenu()" *ngIf="log.isntAdmin()"><span class="material-symbols-outlined">analytics</span><a> Dashboard</a></li>
+            <!-- Cart icon (always visible, goes to checkout) -->
+            <li class="menuElements cart-menu-btn" routerLink="/checkout" id="CartBtn" (click)="disableMenu()">
+              <span class="material-symbols-outlined">shopping_cart</span>
+              <span *ngIf="cartCount > 0" class="not not1">{{cartCount}}</span>
+            </li>
+            <li class="menuElements" id="settings" (click)="showMenu()"><span class="material-symbols-outlined">account_circle</span></li>
         </ul>
     </div>
 </div>
@@ -19,7 +23,7 @@
     <div class="divider" *ngIf="log.isToken()"></div>
     <li (click)="disableMenu()" *ngIf="!log.isToken()" routerLink="/connexion"><span class="material-symbols-outlined">login</span> Connexion</li>
     <li (click)="disableMenu()" *ngIf="!log.isToken()" routerLink="/inscrire"><span class="material-symbols-outlined">person_add</span> S'inscrire</li>
-    <li (click)="disableMenu()" routerLink="/cart" *ngIf="log.isuser()"><span class="material-symbols-outlined">local_mall</span> Commandes <span *ngIf="cart!=0" class="not">{{cart}}</span></li>
-    <li (click)="log.logout();disableMenu()" *ngIf="log.isToken()" routerLink="/inscrire"><span class="material-symbols-outlined">logout</span> Se déconnecter</li>
+    <li (click)="disableMenu()" routerLink="/cart" *ngIf="log.isuser()"><span class="material-symbols-outlined">local_mall</span> Mes commandes</li>
+    <li (click)="log.logout();disableMenu()" *ngIf="log.isToken()" routerLink="/"><span class="material-symbols-outlined">logout</span> Se déconnecter</li>
   </ul>
 </div>

@@ -11,29 +11,30 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { AuthGuard } from './auth.guard';
 import { CsGuard } from './cs.guard';
 import { AdminComponent } from './admin/admin.component';
-import { Command } from 'protractor';
 import { CommandsComponent } from './commands/commands.component';
 import { UsersComponent } from './users/users.component';
 import { ProductsComponent } from './products/products.component';
 import { ConnectedGuard } from './connected.guard';
 import { SettingsComponent } from './settings/settings.component';
+import { CheckoutComponent } from './checkout/checkout.component';
 
 const routes: Routes = [
-  {path:'shopping',component:ShoppingComponent,},
+  {path:'shopping',component:ShoppingComponent},
   {path:'',component:AcceuilContComponent},
-  {path:"cart",component:AproposComponent,canActivate:[ConnectedGuard]},
-  {path:"produit/:idproducts",component:BuyproductComponent},
-  {path:"connexion",component:LoginComponent,canActivate:[CsGuard]},
-  {path:"inscrire",component:RegistreComponent,canActivate:[CsGuard]},
-  {path:"admin",component:AdminComponent,canActivate:[AuthGuard],
+  {path:'cart',component:AproposComponent,canActivate:[ConnectedGuard]},
+  {path:'checkout',component:CheckoutComponent},
+  {path:'produit/:idproducts',component:BuyproductComponent},
+  {path:'connexion',component:LoginComponent,canActivate:[CsGuard]},
+  {path:'inscrire',component:RegistreComponent,canActivate:[CsGuard]},
+  {path:'admin',component:AdminComponent,canActivate:[AuthGuard],
   children:[
-    {path:"dashboard",component:DashboardComponent,canActivate:[AuthGuard]},
-    {path:"commands",component:CommandsComponent,canActivate:[AuthGuard]},
-    {path:"users",component:UsersComponent,canActivate:[AuthGuard]},
-    {path:"products",component:ProductsComponent,canActivate:[AuthGuard]},
-    {path:"settings",component:SettingsComponent,canActivate:[AuthGuard]}
+    {path:'dashboard',component:DashboardComponent,canActivate:[AuthGuard]},
+    {path:'commands',component:CommandsComponent,canActivate:[AuthGuard]},
+    {path:'users',component:UsersComponent,canActivate:[AuthGuard]},
+    {path:'products',component:ProductsComponent,canActivate:[AuthGuard]},
+    {path:'settings',component:SettingsComponent,canActivate:[AuthGuard]}
   ]},
-  {path:"**",component:PagenotfoundComponent}
+  {path:'**',component:PagenotfoundComponent}
 ];
 
 @NgModule({

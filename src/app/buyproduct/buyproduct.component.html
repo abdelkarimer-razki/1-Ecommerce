@@ -29,15 +29,18 @@
         <span>Livraison gratuite</span>
       </div>
 
-      <div class="actionButtons" *ngIf="!this.admin">
-        <button class="acheter" (click)="acheter(item.idproducts,false)">
-          <span *ngIf="!achate">Acheter maintenant</span>
-          <img *ngIf="achate" src="../../assets/loading.gif" width="30px" alt="">
+      <div class="actionButtons" *ngIf="!admin">
+        <!-- Buy Now (add to cart + go to checkout) -->
+        <button class="acheter" (click)="goToCheckout(item)">
+          <span class="material-symbols-outlined">flash_on</span>
+          Commander maintenant
         </button>
-        <button *ngIf="!cart" class="cart" (click)="acheter(item.idproducts,true)">
+
+        <!-- Add to cart -->
+        <button *ngIf="!addedToCart" class="cart" (click)="addToCart(item)" title="Ajouter au panier">
           <span class="material-symbols-outlined">add_shopping_cart</span>
         </button>
-        <button *ngIf="cart" class="cart" disabled>
+        <button *ngIf="addedToCart" class="cart" routerLink="/checkout" title="Voir le panier">
           <span class="material-symbols-outlined" style="color: var(--color-secondary);">check_circle</span>
         </button>
       </div>

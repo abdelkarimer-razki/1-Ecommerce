@@ -1,6 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { commands } from '../backend/commands';
-import { users } from '../backend/users';
 import { DashboardService } from '../services/dashboard.service';
 
 @Component({
@@ -9,35 +7,42 @@ import { DashboardService } from '../services/dashboard.service';
   styleUrls: ['./commands.component.css']
 })
 export class CommandsComponent implements OnInit {
-  table:any;
-  voidE:boolean=false;
-  voidNE:boolean=false;
-  combobox:any;
-  isEdit:boolean=false;
-  table2:any;
+  // Tables
+  pendingOrders: any[] = [];
+  completedOrders: any[] = [];
+  
+  // UI state
+  voidPending: boolean = false;
+  voidCompleted: boolean = false;
+  isEffectuer: boolean = true; // true = pending (non-effectuées), false = completed
   date: string = this.getCurrentMonth();
-  isEffectuer:boolean=true;
+  
+  // Detail modal
+  detailModalActive: boolean = false;
+  selectedOrder: any = null;
 
-  // Add Command Modal Properties
+  // Delete confirm modal
+  deleteModalActive: boolean = false;
+  orderToDelete: any = null;
+  
+  // Add Manual Command Modal
   addModalActive: boolean = false;
   productsList: any[] = [];
-  sizesList: any[] = [];
-  selectedProduct: any = null;
-  selectedSizeObj: any = null;
-  newCommand: any = {
+  // Cart items for manual command
+  manualCartItems: any[] = [];
+  manualCustomer = {
     fullname: '',
     adress: '',
     tel: '',
     email: '',
-    idproducts: 0,
-    qte: 1,
-    taille: '',
-    prix: 0,
     etat: false
   };
+  manualProductSelect: any = { idproducts: '', qte: 1 };
+  manualSelectedProduct: any = null;
+  manualSizesList: any[] = [];
+  manualSelectedSize: any = null;
 
-  constructor(private dash:DashboardService) {
-   }
+  constructor(private dash: DashboardService) {}
 
   getCurrentMonth(): string {
     const d = new Date();
@@ -46,189 +51,119 @@ export class CommandsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.chargeTables();
+    this.loadTables();
   }
 
-  validChange(adress:any,id:any,qte:Number,idcommande:Number,idprodutss:Number)
-  {
-    this.dash.changeAdressUser(id,adress).subscribe();
-    this.dash.changeQteProduit(idcommande,idprodutss,qte).subscribe();
-    this.chargeTables();
-    this.search(this.date);
-  }
-  Edit()
-  {
-    this.dash.productCombobox().subscribe(data=>{
-      this.combobox=data;
-    })
+  loadTables() {
+    // Load pending (non-effectuées)
+    this.dash.allCommandsE().subscribe((data: any) => {
+      this.pendingOrders = data || [];
+      this.voidPending = this.pendingOrders.length === 0;
+    });
+    // Load completed for current month
+    this.searchCompleted(this.date);
   }
 
-  search(date: any)
-  {
-    if(date == undefined || date === '')
-    {
-      this.dash.allCommandsN().subscribe(data=>{
-        this.table2=data;
-        if(data.toString()=="")
-        {
-          this.voidE=true;
-        }
-        else
-        {
-          this.voidE=false;
-        }
-      })
-    }
-    else
-    {
-      this.dash.commandEffectueSearch(date).subscribe(data=>{
-        this.table2=data;
-        if(data.toString()=="")
-        {
-          this.voidE=true;
-        }
-        else
-        {
-          this.voidE=false;
-        }
+  searchCompleted(date: any) {
+    if (!date) {
+      this.dash.allCommandsN().subscribe((data: any) => {
+        this.completedOrders = data || [];
+        this.voidCompleted = this.completedOrders.length === 0;
+      });
+    } else {
+      this.dash.commandEffectueSearch(date).subscribe((data: any) => {
+        this.completedOrders = data || [];
+        this.voidCompleted = this.completedOrders.length === 0;
       });
     }
   }
 
-  chargeTables()
-  {
-    this.dash.allCommandsE().subscribe(data=>{
-      this.table=data;
-      if(data.toString()=="")
-      {
-        this.voidNE=true;
-      }
-      else
-      {
-        this.voidNE=false;
-      }
-    })
+  changeTab(isPending: boolean) {
+    this.isEffectuer = isPending;
+    if (!isPending) this.searchCompleted(this.date);
   }
 
-  showComNo(){
-    setTimeout(() => {
-      this.search(this.date);
-      this.chargeTables();
-    }, 300);
-  }
-  changeEtatN(){
-    this.search(this.date);
-    this.chargeTables()
-    this.isEffectuer=false
-  }
-  changeEtatP(){
-    this.search(this.date);
-    this.chargeTables()
-    this.isEffectuer=true
-  }
-  showmor(a:any){
-    var s=document.getElementById(a.toString());
-    if(s?.style.display=="none"){
-      if(s) s.style.display="block"
-    }else
-    {
-      if(s) s.style.display="none"
-    }
-  }
-  showmodifie(a:String)
-  {
-    var s=document.getElementById(a.toString());
-      if(s) s.style.display="block"
-  }
-  disable(a:Number){
-    var i;
-    var s=document.getElementsByClassName("more");
-    for(i=0;i<s.length;i++){
-      var v=document.getElementById(i.toString());
-      if(i!=a){
-        if(v?.style.display=="block"){
-          if(v) v.style.display="none"
-        }
-      }
-    }
-  }
-  disableOther(id:any)
-  {
-    var s=document.getElementById(id.toString());
-    if(s?.style.display=="none"){
-      if(s) s.style.display="block"
-    }else
-    {
-      if(s) s.style.display="none"
-    }
-  }
-
-  verifie(i:Number,command:commands,isVerified:boolean)
-  {
-    if(isVerified==true)
-    {
-      this.dash.verfieCommande(i,command).subscribe();
-    }
-    else if(isVerified==false)
-    {
-      this.dash.unverfiedCommande(i,command).subscribe();
-    }
-  }
-
-  effectue(i:Number,command:commands,isEffectuer:boolean){
-    if(isEffectuer==true)
-    {
-      this.dash.deeffectueCommande(i,command).subscribe();
-    }else if(isEffectuer==false)
-    {
-      this.dash.effectueCommande(i,command).subscribe();
-    }
-
-  }
-
-  // Month navigation helpers
-  prevMonth() {
-    this.adjustMonth(-1);
-  }
-
-  nextMonth() {
-    this.adjustMonth(1);
-  }
+  // Month navigation
+  prevMonth() { this.adjustMonth(-1); }
+  nextMonth() { this.adjustMonth(1); }
 
   adjustMonth(offset: number) {
-    if (!this.date) {
-      this.date = this.getCurrentMonth();
-    }
+    if (!this.date) this.date = this.getCurrentMonth();
     const [yearStr, monthStr] = this.date.split('-');
-    let year = parseInt(yearStr, 10);
-    let month = parseInt(monthStr, 10) - 1;
-
-    const date = new Date(year, month);
-    date.setMonth(date.getMonth() + offset);
-
-    const nextY = date.getFullYear();
-    const nextM = String(date.getMonth() + 1).padStart(2, '0');
-    this.date = `${nextY}-${nextM}`;
-    this.search(this.date);
+    const d = new Date(parseInt(yearStr), parseInt(monthStr) - 1);
+    d.setMonth(d.getMonth() + offset);
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    this.date = `${y}-${m}`;
+    this.searchCompleted(this.date);
   }
 
-  // Manual Command Modal
+  getMonthLabel(): string {
+    if (!this.date) return '';
+    const [y, m] = this.date.split('-');
+    const d = new Date(parseInt(y), parseInt(m) - 1);
+    return d.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+  }
+
+  // Mark order as effectuée / non-effectuée
+  toggleEffectue(order: any) {
+    if (order.etat) {
+      this.dash.deeffectueCommande(order.idgroup, order).subscribe(() => this.loadTables());
+    } else {
+      this.dash.effectueCommande(order.idgroup, order).subscribe(() => this.loadTables());
+    }
+  }
+
+  // Verify / Unverify
+  toggleVerify(order: any) {
+    if (order.verifie) {
+      this.dash.verfieCommande(order.idgroup, order).subscribe(() => this.loadTables());
+    } else {
+      this.dash.unverfiedCommande(order.idgroup, order).subscribe(() => this.loadTables());
+    }
+  }
+
+  // Detail modal
+  openDetail(order: any) {
+    this.selectedOrder = order;
+    this.detailModalActive = true;
+  }
+
+  closeDetail() {
+    this.detailModalActive = false;
+    this.selectedOrder = null;
+  }
+
+  // Delete modal
+  openDeleteConfirm(order: any) {
+    this.orderToDelete = order;
+    this.deleteModalActive = true;
+  }
+
+  closeDeleteConfirm() {
+    this.deleteModalActive = false;
+    this.orderToDelete = null;
+  }
+
+  confirmDelete() {
+    if (!this.orderToDelete) return;
+    this.dash.deleteOrderGroup(this.orderToDelete.idgroup).subscribe(() => {
+      this.closeDeleteConfirm();
+      this.loadTables();
+    });
+  }
+
+  // =============================================
+  // MANUAL COMMAND MODAL (multi-product cart)
+  // =============================================
   openAddModal() {
-    this.newCommand = {
-      fullname: '',
-      adress: '',
-      tel: '',
-      email: '',
-      idproducts: '',
-      qte: 1,
-      taille: '',
-      prix: 0,
-      etat: false
-    };
-    this.selectedProduct = null;
-    this.selectedSizeObj = null;
-    this.sizesList = [];
-    
+    this.manualCustomer = { fullname: '', adress: '', tel: '', email: '', etat: false };
+    this.manualCartItems = [];
+    this.manualProductSelect = { idproducts: '', qte: 1 };
+    this.manualSelectedProduct = null;
+    this.manualSizesList = [];
+    this.manualSelectedSize = null;
+
     this.dash.showproducts().subscribe((data: any) => {
       this.productsList = data;
       this.addModalActive = true;
@@ -239,57 +174,79 @@ export class CommandsComponent implements OnInit {
     this.addModalActive = false;
   }
 
-  onProductSelect(prodId: any) {
-    this.selectedProduct = this.productsList.find(p => Number(p.idproducts) === Number(prodId));
-    if (this.selectedProduct) {
-      this.newCommand.idproducts = this.selectedProduct.idproducts;
-      
-      let sizes = this.selectedProduct.sizes || [];
+  onManualProductSelect(prodId: any) {
+    this.manualSelectedProduct = this.productsList.find(p => Number(p.idproducts) === Number(prodId));
+    if (this.manualSelectedProduct) {
+      let sizes = this.manualSelectedProduct.sizes || [];
       if (sizes.length === 0) {
-        sizes = [];
-        if (this.selectedProduct.taille && this.selectedProduct.taille !== '0') {
-          sizes.push({ taille: String(this.selectedProduct.taille), prix: Number(this.selectedProduct.prix) });
+        if (this.manualSelectedProduct.taille && this.manualSelectedProduct.taille !== '0') {
+          sizes.push({ taille: String(this.manualSelectedProduct.taille), prix: Number(this.manualSelectedProduct.prix) });
         }
-        if (this.selectedProduct.taille2 && this.selectedProduct.taille2 !== '0') {
-          sizes.push({ taille: String(this.selectedProduct.taille2), prix: Number(this.selectedProduct.prix2) });
+        if (this.manualSelectedProduct.taille2 && this.manualSelectedProduct.taille2 !== '0') {
+          sizes.push({ taille: String(this.manualSelectedProduct.taille2), prix: Number(this.manualSelectedProduct.prix2) });
         }
-        if (this.selectedProduct.taille3 && this.selectedProduct.taille3 !== '0') {
-          sizes.push({ taille: String(this.selectedProduct.taille3), prix: Number(this.selectedProduct.prix3) });
+        if (this.manualSelectedProduct.taille3 && this.manualSelectedProduct.taille3 !== '0') {
+          sizes.push({ taille: String(this.manualSelectedProduct.taille3), prix: Number(this.manualSelectedProduct.prix3) });
         }
       }
-      this.sizesList = sizes;
-      
-      if (this.sizesList.length > 0) {
-        this.selectedSizeObj = this.sizesList[0];
-        this.onSizeSelect(this.selectedSizeObj);
-      } else {
-        this.selectedSizeObj = null;
-        this.newCommand.taille = '';
-        this.newCommand.prix = 0;
-      }
+      this.manualSizesList = sizes;
+      this.manualSelectedSize = sizes.length > 0 ? sizes[0] : null;
     }
   }
 
-  onSizeSelect(sizeObj: any) {
-    if (sizeObj) {
-      this.newCommand.taille = sizeObj.taille;
-      this.newCommand.prix = sizeObj.prix;
+  addItemToManualCart() {
+    if (!this.manualSelectedProduct || !this.manualSelectedSize) return;
+    const existing = this.manualCartItems.find(
+      i => i.idproducts === this.manualSelectedProduct.idproducts && i.taille === this.manualSelectedSize.taille
+    );
+    if (existing) {
+      existing.qte += Number(this.manualProductSelect.qte) || 1;
+    } else {
+      this.manualCartItems.push({
+        idproducts: this.manualSelectedProduct.idproducts,
+        name: this.manualSelectedProduct.name,
+        taille: this.manualSelectedSize.taille,
+        prix: Number(this.manualSelectedSize.prix),
+        qte: Number(this.manualProductSelect.qte) || 1
+      });
     }
+    this.manualProductSelect = { idproducts: '', qte: 1 };
+    this.manualSelectedProduct = null;
+    this.manualSizesList = [];
+    this.manualSelectedSize = null;
+  }
+
+  removeManualItem(i: number) {
+    this.manualCartItems.splice(i, 1);
+  }
+
+  getManualTotal(): number {
+    return this.manualCartItems.reduce((s, i) => s + i.prix * i.qte, 0);
   }
 
   submitManualCommand() {
-    if (!this.newCommand.fullname || !this.newCommand.tel || !this.newCommand.idproducts) {
-      alert("Veuillez remplir tous les champs obligatoires (Nom, Téléphone, Produit).");
+    if (!this.manualCustomer.fullname || !this.manualCustomer.tel) {
+      alert('Veuillez remplir le nom et le téléphone du client.');
       return;
     }
-    
-    this.dash.addManualCommand(this.newCommand).subscribe((res: any) => {
-      this.closeAddModal();
-      this.chargeTables();
-      this.search(this.date);
-    }, (err) => {
-      console.error(err);
-      alert("Erreur lors de l'ajout de la commande.");
-    });
+    if (this.manualCartItems.length === 0) {
+      alert('Veuillez ajouter au moins un produit.');
+      return;
+    }
+    const payload = {
+      ...this.manualCustomer,
+      source: 'magasin',
+      items: this.manualCartItems
+    };
+    this.dash.addManualCommand(payload).subscribe(
+      () => {
+        this.closeAddModal();
+        this.loadTables();
+      },
+      (err) => {
+        console.error(err);
+        alert("Erreur lors de l'ajout de la commande.");
+      }
+    );
   }
 }

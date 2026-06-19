@@ -6,6 +6,7 @@ import { products } from '../backend/products';
 import { BuyproductService } from '../services/buyproduct.service';
 import { Title } from '@angular/platform-browser';
 import { LoginService } from '../services/login.service';
+import { CartService } from '../services/cart.service';
 
 @Component({
   selector: 'app-buyproduct',
@@ -13,22 +14,29 @@ import { LoginService } from '../services/login.service';
   styleUrls: ['./buyproduct.component.css']
 })
 export class BuyproductComponent implements OnInit {
-   id:String=this.route.snapshot.params['idproducts'];
-   loading:boolean=true;
-   qte:any=1;
-   achate:boolean=false;
-   cart:boolean=false;
-   admin:boolean=false;
+   id: String = this.route.snapshot.params['idproducts'];
+   loading: boolean = true;
+   qte: any = 1;
+   addedToCart: boolean = false;
+   admin: boolean = false;
    selectedSize: any = null;
 
-   product:products[]=[];
-  constructor(private route:ActivatedRoute,private login:LoginService,private router:Router,private buyService:BuyproductService,private sanitizer: DomSanitizer,private titleService:Title) {
-   }
+   product: products[] = [];
+
+  constructor(
+    private route: ActivatedRoute,
+    private login: LoginService,
+    private router: Router,
+    private buyService: BuyproductService,
+    private sanitizer: DomSanitizer,
+    private titleService: Title,
+    private cartService: CartService
+  ) {}
 
   ngOnInit(): void {
-    this.buyService.getProducts(this.id).subscribe(data=>{
-      this.product=data;
-      this.loading=false;
+    this.buyService.getProducts(this.id).subscribe(data => {
+      this.product = data;
+      this.loading = false;
       if (this.product && this.product[0]) {
         if (!this.product[0].sizes || this.product[0].sizes.length === 0) {
           this.product[0].sizes = [];
@@ -45,65 +53,50 @@ export class BuyproductComponent implements OnInit {
         if (this.product[0].sizes && this.product[0].sizes.length > 0) {
           this.selectedSize = this.product[0].sizes[0];
         }
+        this.titleService.setTitle(this.product[0].name);
       }
     });
 
-    this.buyService.cartcheck(this.id,localStorage.getItem("userId")).subscribe((data:any)=>
-    {
-      if(data[0].count>0)
-      {
-        this.cart=true;
-      }
-    })
-    if(this.login.isntAdmin())
-    {
-      this.admin=true;
+    if (this.login.isntAdmin()) {
+      this.admin = true;
     }
+
+    // Check if already in cart
+    const cartItems = this.cartService.getItems();
+    this.addedToCart = cartItems.some(i => i.idproducts === Number(this.id));
   }
 
-  transform(pic:string){
-    var re = /kigmfhhh/gi;
-    var pic1=pic.replace(re,"/");
-    if(pic1==null){
-      return null;
-    }else{
-      return this.sanitizer.bypassSecurityTrustUrl(pic1);
-    }
+  transform(pic: string) {
+    if (!pic) return '';
+    const re = /kigmfhhh/gi;
+    const pic1 = pic.replace(re, '/');
+    return this.sanitizer.bypassSecurityTrustUrl(pic1);
   }
 
   selectSize(size: any) {
     this.selectedSize = size;
+    // Re-check cart status when size changes
+    const cartItems = this.cartService.getItems();
+    this.addedToCart = cartItems.some(i =>
+      i.idproducts === Number(this.id) && i.taille === size.taille
+    );
   }
 
-  acheter(idproducts:any,cart:any)
-  {
-    if(cart==false)
-    {
-      this.achate=true;
-    }
-    if(!localStorage.getItem("userId"))
-    {
-      this.router.navigate(['/connexion']);
-      return;
-    }
-    if (!this.selectedSize) {
-      this.achate = false;
-      return;
-    }
-
-    const price = Number(this.selectedSize.prix);
-    const sizeName = this.selectedSize.taille;
-
-    this.buyService.acheterorcart(idproducts,localStorage.getItem("userId"),this.qte,this.qte*price,cart,sizeName).subscribe(data=>{
-      if(cart==true){
-        this.cart=true;
-        localStorage.removeItem('cart');
-      }else
-      {
-        localStorage.setItem('cart','false');
-        this.router.navigate(['/cart']);
-      }
-      this.achate=false;
+  addToCart(item: any) {
+    if (!this.selectedSize) return;
+    this.cartService.addItem({
+      idproducts: Number(item.idproducts),
+      name: item.name,
+      picture: item.picture,
+      taille: this.selectedSize.taille,
+      prix: Number(this.selectedSize.prix),
+      qte: Number(this.qte) || 1
     });
+    this.addedToCart = true;
+  }
+
+  goToCheckout(item: any) {
+    this.addToCart(item);
+    this.router.navigate(['/checkout']);
   }
 }

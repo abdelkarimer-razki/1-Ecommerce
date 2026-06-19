@@ -1,215 +1,397 @@
-<div class="admin-commands-container">
-  <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 16px; margin-top: 15px;">
-    <h1 class="title" style="font-family: var(--font-serif) !important; font-size: 1.6rem; font-weight: 700; color: var(--color-text-main); display: flex; align-items: center; gap: 12px; margin: 0;">
-      <span class="material-symbols-outlined" style="color: var(--color-secondary);">receipt_long</span> Commandes
-    </h1>
-    <div id="buttonid" (click)="openAddModal()" style="background-color: var(--color-primary); color: white; border-radius: var(--border-radius-sm); padding: 10px 20px; font-family: var(--font-sans); font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: var(--transition-smooth); display: flex; align-items: center; justify-content: center; gap: 8px;">
-      <span class="material-symbols-outlined" style="font-size: 1.2rem;">add</span> Commande Manuelle
+<div class="commands-page">
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="page-title">
+      <span class="material-symbols-outlined">receipt_long</span>
+      <h1>Commandes</h1>
+    </div>
+    <button class="btn-add-manual" (click)="openAddModal()">
+      <span class="material-symbols-outlined">add_shopping_cart</span>
+      Commande Manuelle
+    </button>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn" [class.active]="isEffectuer" (click)="changeTab(true)">
+      <span class="material-symbols-outlined">pending_actions</span>
+      En attente
+      <span class="tab-badge" *ngIf="pendingOrders.length > 0">{{pendingOrders.length}}</span>
+    </button>
+    <button class="tab-btn" [class.active]="!isEffectuer" (click)="changeTab(false)">
+      <span class="material-symbols-outlined">check_circle</span>
+      Effectuées
+    </button>
+  </div>
+
+  <!-- MONTH NAVIGATOR (for Effectuées tab) -->
+  <div class="month-nav" *ngIf="!isEffectuer">
+    <button class="arrow-btn" (click)="prevMonth()" title="Mois précédent">
+      <span class="material-symbols-outlined">chevron_left</span>
+    </button>
+    <span class="month-label">{{getMonthLabel()}}</span>
+    <button class="arrow-btn" (click)="nextMonth()" title="Mois suivant">
+      <span class="material-symbols-outlined">chevron_right</span>
+    </button>
+  </div>
+
+  <!-- PENDING ORDERS TABLE -->
+  <div *ngIf="isEffectuer">
+    <div class="empty-state" *ngIf="voidPending">
+      <span class="material-symbols-outlined">check_circle</span>
+      <p>Toutes les commandes ont été effectuées !</p>
+    </div>
+    <div class="orders-table-wrap" *ngIf="!voidPending">
+      <table class="orders-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Client</th>
+            <th>Téléphone</th>
+            <th>Produits</th>
+            <th>Total</th>
+            <th>Date</th>
+            <th>Source</th>
+            <th>Statut</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let order of pendingOrders">
+            <td class="order-id">#{{order.idgroup}}</td>
+            <td class="order-client">
+              <div class="client-name">{{order.fullname}}</div>
+              <div class="client-addr" *ngIf="order.adress">{{order.adress}}</div>
+            </td>
+            <td>{{order.tel}}</td>
+            <td class="order-products">
+              <div class="product-pills">
+                <span class="product-pill" *ngFor="let it of (order.items || [])">
+                  {{it.name}} <span class="pill-qte">×{{it.qte}}</span>
+                </span>
+              </div>
+            </td>
+            <td class="order-total">{{order.prix_total | number:'1.0-0'}} DH</td>
+            <td class="order-date">{{order.to_char}}</td>
+            <td>
+              <span class="source-badge magasin" *ngIf="order.source === 'magasin'">
+                <span class="material-symbols-outlined">store</span> Magasin
+              </span>
+              <span class="source-badge site" *ngIf="order.source !== 'magasin'">
+                <span class="material-symbols-outlined">language</span> En ligne
+              </span>
+            </td>
+            <td>
+              <span class="status-badge pending">En attente</span>
+            </td>
+            <td class="action-btns">
+              <button class="icon-btn view" (click)="openDetail(order)" title="Voir les détails">
+                <span class="material-symbols-outlined">visibility</span>
+              </button>
+              <button class="icon-btn effectue" (click)="toggleEffectue(order)" title="Marquer effectuée">
+                <span class="material-symbols-outlined">check_circle</span>
+              </button>
+              <button class="icon-btn del" (click)="openDeleteConfirm(order)" title="Supprimer">
+                <span class="material-symbols-outlined">delete_outline</span>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 
-  <div class="choice" style="margin-top: 24px;">
-    <label class="effectuer" (click)="changeEtatN()" [ngClass]="{colorback: !isEffectuer}"><span class="material-symbols-outlined">check_circle</span> Achat Effectuer</label>
-    <label class="Noneffectuer" (click)="changeEtatP()" [ngClass]="{colorback: isEffectuer}"><span class="material-symbols-outlined">cancel</span> Achat Non-Effectuer</label>
-  </div>
-  
-  <div *ngIf="!isEffectuer" id="search" style="display: flex; align-items: center;">
-    <button type="button" class="btn-arrow" (click)="prevMonth()" title="Mois précédent" style="background: none; border: none; color: var(--color-text-light); padding: 0 12px; cursor: pointer; display: inline-flex; align-items: center; height: 100%; transition: var(--transition-smooth);">
-      <span class="material-symbols-outlined" style="font-size: 1.3rem;">chevron_left</span>
-    </button>
-    <input type="month" [(ngModel)]="date" (ngModelChange)="search(date)" name="month-picker" id="month-picker" style="text-align: center; border-left: 1px solid var(--border-color); border-right: 1px solid var(--border-color); border-radius: 0;">
-    <button type="button" class="btn-arrow" (click)="nextMonth()" title="Mois suivant" style="background: none; border: none; color: var(--color-text-light); padding: 0 12px; cursor: pointer; display: inline-flex; align-items: center; height: 100%; transition: var(--transition-smooth);">
-      <span class="material-symbols-outlined" style="font-size: 1.3rem;">chevron_right</span>
-    </button>
-    <button (click)="search(date)" style="border-top-left-radius: 0; border-bottom-left-radius: 0;"><span class="material-symbols-outlined" style="font-size: 18px; margin-right: 4px;">search</span> Chercher</button>
-  </div>
-  <div class="table" *ngIf="isEffectuer">
-    <div *ngIf="voidNE" style="text-align:center;font-size: 30px;padding-top: 120px;"><img src="../../assets/smallbee.png" alt=""> Tous les commandes sont effectue</div>
-    <table *ngIf="!voidNE">
-      <tr id="headerTable">
-        <th><span class="material-symbols-outlined">person</span> Nom</th>
-        <th><span class="material-symbols-outlined">home</span> Adresse</th>
-        <th><span class="material-symbols-outlined">call</span> Telephone/E-mail</th>
-        <th><span class="material-symbols-outlined">shopping_bag</span> Produit</th>
-        <th><span class="material-symbols-outlined">calendar_today</span> Date de Commande</th>
-        <th><span class="material-symbols-outlined">payments</span> Taille/Prix</th>
-        <th>Verifié?</th>
-        <th>Effectué?</th>
-        <th></th>
-      </tr>
-      <tr class="TableElement" *ngFor="let item of table;index as i">
-        <td>
-          <div style="font-weight: 700; color: var(--color-text-main);">{{item.fullname}}</div>
-          <!-- Type/Source badge -->
-          <span class="ticket-source magasin" *ngIf="item.source === 'magasin'" style="display: inline-flex; align-items: center; gap: 4px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; background-color: var(--color-primary-light); color: var(--color-primary); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(180, 83, 9, 0.15); margin-top: 4px;">
-            <span class="material-symbols-outlined" style="font-size: 0.8rem;">store</span> Magasin
-          </span>
-          <span class="ticket-source site" *ngIf="item.source !== 'magasin'" style="display: inline-flex; align-items: center; gap: 4px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; background-color: var(--color-secondary-light); color: var(--color-secondary); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(63, 98, 18, 0.15); margin-top: 4px;">
-            <span class="material-symbols-outlined" style="font-size: 0.8rem;">language</span> En ligne
-          </span>
-        </td>
-        <td style="display:block" class = "edits" [id]="i + 'c'">{{item.adress}}</td>
-        <td style="display:none" [id]="i + 'b'" class = "edits"><input type="text" class="editers"  name="" id="" value={{item.adress}} [(ngModel)]="item.adress"></td>
-        <td><label id="phone">{{item.tel}}</label>
-          {{item.email}}
-        </td>
-        <td style="display:block" [id]="i + 'd'" class = "edits">{{item.name}} ({{item.qte}})</td>
-        <td style="display:none" class = "edits" [id]="i + 'a'"><select  class="optionP" [(ngModel)]="item.idproducts"><option *ngFor="let item of combobox" value={{item.idproducts}}>{{item.name}}</option></select> <input type="text" class="editers" style="width:45px;" [(ngModel)]="item.qte" value={{item.qte}}></td>
-        <td>{{item.to_char}}</td>
-        <td>{{item.prix}} DH/
-          {{item.taille}}
-        </td>
-        <td><span class="true" *ngIf="item.verifie">Verifié</span><span class="false" *ngIf="!item.verifie">En attent</span></td>
-        <td><span class="true" *ngIf="item.etat">Effecuter</span><span class="false" *ngIf="!item.etat">En attent</span></td>
-        <td><span class="material-symbols-outlined" style="cursor: pointer;" (click)="showmor(i);disable(i)">more_vert</span></td><br>
-        <div [id]="i" style="display: none;" class="more">
-          <ul>
-            <li [id]="i + '1'" style="display: none;" (click)="validChange(item.adress,item.iduser,item.qte,item.idcommande,item.idproducts);showmor(i);showmor(i+'a');showmor(i+'b');showmor(i+'c');showmor(i+'d')"><span class="material-symbols-outlined">done</span> Valider</li>
-            <li [id]="i + '2'" style="display: none;" (click)="showmor(i + '1');showmor(i + '2');showmor(i + '3');showmor(i + '4');showmor(i + '5');showmor(i+'a');showmor(i+'b');showmor(i+'c');showmor(i);showmor(i+'d')"><span class="material-symbols-outlined">close</span> Annuler</li>
-            <li [id]="i + '3'" style="display: block;" (click)="Edit();showmor(i + '1');showmor(i + '2');showmor(i + '3');showmor(i + '4');showmor(i + '5');showmor(i+'a');showmor(i+'b');showmor(i+'c');showmor(i);showmor(i+'d')"><span class="material-symbols-outlined">edit</span> Modifier</li>
-            <li [id]="i + '4'" style="display: block;" (click)="verifie(item.idcommande,item,item.verifie);showmor(i);showComNo()"><span class="material-symbols-outlined">verified</span> <span for="" *ngIf="!item.verifie">  Verifié</span>  <span for="" *ngIf="item.verifie">  Falsifier</span></li>
-            <li [id]="i + '5'" style="display: block;" (click)="effectue(item.idcommande,item,item.etat);showmor(i);showComNo()"><span class="material-symbols-outlined">check_circle</span> Effectué</li>
-          </ul>
-      </div>
-      </tr>
-    </table>
-</div>
-<div class="table" *ngIf="!isEffectuer">
-  <div *ngIf="voidE" style="text-align:center;font-size: 30px;padding-top: 120px;"><img src="../../assets/smallbee.png" alt=""> Il n'y a pas de Commande effectuer</div>
-  <table *ngIf="!voidE">
-    <tr id="headerTable">
-      <th><span class="material-symbols-outlined">person</span> Nom</th>
-      <th><span class="material-symbols-outlined">home</span> Adresse</th>
-      <th><span class="material-symbols-outlined">call</span> Telephone/E-mail</th>
-      <th><span class="material-symbols-outlined">shopping_bag</span> Produit</th>
-      <th><span class="material-symbols-outlined">calendar_today</span> Date de Commande</th>
-      <th><span class="material-symbols-outlined">payments</span> Taille/Prix</th>
-      <th>Verifié?</th>
-      <th>Effectué?</th>
-      <th></th>
-    </tr>
-    <tr class="TableElement" *ngFor="let item of table2;index as i">
-      <td>
-        <div style="font-weight: 700; color: var(--color-text-main);">{{item.fullname}}</div>
-        <!-- Type/Source badge -->
-        <span class="ticket-source magasin" *ngIf="item.source === 'magasin'" style="display: inline-flex; align-items: center; gap: 4px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; background-color: var(--color-primary-light); color: var(--color-primary); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(180, 83, 9, 0.15); margin-top: 4px;">
-          <span class="material-symbols-outlined" style="font-size: 0.8rem;">store</span> Magasin
-        </span>
-        <span class="ticket-source site" *ngIf="item.source !== 'magasin'" style="display: inline-flex; align-items: center; gap: 4px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; background-color: var(--color-secondary-light); color: var(--color-secondary); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(63, 98, 18, 0.15); margin-top: 4px;">
-          <span class="material-symbols-outlined" style="font-size: 0.8rem;">language</span> En ligne
-        </span>
-      </td>
-      <td style="display:block" class ="edits" [id]="i + 'c'">{{item.adress}}</td>
-      <td style="display:none" [id]="i + 'b'" class = "edits"><input class="editers" type="text" name="" id="" value={{item.adress}} [(ngModel)]="item.adress"></td>
-      <td><label id="phone">{{item.tel}}</label>
-        {{item.email}}
-      </td>
-      <td style="display:block" [id]="i + 'd'" class = "edits">{{item.name}} ({{item.qte}})</td>
-      <td style="display:none" class = "edits" [id]="i + 'a'"><select class="optionP" [(ngModel)]="item.idproducts"><option select *ngFor="let item of combobox" value={{item.idproducts}}>{{item.name}}</option></select> <input type="text" class="editers" style="width:45px;" [(ngModel)]="item.qte" value={{item.qte}}></td>
-      <td>{{item.to_char}}</td>
-      <td>{{item.prix}} DH/
-        {{item.taille}}
-      </td>
-      <td><span class="true" *ngIf="item.verifie">Verifié</span><span class="false" *ngIf="!item.verifie">En attent</span></td>
-      <td><span class="true" *ngIf="item.etat">Effecuter</span><span class="false" *ngIf="!item.etat">En attent</span></td>
-      <td><span class="material-symbols-outlined" style="cursor: pointer;" (click)="showmor(i);disable(i)">more_vert</span></td><br>
-      <div [id]="i" style="display: none;" class="more">
-        <ul>
-          <li [id]="i + '1'" style="display: none;" (click)="validChange(item.adress,item.iduser,item.qte,item.idcommande,item.idproducts);showmor(i);showmor(i+'a');showmor(i+'b');showmor(i+'c');showmor(i+'d')"><span class="material-symbols-outlined">done</span> Valider</li>
-          <li [id]="i + '2'" style="display: none;" (click)="showmor(i + '1');showmor(i + '2');showmor(i + '3');showmor(i + '4');showmor(i + '5');showmor(i+'a');showmor(i+'b');showmor(i+'c');showmor(i);showmor(i+'d')"><span class="material-symbols-outlined">close</span> Annuler</li>
-          <li [id]="i + '3'" style="display: block;" (click)="Edit();showmor(i + '1');showmor(i + '2');showmor(i + '3');showmor(i + '4');showmor(i + '5');showmor(i+'a');showmor(i+'b');showmor(i+'c');showmor(i);showmor(i+'d')"><span class="material-symbols-outlined">edit</span> Modifier</li>
-          <li [id]="i + '4'" style="display: block;" (click)="verifie(item.idcommande,item,item.verifie);showmor(i);showComNo()"><span class="material-symbols-outlined">verified</span> <span for="" *ngIf="!item.verifie">  Verifié</span>  <span for="" *ngIf="item.verifie">  Falsifier</span></li>
-          <li [id]="i + '5'" style="display: block;" (click)="effectue(item.idcommande,item,item.etat);showmor(i);showComNo()"><span class="material-symbols-outlined">check_circle</span> Abandonner</li>
-        </ul>
+  <!-- COMPLETED ORDERS TABLE -->
+  <div *ngIf="!isEffectuer">
+    <div class="empty-state" *ngIf="voidCompleted">
+      <span class="material-symbols-outlined">calendar_month</span>
+      <p>Aucune commande effectuée en {{getMonthLabel()}}.</p>
     </div>
-    </tr>
-  </table>
+    <div class="orders-table-wrap" *ngIf="!voidCompleted">
+      <table class="orders-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Client</th>
+            <th>Téléphone</th>
+            <th>Produits</th>
+            <th>Total</th>
+            <th>Date</th>
+            <th>Source</th>
+            <th>Statut</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let order of completedOrders">
+            <td class="order-id">#{{order.idgroup}}</td>
+            <td class="order-client">
+              <div class="client-name">{{order.fullname}}</div>
+              <div class="client-addr" *ngIf="order.adress">{{order.adress}}</div>
+            </td>
+            <td>{{order.tel}}</td>
+            <td class="order-products">
+              <div class="product-pills">
+                <span class="product-pill" *ngFor="let it of (order.items || [])">
+                  {{it.name}} <span class="pill-qte">×{{it.qte}}</span>
+                </span>
+              </div>
+            </td>
+            <td class="order-total">{{order.prix_total | number:'1.0-0'}} DH</td>
+            <td class="order-date">{{order.to_char}}</td>
+            <td>
+              <span class="source-badge magasin" *ngIf="order.source === 'magasin'">
+                <span class="material-symbols-outlined">store</span> Magasin
+              </span>
+              <span class="source-badge site" *ngIf="order.source !== 'magasin'">
+                <span class="material-symbols-outlined">language</span> En ligne
+              </span>
+            </td>
+            <td>
+              <span class="status-badge done">Effectuée</span>
+            </td>
+            <td class="action-btns">
+              <button class="icon-btn view" (click)="openDetail(order)" title="Voir les détails">
+                <span class="material-symbols-outlined">visibility</span>
+              </button>
+              <button class="icon-btn pending-btn" (click)="toggleEffectue(order)" title="Marquer non-effectuée">
+                <span class="material-symbols-outlined">undo</span>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>
 
-<!-- Modal Add Manual Command Backdrop -->
-<div class="modal-backdrop" *ngIf="addModalActive" (click)="closeAddModal()"></div>
-
-<!-- Modal Add Manual Command Window -->
-<div class="modal-window" *ngIf="addModalActive" style="max-width: 500px;">
+<!-- ============================================ -->
+<!-- ORDER DETAIL MODAL -->
+<!-- ============================================ -->
+<div class="modal-backdrop" *ngIf="detailModalActive" (click)="closeDetail()"></div>
+<div class="modal-window detail-modal" *ngIf="detailModalActive">
   <div class="modal-header">
-    <h3>Ajouter une Commande Manuelle</h3>
-    <button class="modal-close-btn" (click)="closeAddModal()"><span class="material-symbols-outlined">close</span></button>
+    <div>
+      <h3>Commande #{{selectedOrder?.idgroup}}</h3>
+      <div class="detail-meta">
+        <span class="source-badge magasin" *ngIf="selectedOrder?.source === 'magasin'">
+          <span class="material-symbols-outlined">store</span> Magasin
+        </span>
+        <span class="source-badge site" *ngIf="selectedOrder?.source !== 'magasin'">
+          <span class="material-symbols-outlined">language</span> En ligne
+        </span>
+        <span class="status-badge done" *ngIf="selectedOrder?.etat">Effectuée</span>
+        <span class="status-badge pending" *ngIf="!selectedOrder?.etat">En attente</span>
+      </div>
+    </div>
+    <button class="modal-close-btn" (click)="closeDetail()">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+  </div>
+
+  <div class="modal-body" *ngIf="selectedOrder">
+    <!-- Client Info -->
+    <div class="detail-section">
+      <div class="detail-section-title">
+        <span class="material-symbols-outlined">person</span>
+        Informations client
+      </div>
+      <div class="detail-grid">
+        <div class="detail-field">
+          <span class="detail-label">Nom complet</span>
+          <span class="detail-val">{{selectedOrder.fullname}}</span>
+        </div>
+        <div class="detail-field">
+          <span class="detail-label">Téléphone</span>
+          <span class="detail-val">{{selectedOrder.tel}}</span>
+        </div>
+        <div class="detail-field" *ngIf="selectedOrder.email">
+          <span class="detail-label">E-mail</span>
+          <span class="detail-val">{{selectedOrder.email}}</span>
+        </div>
+        <div class="detail-field" *ngIf="selectedOrder.adress">
+          <span class="detail-label">Adresse</span>
+          <span class="detail-val">{{selectedOrder.adress}}</span>
+        </div>
+        <div class="detail-field">
+          <span class="detail-label">Date</span>
+          <span class="detail-val">{{selectedOrder.to_char}}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Products list -->
+    <div class="detail-section">
+      <div class="detail-section-title">
+        <span class="material-symbols-outlined">shopping_bag</span>
+        Produits commandés
+      </div>
+      <div class="detail-items">
+        <div class="detail-item" *ngFor="let it of selectedOrder.items">
+          <div class="detail-item-info">
+            <div class="di-name">{{it.name}}</div>
+            <div class="di-taille" *ngIf="it.taille && it.taille !== '0'">{{it.taille}}</div>
+          </div>
+          <div class="detail-item-right">
+            <span class="di-qte">×{{it.qte}}</span>
+            <span class="di-prix">{{(it.prix * it.qte) | number:'1.0-0'}} DH</span>
+          </div>
+        </div>
+      </div>
+      <div class="detail-total">
+        <span>Total</span>
+        <strong>{{selectedOrder.prix_total | number:'1.0-0'}} DH</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn-cancel" (click)="closeDetail()">Fermer</button>
+    <button class="btn-effectue" *ngIf="!selectedOrder?.etat" (click)="toggleEffectue(selectedOrder); closeDetail()">
+      <span class="material-symbols-outlined">check_circle</span>
+      Marquer effectuée
+    </button>
+    <button class="btn-undo" *ngIf="selectedOrder?.etat" (click)="toggleEffectue(selectedOrder); closeDetail()">
+      <span class="material-symbols-outlined">undo</span>
+      Marquer en attente
+    </button>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- DELETE CONFIRM MODAL -->
+<!-- ============================================ -->
+<div class="modal-backdrop" *ngIf="deleteModalActive" (click)="closeDeleteConfirm()"></div>
+<div class="modal-window delete-modal" *ngIf="deleteModalActive">
+  <div class="modal-header">
+    <h3>Supprimer la commande</h3>
+    <button class="modal-close-btn" (click)="closeDeleteConfirm()">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="confirm-text">
+      <span class="material-symbols-outlined warn-icon">warning</span>
+      <p>Êtes-vous sûr de vouloir supprimer la commande <strong>#{{orderToDelete?.idgroup}}</strong> de <strong>{{orderToDelete?.fullname}}</strong> ?<br>
+      Cette action est irréversible.</p>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn-cancel" (click)="closeDeleteConfirm()">Annuler</button>
+    <button class="btn-delete" (click)="confirmDelete()">
+      <span class="material-symbols-outlined">delete_forever</span>
+      Supprimer définitivement
+    </button>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- ADD MANUAL COMMAND MODAL (multi-product) -->
+<!-- ============================================ -->
+<div class="modal-backdrop" *ngIf="addModalActive" (click)="closeAddModal()"></div>
+<div class="modal-window manual-modal" *ngIf="addModalActive">
+  <div class="modal-header">
+    <h3>Nouvelle commande manuelle</h3>
+    <button class="modal-close-btn" (click)="closeAddModal()">
+      <span class="material-symbols-outlined">close</span>
+    </button>
   </div>
 
   <div class="modal-body">
-    <div class="modal-form-grid" style="display: flex; flex-direction: column; gap: 16px;">
-      <!-- Client Full Name -->
-      <div class="input-group">
-        <label>Nom complet du client</label>
-        <input class="text" type="text" [(ngModel)]="newCommand.fullname" placeholder="Ex: Karim Bensouda" required>
+    <!-- Customer Info -->
+    <div class="detail-section-title" style="margin-bottom: 12px;">
+      <span class="material-symbols-outlined">person</span> Informations client
+    </div>
+    <div class="modal-form-grid">
+      <div class="input-group" style="grid-column: 1 / -1;">
+        <label>Nom complet *</label>
+        <input class="text" type="text" [(ngModel)]="manualCustomer.fullname" placeholder="Ex: Karim Bensouda">
       </div>
-
-      <!-- Client Tel & Email -->
-      <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-        <div class="input-group">
-          <label>Téléphone</label>
-          <input class="text" type="text" [(ngModel)]="newCommand.tel" placeholder="Ex: 0612345678" required>
-        </div>
-        <div class="input-group">
-          <label>E-mail (facultatif)</label>
-          <input class="text" type="email" [(ngModel)]="newCommand.email" placeholder="Ex: client@gmail.com">
-        </div>
-      </div>
-
-      <!-- Client Address -->
       <div class="input-group">
-        <label>Adresse de livraison / Magasin</label>
-        <input class="text" type="text" [(ngModel)]="newCommand.adress" placeholder="Ex: Riad El Mansour, Meknès">
+        <label>Téléphone *</label>
+        <input class="text" type="tel" [(ngModel)]="manualCustomer.tel" placeholder="Ex: 0612345678">
       </div>
-
-      <hr style="border: 0; border-top: 1px dashed var(--border-color); margin: 8px 0;">
-
-      <!-- Product Selector -->
       <div class="input-group">
-        <label>Sélectionner le produit</label>
-        <select class="optionP" [ngModel]="newCommand.idproducts" (ngModelChange)="onProductSelect($event)">
-          <option value="" disabled selected>-- Choisir un produit --</option>
-          <option *ngFor="let prod of productsList" [value]="prod.idproducts">{{prod.name}}</option>
+        <label>E-mail (facultatif)</label>
+        <input class="text" type="email" [(ngModel)]="manualCustomer.email" placeholder="Ex: client@gmail.com">
+      </div>
+      <div class="input-group" style="grid-column: 1 / -1;">
+        <label>Adresse (facultatif)</label>
+        <input class="text" type="text" [(ngModel)]="manualCustomer.adress" placeholder="Ex: Riad El Mansour, Meknès">
+      </div>
+      <div class="input-group" style="grid-column: 1 / -1;">
+        <label>Statut initial</label>
+        <select class="optionP" [(ngModel)]="manualCustomer.etat">
+          <option [ngValue]="false">En attente</option>
+          <option [ngValue]="true">Livrée / Effectuée</option>
         </select>
       </div>
+    </div>
 
-      <!-- Sizing Variation & Quantity -->
-      <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;" *ngIf="sizesList.length > 0">
-        <div class="input-group">
-          <label>Taille / Conditionnement</label>
-          <select class="optionP" [ngModel]="selectedSizeObj" (ngModelChange)="selectedSizeObj = $event; onSizeSelect($event)">
-            <option *ngFor="let size of sizesList" [ngValue]="size">{{size.taille}}</option>
-          </select>
-        </div>
-        <div class="input-group">
-          <label>Quantité</label>
-          <input class="text" type="number" [(ngModel)]="newCommand.qte" min="1" required>
-        </div>
+    <hr style="border:0; border-top: 1px dashed var(--border-color); margin: 16px 0;">
+
+    <!-- Product Adder -->
+    <div class="detail-section-title" style="margin-bottom: 12px;">
+      <span class="material-symbols-outlined">add_shopping_cart</span> Ajouter un produit
+    </div>
+    <div class="modal-form-grid">
+      <div class="input-group" style="grid-column: 1 / -1;">
+        <label>Produit</label>
+        <select class="optionP" [ngModel]="manualProductSelect.idproducts" (ngModelChange)="manualProductSelect.idproducts = $event; onManualProductSelect($event)">
+          <option value="" disabled>-- Choisir un produit --</option>
+          <option *ngFor="let p of productsList" [value]="p.idproducts">{{p.name}}</option>
+        </select>
       </div>
+      <div class="input-group" *ngIf="manualSizesList.length > 0">
+        <label>Taille</label>
+        <select class="optionP" [ngModel]="manualSelectedSize" (ngModelChange)="manualSelectedSize = $event">
+          <option *ngFor="let s of manualSizesList" [ngValue]="s">{{s.taille}} — {{s.prix}} DH</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>Quantité</label>
+        <input class="text" type="number" [(ngModel)]="manualProductSelect.qte" min="1">
+      </div>
+      <div class="input-group" style="grid-column: 1 / -1;">
+        <button class="btn-add-item" [disabled]="!manualSelectedProduct || !manualSelectedSize" (click)="addItemToManualCart()">
+          <span class="material-symbols-outlined">add_circle</span>
+          Ajouter au panier de la commande
+        </button>
+      </div>
+    </div>
 
-      <!-- Pricing Summary & Etat -->
-      <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-        <div class="input-group">
-          <label>Prix total calculé (DH)</label>
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <input class="text" type="number" [(ngModel)]="newCommand.prix" style="flex-grow: 1;">
-            <span style="font-weight: 700; color: var(--color-text-muted);">DH</span>
+    <!-- Manual Cart Preview -->
+    <div class="manual-cart" *ngIf="manualCartItems.length > 0">
+      <div class="detail-section-title" style="margin: 16px 0 10px;">
+        <span class="material-symbols-outlined">shopping_cart</span> Panier ({{manualCartItems.length}} article(s))
+      </div>
+      <div class="detail-items">
+        <div class="detail-item" *ngFor="let it of manualCartItems; let i = index">
+          <div class="detail-item-info">
+            <div class="di-name">{{it.name}}</div>
+            <div class="di-taille" *ngIf="it.taille">{{it.taille}}</div>
+          </div>
+          <div class="detail-item-right">
+            <span class="di-qte">×{{it.qte}}</span>
+            <span class="di-prix">{{(it.prix * it.qte) | number:'1.0-0'}} DH</span>
+            <button class="remove-item-btn" (click)="removeManualItem(i)">
+              <span class="material-symbols-outlined">close</span>
+            </button>
           </div>
         </div>
-        <div class="input-group">
-          <label>Statut de la commande</label>
-          <select class="optionP" [(ngModel)]="newCommand.etat">
-            <option [ngValue]="false">En attente (Non-effectuée)</option>
-            <option [ngValue]="true">Livrée / Effectuée</option>
-          </select>
-        </div>
       </div>
-
+      <div class="detail-total">
+        <span>Total estimé</span>
+        <strong>{{getManualTotal() | number:'1.0-0'}} DH</strong>
+      </div>
     </div>
   </div>
 
   <div class="modal-footer">
     <button class="btn-cancel" (click)="closeAddModal()">Annuler</button>
-    <button class="btn-save" (click)="submitManualCommand()">Enregistrer</button>
+    <button class="btn-save" (click)="submitManualCommand()" [disabled]="manualCartItems.length === 0">
+      <span class="material-symbols-outlined">save</span>
+      Enregistrer la commande
+    </button>
   </div>
 </div>

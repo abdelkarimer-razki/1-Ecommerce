@@ -23,6 +23,7 @@ import { UsersComponent } from './users/users.component';
 import { EncrDecrService } from './services/encr-decr.service';
 import { ProductsComponent } from './products/products.component';
 import { SettingsComponent } from './settings/settings.component';
+import { CheckoutComponent } from './checkout/checkout.component';
 const customNotifierOptions: NotifierOptions = {
   position: {
 		horizontal: {
@@ -79,7 +80,8 @@ const customNotifierOptions: NotifierOptions = {
     CommandsComponent,
     UsersComponent,
     ProductsComponent,
-    SettingsComponent
+    SettingsComponent,
+    CheckoutComponent
   ],
   imports: [
     BrowserModule,
