@@ -148,12 +148,12 @@ export class DashboardComponent implements OnInit {
               tooltip: {
                   backgroundColor: '#292524', // stone-800
                   titleFont: {
-                      family: 'Playfair Display, serif',
+                      family: 'Plus Jakarta Sans, sans-serif',
                       size: 14,
                       weight: 'bold'
                   },
                   bodyFont: {
-                      family: 'Inter, sans-serif',
+                      family: 'Plus Jakarta Sans, sans-serif',
                       size: 13
                   },
                   padding: 12,
@@ -180,7 +180,7 @@ export class DashboardComponent implements OnInit {
                   },
                   ticks: {
                       font: {
-                          family: 'Inter, sans-serif',
+                          family: 'Plus Jakarta Sans, sans-serif',
                           size: 11,
                           weight: '600'
                       },
@@ -195,7 +195,7 @@ export class DashboardComponent implements OnInit {
                   },
                   ticks: {
                       font: {
-                          family: 'Inter, sans-serif',
+                          family: 'Plus Jakarta Sans, sans-serif',
                           size: 11
                       },
                       color: '#78716c',
