@@ -402,7 +402,7 @@ app.post('/checkout',async(req,res)=>{
       const fname = parts[0] || 'Client';
       const lname = parts.slice(1).join(' ') || 'Anonyme';
       const insertUser = await p1.query(
-        "INSERT INTO public.users (fname, lname, adress, tel, email, password, active) VALUES ($1, $2, $3, $4, $5, 'guest_pwd', false) RETURNING iduser",
+        "INSERT INTO public.users (fname, lname, adress, tel, email, password) VALUES ($1, $2, $3, $4, $5, 'guest_pwd') RETURNING iduser",
         [fname, lname, adress||'', tel||'0000000000', email||'']
       );
       userId = insertUser.rows[0].iduser;
@@ -454,7 +454,7 @@ app.post('/addManualCommand',verifyToken,async(req,res)=>{
       const fname = parts[0] || 'Client';
       const lname = parts.slice(1).join(' ') || 'Anonyme';
       const insertUser = await p1.query(
-        "INSERT INTO public.users (fname, lname, adress, tel, email, password, active) VALUES ($1, $2, $3, $4, $5, 'manual_guest_pwd', false) RETURNING iduser",
+        "INSERT INTO public.users (fname, lname, adress, tel, email, password) VALUES ($1, $2, $3, $4, $5, 'manual_guest_pwd') RETURNING iduser",
         [fname, lname, adress||'', tel||'0000000000', email||'']
       );
       userId = insertUser.rows[0].iduser;
