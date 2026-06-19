@@ -111,42 +111,98 @@ export class DashboardComponent implements OnInit {
   }
   fillchart()
   {
+    // Create modern linear gradient matching the organic honey/oil brand colors
+    const gradient = this.ctx.createLinearGradient(0, 0, 0, 300);
+    gradient.addColorStop(0, 'rgba(180, 83, 9, 0.85)'); // Honey Gold/Amber (var(--color-primary))
+    gradient.addColorStop(1, 'rgba(194, 65, 12, 0.15)'); // Terracotta translucent (var(--color-terracotta))
+
+    const borderGradient = this.ctx.createLinearGradient(0, 0, 0, 300);
+    borderGradient.addColorStop(0, 'rgba(180, 83, 9, 1)');
+    borderGradient.addColorStop(1, 'rgba(194, 65, 12, 0.5)');
+
     var myChart = new Chart(this.ctx, {
       type: 'bar',
       data: {
           labels: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'],
           datasets: [{
-              label: 'Revenu mensuel/DH',
+              label: 'Revenu mensuel',
               data: [this.janvier, this.fevrier, this.mars, this.april, this.may, this.juin,this.juilet,this.aout,this.septembre,this.octobre,this.novombre,this.decembre],
-              backgroundColor: [
-                  '#FF8484',
-                  '#B6DDFC',
-                  '#FFBE6D',
-                  '#FFD503',
-                  '#E2E0E3',
-                  '#90EE90',
-                  '#FFD8DD',
-                  '#3F9CB8',
-                  '#FFBE6D',
-                  '#FFD503',
-                  '#E2E0E3',
-                  '#90EE90'
-              ],
-              borderColor: [
-                '#F17E5D',
-                '#B6DDFC',
-                '#FCC468',
-                '#FFD503',
-                '#E2E0E3',
-                '#90EE90'
-              ],
-              borderWidth: 1
+              backgroundColor: gradient,
+              borderColor: borderGradient,
+              borderWidth: 1.5,
+              borderRadius: 6,
+              borderSkipped: false,
+              hoverBackgroundColor: 'rgba(180, 83, 9, 0.95)',
+              hoverBorderColor: 'rgba(180, 83, 9, 1)',
+              barPercentage: 0.6,
+              categoryPercentage: 0.8
           }]
       },
       options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+              legend: {
+                  display: false
+              },
+              tooltip: {
+                  backgroundColor: '#292524', // stone-800
+                  titleFont: {
+                      family: 'Playfair Display, serif',
+                      size: 14,
+                      weight: 'bold'
+                  },
+                  bodyFont: {
+                      family: 'Inter, sans-serif',
+                      size: 13
+                  },
+                  padding: 12,
+                  cornerRadius: 8,
+                  displayColors: false,
+                  callbacks: {
+                      label: function(context) {
+                          let label = context.dataset.label || '';
+                          if (label) {
+                              label += ' : ';
+                          }
+                          if (context.parsed.y !== null) {
+                              label += new Intl.NumberFormat('fr-MA', { style: 'currency', currency: 'MAD', maximumFractionDigits: 0 }).format(context.parsed.y);
+                          }
+                          return label;
+                      }
+                  }
+              }
+          },
           scales: {
+              x: {
+                  grid: {
+                      display: false
+                  },
+                  ticks: {
+                      font: {
+                          family: 'Inter, sans-serif',
+                          size: 11,
+                          weight: '600'
+                      },
+                      color: '#78716c' // stone-500
+                  }
+              },
               y: {
-                  beginAtZero: true
+                  beginAtZero: true,
+                  grid: {
+                      color: 'rgba(231, 229, 228, 0.8)', // warm-gray-200
+                      drawBorder: false
+                  },
+                  ticks: {
+                      font: {
+                          family: 'Inter, sans-serif',
+                          size: 11
+                      },
+                      color: '#78716c',
+                      callback: function(value) {
+                          return value + ' DH';
+                      }
+                  }
               }
           }
       }
