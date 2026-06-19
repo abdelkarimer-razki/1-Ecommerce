@@ -84,15 +84,8 @@
             <td>
               <span class="status-badge pending">En attente</span>
             </td>
-            <td class="action-btns" style="position: relative; justify-content: flex-end;">
-              <span class="material-symbols-outlined action-dots" (click)="morePending[i]=!morePending[i];turnoffPending(i)" style="margin-right: 12px;">more_vert</span>
-              <div *ngIf="morePending[i]" class="more" style="right: 12px; top: 100%;">
-                <ul>
-                  <li (click)="openDetail(order);morePending[i]=false;"><span class="material-symbols-outlined">visibility</span> Détails</li>
-                  <li (click)="toggleEffectue(order);morePending[i]=false;"><span class="material-symbols-outlined">check_circle</span> Effectuée</li>
-                  <li (click)="openDeleteConfirm(order);morePending[i]=false;"><span class="material-symbols-outlined">delete</span> Supprimer</li>
-                </ul>
-              </div>
+            <td class="action-btns" style="justify-content: flex-end;">
+              <span class="material-symbols-outlined action-dots" (click)="toggleDropdown($event, order, true)" style="margin-right: 12px;">more_vert</span>
             </td>
           </tr>
         </tbody>
@@ -149,14 +142,8 @@
             <td>
               <span class="status-badge done">Effectuée</span>
             </td>
-            <td class="action-btns" style="position: relative; justify-content: flex-end;">
-              <span class="material-symbols-outlined action-dots" (click)="moreCompleted[i]=!moreCompleted[i];turnoffCompleted(i)" style="margin-right: 12px;">more_vert</span>
-              <div *ngIf="moreCompleted[i]" class="more" style="right: 12px; top: 100%;">
-                <ul>
-                  <li (click)="openDetail(order);moreCompleted[i]=false;"><span class="material-symbols-outlined">visibility</span> Détails</li>
-                  <li (click)="toggleEffectue(order);moreCompleted[i]=false;"><span class="material-symbols-outlined">undo</span> En attente</li>
-                </ul>
-              </div>
+            <td class="action-btns" style="justify-content: flex-end;">
+              <span class="material-symbols-outlined action-dots" (click)="toggleDropdown($event, order, false)" style="margin-right: 12px;">more_vert</span>
             </td>
           </tr>
         </tbody>
@@ -394,4 +381,21 @@
       Enregistrer la commande
     </button>
   </div>
+</div>
+
+<!-- Single Dropdown Menu Outside the Table -->
+<div *ngIf="showDropdown && activeDropdownOrder" class="more" 
+     [style.position]="'absolute'" 
+     [style.top.px]="dropdownPosition.top" 
+     [style.left.px]="dropdownPosition.left" 
+     style="z-index: 2000; margin: 0;">
+  <ul *ngIf="isPendingDropdown">
+    <li (click)="openDetail(activeDropdownOrder); showDropdown = false;"><span class="material-symbols-outlined">visibility</span> Détails</li>
+    <li (click)="toggleEffectue(activeDropdownOrder); showDropdown = false;"><span class="material-symbols-outlined">check_circle</span> Effectuée</li>
+    <li (click)="openDeleteConfirm(activeDropdownOrder); showDropdown = false;"><span class="material-symbols-outlined">delete</span> Supprimer</li>
+  </ul>
+  <ul *ngIf="!isPendingDropdown">
+    <li (click)="openDetail(activeDropdownOrder); showDropdown = false;"><span class="material-symbols-outlined">visibility</span> Détails</li>
+    <li (click)="toggleEffectue(activeDropdownOrder); showDropdown = false;"><span class="material-symbols-outlined">undo</span> En attente</li>
+  </ul>
 </div>

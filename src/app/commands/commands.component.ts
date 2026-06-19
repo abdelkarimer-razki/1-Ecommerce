@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { DashboardService } from '../services/dashboard.service';
 
 @Component({
@@ -28,6 +28,12 @@ export class CommandsComponent implements OnInit {
   // Action dropdown states
   morePending: boolean[] = [];
   moreCompleted: boolean[] = [];
+
+  // Context menu dropdown (outside table)
+  activeDropdownOrder: any = null;
+  dropdownPosition = { top: 0, left: 0 };
+  showDropdown: boolean = false;
+  isPendingDropdown: boolean = false;
   
   // Add Manual Command Modal
   addModalActive: boolean = false;
@@ -61,6 +67,8 @@ export class CommandsComponent implements OnInit {
   loadTables() {
     this.morePending = [];
     this.moreCompleted = [];
+    this.showDropdown = false;
+    this.activeDropdownOrder = null;
     // Load pending (non-effectuées)
     this.dash.allCommandsE().subscribe((data: any) => {
       this.pendingOrders = data || [];
@@ -88,6 +96,8 @@ export class CommandsComponent implements OnInit {
     this.isEffectuer = isPending;
     this.morePending = [];
     this.moreCompleted = [];
+    this.showDropdown = false;
+    this.activeDropdownOrder = null;
     if (!isPending) this.searchCompleted(this.date);
   }
 
@@ -276,6 +286,30 @@ export class CommandsComponent implements OnInit {
         this.moreCompleted[j] = false;
       }
     }
+  }
+
+  toggleDropdown(event: MouseEvent, order: any, isPending: boolean) {
+    event.stopPropagation();
+    if (this.activeDropdownOrder?.idgroup === order.idgroup && this.showDropdown) {
+      this.showDropdown = false;
+      this.activeDropdownOrder = null;
+      return;
+    }
+    
+    this.activeDropdownOrder = order;
+    this.isPendingDropdown = isPending;
+    const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
+    this.dropdownPosition = {
+      top: rect.bottom + window.scrollY,
+      left: rect.left + window.scrollX - 120
+    };
+    this.showDropdown = true;
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick() {
+    this.showDropdown = false;
+    this.activeDropdownOrder = null;
   }
 }
 

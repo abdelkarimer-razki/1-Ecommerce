@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { Observable, Subscriber } from 'rxjs';
 import { DomSanitizer } from '@angular/platform-browser';
 import { DashboardService } from '../services/dashboard.service';
@@ -35,6 +35,11 @@ export class ProductsComponent implements OnInit {
   more: Boolean[] = [];
   details: Boolean[] = [];
   pname: any = "";
+
+  // Context menu dropdown
+  activeDropdownProduct: any = null;
+  dropdownPosition = { top: 0, left: 0 };
+  showDropdown: boolean = false;
 
   constructor(private sanitizer: DomSanitizer, private dash: DashboardService) { }
 
@@ -389,5 +394,40 @@ export class ProductsComponent implements OnInit {
     this.dash.deleteproduct(id).subscribe(data => {
       this.loadProducts();
     });
+  }
+
+  toggleDropdown(event: MouseEvent, prod: any) {
+    event.stopPropagation();
+    if (this.activeDropdownProduct?.idproducts === prod.idproducts && this.showDropdown) {
+      this.showDropdown = false;
+      this.activeDropdownProduct = null;
+      return;
+    }
+    
+    this.activeDropdownProduct = prod;
+    const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
+    this.dropdownPosition = {
+      top: rect.bottom + window.scrollY,
+      left: rect.left + window.scrollX - 120
+    };
+    this.showDropdown = true;
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick() {
+    this.showDropdown = false;
+    this.activeDropdownProduct = null;
+  }
+
+  getMinPrice(prod: any): number {
+    if (!prod.sizes || prod.sizes.length === 0) return Number(prod.prix) || 0;
+    const prices = prod.sizes.map((s: any) => Number(s.prix) || 0).filter((p: number) => !isNaN(p));
+    return prices.length > 0 ? Math.min(...prices) : (Number(prod.prix) || 0);
+  }
+
+  getMaxPrice(prod: any): number {
+    if (!prod.sizes || prod.sizes.length === 0) return Number(prod.prix) || 0;
+    const prices = prod.sizes.map((s: any) => Number(s.prix) || 0).filter((p: number) => !isNaN(p));
+    return prices.length > 0 ? Math.max(...prices) : (Number(prod.prix) || 0);
   }
 }

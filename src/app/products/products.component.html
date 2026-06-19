@@ -21,6 +21,9 @@
         <th>Aperçu</th>
         <th>Nom du produit</th>
         <th>Catégorie</th>
+        <th>Description</th>
+        <th>Prix & Variations</th>
+        <th>Type</th>
         <th style="text-align: right; padding-right: 24px;">Action</th>
       </tr>
 
@@ -37,16 +40,27 @@
           <label class="tickets rien" *ngIf="produit.categorie != 'HUILE' && produit.categorie != 'MIEL'">{{produit.categorie}}</label>
         </td>
         <td>
+          <div class="product-desc-preview" style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--color-text-muted); font-size: 0.85rem;">
+            {{produit.description || '-'}}
+          </div>
+        </td>
+        <td>
+          <div class="product-price-preview" style="font-weight: 700; font-size: 0.9rem; color: var(--color-primary);">
+            <span *ngIf="produit.sizes && produit.sizes.length > 0">
+              {{produit.sizes.length}} var. ({{getMinPrice(produit)}} - {{getMaxPrice(produit)}} DH)
+            </span>
+            <span *ngIf="!produit.sizes || produit.sizes.length === 0">
+              {{produit.prix}} DH
+            </span>
+          </div>
+        </td>
+        <td>
+          <span class="tickets mangable" *ngIf="produit.mangable" style="font-size: 0.75rem; padding: 4px 10px; border-radius: 12px; font-weight: 700; background: rgba(63, 98, 18, 0.1); color: var(--color-secondary);">Comestible</span>
+          <span class="tickets nmangable" *ngIf="!produit.mangable" style="font-size: 0.75rem; padding: 4px 10px; border-radius: 12px; font-weight: 700; background: rgba(220, 38, 38, 0.08); color: #dc2626;">Non-comestible</span>
+        </td>
+        <td>
           <div style="display: flex; align-items: center; justify-content: flex-end; gap: 12px; position: relative;">
-            <!-- Action dropdown -->
-            <span class="material-symbols-outlined action-dots" (click)="more[i+1]=!more[i+1];turnoff(i+1)" style="margin-right: 12px;">more_vert</span>
-            <div *ngIf="more[i+1]" class="more" style="right: 12px; top: 100%;">
-              <ul>
-                <li (click)="openViewModal(produit);more[i+1]=false;"><span class="material-symbols-outlined" style="font-size: 1rem; margin-right: 6px;">visibility</span> View</li>
-                <li (click)="openEditModal(produit);more[i+1]=false;"><span class="material-symbols-outlined" style="font-size: 1rem; margin-right: 6px;">edit</span> Modifier</li>
-                <li (click)="confirmDelete(produit);more[i+1]=false;"><span class="material-symbols-outlined" style="font-size: 1rem; margin-right: 6px;">delete</span> Supprimer</li>
-              </ul>
-            </div>
+            <span class="material-symbols-outlined action-dots" (click)="toggleDropdown($event, produit)" style="margin-right: 12px;">more_vert</span>
           </div>
         </td>
       </tr>
@@ -301,4 +315,17 @@
       Supprimer
     </button>
   </div>
+</div>
+
+<!-- Single Dropdown Menu Outside the Table -->
+<div *ngIf="showDropdown && activeDropdownProduct" class="more" 
+     [style.position]="'absolute'" 
+     [style.top.px]="dropdownPosition.top" 
+     [style.left.px]="dropdownPosition.left" 
+     style="z-index: 2000; margin: 0;">
+  <ul>
+    <li (click)="openViewModal(activeDropdownProduct); showDropdown = false;"><span class="material-symbols-outlined" style="font-size: 1rem;">visibility</span> Voir</li>
+    <li (click)="openEditModal(activeDropdownProduct); showDropdown = false;"><span class="material-symbols-outlined" style="font-size: 1rem;">edit</span> Modifier</li>
+    <li (click)="confirmDelete(activeDropdownProduct); showDropdown = false;"><span class="material-symbols-outlined" style="font-size: 1rem;">delete</span> Supprimer</li>
+  </ul>
 </div>
