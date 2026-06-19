@@ -157,39 +157,45 @@
    ORDERS TABLE
    ==================================== */
 .orders-table-wrap {
-  overflow-x: auto;
+  background-color: var(--color-bg-card);
+  border-radius: var(--border-radius-lg);
   border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-md);
-  background: var(--color-bg-card);
   box-shadow: var(--shadow-sm);
+  padding: 24px;
+  width: 100%;
+  overflow-x: auto;
+  min-height: auto;
+  margin: 0;
 }
 
 .orders-table {
   width: 100%;
   border-collapse: collapse;
-  font-family: var(--font-sans);
-  font-size: 0.875rem;
+  text-align: left;
 }
 
-.orders-table thead tr {
-  background: var(--color-bg-main);
-  border-bottom: 2px solid var(--border-color);
+.orders-table th, .orders-table td {
+  padding: 16px;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  border-bottom: 1px solid var(--border-color);
+  vertical-align: middle;
 }
 
 .orders-table th {
-  padding: 12px 14px;
-  text-align: left;
-  font-size: 0.75rem;
+  font-family: var(--font-serif) !important;
   font-weight: 700;
-  color: var(--color-text-light);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  white-space: nowrap;
+  color: var(--color-text-main);
+  background-color: var(--color-bg-main);
+}
+
+.orders-table td {
+  color: var(--color-text-main);
 }
 
 .orders-table tbody tr {
   border-bottom: 1px solid var(--border-color);
-  transition: background-color 0.15s;
+  transition: var(--transition-smooth);
 }
 
 .orders-table tbody tr:last-child {
@@ -197,13 +203,7 @@
 }
 
 .orders-table tbody tr:hover {
-  background: var(--color-secondary-light, rgba(63, 98, 18, 0.04));
-}
-
-.orders-table td {
-  padding: 12px 14px;
-  vertical-align: middle;
-  color: var(--color-text-main);
+  background-color: var(--color-secondary-light);
 }
 
 .order-id {

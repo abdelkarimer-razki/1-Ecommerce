@@ -235,3 +235,20 @@ input:focus, textarea:focus {
   align-items: center;
   justify-content: center;
 }
+
+/* Force typography consistency globally across all components */
+body, p, div, input, select, textarea, button, option, label, table, tr, td, th, strong, a, li, ul, pre, code {
+  font-family: var(--font-sans) !important;
+}
+
+/* Ensure spans use font-sans, but NOT if they are icons */
+span:not(.material-symbols-outlined):not(.fas):not(.far):not(.fab):not(.fa) {
+  font-family: var(--font-sans) !important;
+}
+
+/* Maintain Serif headings */
+h1, h2, h3, h4, h5, h6, 
+.title, #title > p:first-child, 
+.titleProduit, #logo > li > a {
+  font-family: var(--font-serif) !important;
+}
