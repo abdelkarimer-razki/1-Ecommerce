@@ -16,6 +16,7 @@ import { CommandsComponent } from './commands/commands.component';
 import { UsersComponent } from './users/users.component';
 import { ProductsComponent } from './products/products.component';
 import { ConnectedGuard } from './connected.guard';
+import { SettingsComponent } from './settings/settings.component';
 
 const routes: Routes = [
   {path:'shopping',component:ShoppingComponent,},
@@ -29,7 +30,8 @@ const routes: Routes = [
     {path:"dashboard",component:DashboardComponent,canActivate:[AuthGuard]},
     {path:"commands",component:CommandsComponent,canActivate:[AuthGuard]},
     {path:"users",component:UsersComponent,canActivate:[AuthGuard]},
-    {path:"products",component:ProductsComponent,canActivate:[AuthGuard]}
+    {path:"products",component:ProductsComponent,canActivate:[AuthGuard]},
+    {path:"settings",component:SettingsComponent,canActivate:[AuthGuard]}
   ]},
   {path:"**",component:PagenotfoundComponent}
 ];

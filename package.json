@@ -3,11 +3,12 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
+    "start": "NODE_OPTIONS=--openssl-legacy-provider ng serve",
+    "build": "NODE_OPTIONS=--openssl-legacy-provider ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "seed": "node src/app/backend/seed.js"
   },
   "private": true,
   "dependencies": {
@@ -32,6 +33,7 @@
     "jsonwebtoken": "^8.5.1",
     "ngx-cookie-service": "^12.0.0",
     "nodemon": "^2.0.9",
+    "pg": "^8.22.0",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
     "zone.js": "~0.11.3"

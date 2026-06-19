@@ -1,9 +1,16 @@
-<div class="leftCon con">
-  <ul class="listRoute">
-    <li routerLink="dashboard" [ngClass]="{clicked: isDashboard}"><a class="element" [ngClass]="{color: isDashboard}"><i class="fas fa-chart-line"></i> Dashboard</a></li>
-    <li routerLink="commands" [ngClass]="{clicked: isCommands}"><a class="element" [ngClass]="{color: isCommands}"><i class="fas fa-shopping-basket"></i> Commands</a></li>
-    <li routerLink="products" [ngClass]="{clicked: isProduits}"><a class="element" [ngClass]="{color: isProduits}"><i class="fas fa-cash-register"></i> Produits</a> </li>
-    <li routerLink="users" [ngClass]="{clicked: isUsers}"><a class="element" [ngClass]="{color: isUsers}"><i class="fas fa-house-user"></i> Utilisateurs</a></li>
-  </ul>
+<div class="admin-container">
+  <div class="admin-sidebar">
+    <div class="admin-title">Panel Admin</div>
+    <ul class="listRoute">
+      <li routerLink="dashboard" [ngClass]="{clicked: isDashboard}"><a class="element" [ngClass]="{color: isDashboard}"><span class="material-symbols-outlined">analytics</span> Dashboard</a></li>
+      <li routerLink="commands" [ngClass]="{clicked: isCommands}"><a class="element" [ngClass]="{color: isCommands}"><span class="material-symbols-outlined">receipt_long</span> Commandes</a></li>
+      <li routerLink="products" [ngClass]="{clicked: isProduits}"><a class="element" [ngClass]="{color: isProduits}"><span class="material-symbols-outlined">inventory_2</span> Produits</a> </li>
+      <li routerLink="users" [ngClass]="{clicked: isUsers}"><a class="element" [ngClass]="{color: isUsers}"><span class="material-symbols-outlined">group</span> Utilisateurs</a></li>
+      <li routerLink="settings" [ngClass]="{clicked: isSettings}"><a class="element" [ngClass]="{color: isSettings}"><span class="material-symbols-outlined">tune</span> Personnaliser</a></li>
+    </ul>
+  </div>
+  <div class="admin-content">
+    <router-outlet></router-outlet>
+  </div>
 </div>
-<router-outlet></router-outlet>
+

@@ -16,6 +16,7 @@ import { ShoppingserviceService } from '../services/shoppingservice.service';
 export class ShoppingComponent implements OnInit {
   products:products[]=[{idproducts:0, name:"",picture:"",description:"",mangable:true,prix:0,categorie:"",prixf:0,taille:'',taille2:'',taille3:'',prix2:0,prix3:0}];
   img:string[]=[];
+  categories:string[]=[];
   /*HUILE:Boolean=true;*/
   pname:any="";
   categorieS:boolean=false;
@@ -25,7 +26,13 @@ export class ShoppingComponent implements OnInit {
    }
   ngOnInit(): void {
     this.showAllData();
+    this.loadCategories();
     this.titleService.setTitle("Shopping");
+  }
+  loadCategories() {
+    this.shop.getCategories().subscribe(cats => {
+      this.categories = cats;
+    });
   }
   showAllData(){
     this.shop.getAllProducts().subscribe(data=>{

@@ -9,7 +9,7 @@ import { importType } from '@angular/compiler/src/output/output_ast';
   providedIn: 'root'
 })
 export class DashboardService {
-  url1="http://localhost:500/";
+  url1="http://localhost:5000/";
   constructor(private http:HttpClient) { }
   RouterHere():Observable<commands[]>{
     return this.http.get<commands[]>(this.url1+'dashboard');

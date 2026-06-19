@@ -27,15 +27,13 @@
         <!--</div>
     </div>
   </carousel>-->
-  <h4 class="titles" style="margin-top:0;"><i class="fas fa-gifts"></i> Catégories:</h4>
+  <h4 class="titles" style="margin-top:0;"><span class="material-symbols-outlined">category</span> Catégories:</h4>
   <div class="typesContainaire">
-    <div class="type" id="Miel" (click)='getProductsCategorie("MIEL")'>
-      <img src="../../assets/honey3.png" alt="" width="100px">
-      <h5 >Miel</h5>
-    </div>
-    <div class="type" id="Huile" (click)='getProductsCategorie("HUILE")'>
-      <img src="../../assets/oil3.png" alt="" width="100px">
-      <h5>Huile</h5>
+    <div *ngFor="let cat of categories" class="type" [id]="cat" (click)='getProductsCategorie(cat)'>
+      <img *ngIf="cat === 'MIEL'" src="../../assets/honey3.png" alt="" width="100px">
+      <img *ngIf="cat === 'HUILE'" src="../../assets/oil3.png" alt="" width="100px">
+      <img *ngIf="cat !== 'MIEL' && cat !== 'HUILE'" src="../../assets/logo3.png" alt="" width="100px" style="opacity: 0.85; max-height: 60px; object-fit: contain;">
+      <h5 style="text-transform: capitalize;">{{ cat.toLowerCase() }}</h5>
     </div>
     <div class="type" id="Cuisine" (click)='getProductsMangable(true)' >
       <img src="../../assets/3.png" alt="" width="100px">
@@ -47,22 +45,29 @@
     </div>
   </div>
 
-  <h4 class="titles"><i class="fas fa-shopping-cart"></i> Produits:</h4>
-  <input type="text" [(ngModel)]="pname" (ngModelChange)="change()" id="search" placeholder="Chercher votre produit">
-  <div  *ngIf="!loading" class="produitContainaire">
+  <h4 class="titles"><span class="material-symbols-outlined">storefront</span> Produits :</h4>
+  <input type="text" [(ngModel)]="pname" (ngModelChange)="change()" id="search" placeholder="Rechercher un produit...">
+  <div *ngIf="!loading" class="produitContainaire">
     <div *ngFor='let item of products' class="Products reveal" (click)="routerBuyProduct(item)">
+      <div class="productImageWrapper">
+        <img [src]="transform(item.picture)" alt="{{item.name}}">
+      </div>
+      <span class="productBadge" *ngIf="item.categorie">{{item.categorie}}</span>
       <p class="titleProduit">{{item.name}}</p>
-      <img [src]="transform(item.picture)" alt="" width="250px">
-      <p class="titlePrix">{{item.prix}} DH</p>  <p class="titlePrixf" *ngIf="item.prixf!=0">{{item.prixf}} DH</p>
-      <p style="color: #bfbfbf;">Livraison gratuite</p>
+      <div class="priceWrapper">
+        <span class="titlePrix">{{item.prix}} DH</span>
+        <span class="titlePrixf" *ngIf="item.prixf!=0">{{item.prixf}} DH</span>
+      </div>
+      <div class="productAction">
+        <span>Découvrir</span> <span class="material-symbols-outlined">chevron_right</span>
+      </div>
     </div>
   </div>
-  <div  *ngIf="failed">
+  <div *ngIf="failed">
     <div class="products1 Products">
-      <img src="../../assets/errorS.jpg" style="width: 150x;display: block;margin: 0 auto;" alt="">
-      <!--<i class="fas fa-exclamation-circle" style="font-size: 100px;color: #fd4d4d;width: 100px;display: block;margin: 0 auto;"></i>-->
+      <img src="../../assets/errorS.jpg" alt="">
       <p class="errorP">Aucun produit portant ce nom n'a été trouvé</p>
     </div>
   </div>
-  <img *ngIf="loading" src="../../assets/loading.gif" alt="" width="200px" style="margin: 0 auto;display: block;">
+  <img *ngIf="loading" class="loadingIcon" src="../../assets/loading.gif" alt="">
 </div>

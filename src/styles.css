@@ -1,17 +1,237 @@
-/* You can add global styles to this file, and also import other style files */
+/* Traditional Artisanal Design System - Cooperative Bab Mansour */
 @import "~angular-notifier/styles";
-*{
-    font-family: "Trebuchet MS";
-    margin: 0;
-    padding: 0;
+
+:root {
+  /* Editorial Serifs & Organic Sans-serifs */
+  --font-serif: 'Playfair Display', Georgia, Cambria, "Times New Roman", Times, serif;
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  
+  /* Curated Organic Color Palette (Terra/Amber Honey, Olive/Sage Oils) */
+  --color-primary: #b45309; /* Deep warm artisanal amber honey */
+  --color-primary-hover: #78350f;
+  --color-primary-light: #fdf6e2; /* Warm linen/cream tint */
+  --color-primary-rgb: 180, 83, 9;
+
+  --color-secondary: #3f6212; /* Organic deep olive green */
+  --color-secondary-hover: #273c0a;
+  --color-secondary-light: #f4f6f0; /* Natural sage tint */
+  --color-secondary-rgb: 63, 98, 18;
+
+  --color-terracotta: #c2410c; /* Clay red for accent */
+  --color-terracotta-light: #fdf4f2;
+  
+  --color-bg-main: #fbf9f6; /* Warm parchment/stone background */
+  --color-bg-card: #ffffff;
+  --color-bg-nav: rgba(251, 249, 246, 0.95);
+
+  --color-text-main: #292524; /* Soft warm charcoal (stone 800) */
+  --color-text-muted: #57534e; /* Warm slate (stone 600) */
+  --color-text-light: #87817a; /* Light earth grey */
+
+  /* Traditional Layout Details (Shallow roundings & classic flat card lines) */
+  --border-color: #e7e5e4; /* stone 200 */
+  --border-color-hover: #d6d3d1; /* stone 300 */
+  --border-radius-lg: 10px; /* More classical and structural than hyper-rounded circles */
+  --border-radius-md: 6px;
+  --border-radius-sm: 4px;
+  
+  /* Soft, natural shadows (no neon or high-contrast shadows) */
+  --shadow-sm: 0 1px 2px 0 rgba(41, 37, 36, 0.05);
+  --shadow-md: 0 4px 12px -2px rgba(41, 37, 36, 0.05), 0 2px 4px 0 rgba(41, 37, 36, 0.02);
+  --shadow-lg: 0 16px 28px -8px rgba(41, 37, 36, 0.08), 0 2px 6px -1px rgba(41, 37, 36, 0.03);
+
+  --transition-smooth: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
-.fas{
+
+/* Global Resets & Typography */
+* {
+  font-family: var(--font-sans);
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body, input, select, textarea, button, option {
+  font-family: var(--font-sans);
+  background-color: var(--color-bg-main);
+  color: var(--color-text-main);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Editorial Serif Headings */
+h1, h2, h3, h4, h5, h6, 
+.title, #title > p:first-child, 
+.titleProduit, #logo > li > a {
+  font-family: var(--font-serif) !important;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+}
+
+/* Icons Reset */
+.fas, .far, .fab {
   font-family: "Font Awesome 5 Free" !important;
 }
-.far{
-  font-family: "Font Awesome 5 Free" !important;
-}
-#topMenu{
+
+/* Navigation Menu overrides */
+#topMenu {
   z-index: 2020;
-  background-color: white;
+  background-color: var(--color-bg-nav) !important;
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+}
+
+/* Elegant Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-bg-main);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-text-light);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
+}
+
+/* Classic Form Controls */
+input[type=text],
+input[type=password],
+input[type=email],
+input[type=tel],
+textarea {
+  font-family: var(--font-sans);
+  border: 1px solid var(--border-color);
+  background-color: var(--color-bg-card);
+  color: var(--color-text-main);
+  border-radius: var(--border-radius-md);
+  transition: var(--transition-smooth);
+}
+
+input:focus, textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: none; /* No tech glows */
+}
+
+/* Clean Transitions */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Premium Organic Footer */
+.coop-footer {
+  background-color: var(--color-text-main);
+  color: #f5f5f4;
+  padding: 60px 8% 30px 8%;
+  border-top: 1px solid var(--border-color);
+  font-family: var(--font-sans);
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 40px;
+  margin-bottom: 40px;
+}
+
+.footer-logo {
+  font-family: var(--font-serif) !important;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 16px;
+}
+
+.footer-desc {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #d6d3d1;
+  max-width: 460px;
+  text-align: justify;
+}
+
+.footer-links h4,
+.footer-contact h4 {
+  font-family: var(--font-serif) !important;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.footer-links ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links ul li {
+  margin-bottom: 10px;
+}
+
+.footer-links ul li a {
+  color: #d6d3d1;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: var(--transition-smooth);
+}
+
+.footer-links ul li a:hover {
+  color: var(--color-primary);
+  padding-left: 4px;
+}
+
+.footer-contact p {
+  font-size: 0.9rem;
+  color: #d6d3d1;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.footer-contact p i,
+.footer-contact p .material-symbols-outlined {
+  color: var(--color-primary);
+  width: 20px;
+  text-align: center;
+  font-size: 1.1rem;
+}
+
+.footer-bottom {
+  border-top: 1px solid #44403c;
+  padding-top: 20px;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #a8a29e;
+}
+
+@media (max-width: 768px) {
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+}
+
+/* Modern Material Symbols Helpers */
+.material-symbols-outlined {
+  font-size: 20px;
+  vertical-align: middle;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }

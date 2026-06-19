@@ -1,14 +1,51 @@
 <div class="pageContanaire">
-  <img src="../../assets/backLogReg.webp" alt="">
-  <form class="connexionDetails"  #userForm="ngForm" novalidate (ngSubmit)="registre()">
-    <h3 class="title">S'inscrire</h3><br>
-    <input type="text" [(ngModel)]="user.fname" name="fname" id="email"  placeholder="Nom">
-    <input type="text"  [(ngModel)]="user.lname" name="lname" id="password"  placeholder="Prénom"><br>
-    <div class="input"><input type="tel" (keyup)="testtel()"  [(ngModel)]="user.tel" name="tel" id="password"  placeholder="Telephone"><br><small *ngIf="testtel1">Ce numéro de téléphone existe déjà.</small></div>
-    <input type="text" [(ngModel)]="user.adress" name="adress" id="email" placeholder="Adress">
-    <div class="input" style="text-align: left;"><input  type="email" (keyup)="testtel()" [(ngModel)]="user.email" name="email" id="email"  placeholder="E-mail"><br><small *ngIf="testemail">Cet email existe déjà.</small></div>
-    <input type="password"  [(ngModel)]="password" name="password" id="password"  placeholder="Mot de pass"><br>
-    <button type="submit" class="connecter" [ngClass]="{buttoninv: (testemail||testtel1||vein)}">S'inscrire <i class="fas fa-user-plus"></i></button><br>
-    <small style="color: green;margin-top: 15pt;font-size: 27px;" *ngIf="unmatch">Vous êtes inscrit avec succès</small>
-  </form>
+  <div class="connexionDetails">
+    <h2 class="title">Créer un compte</h2>
+    
+    <div class="successMsg" *ngIf="unmatch">
+      <span class="material-symbols-outlined" style="vertical-align: middle; font-size: 1.1rem; margin-right: 4px;">check_circle</span> Inscription réussie ! Redirection vers la page de connexion...
+    </div>
+
+    <form (ngSubmit)="registre()" class="formGrid" #userForm="ngForm" novalidate>
+      <div class="inputGroup">
+        <label>Nom :</label>
+        <input type="text" [(ngModel)]="user.fname" name="fname" placeholder="Nom" required>
+      </div>
+
+      <div class="inputGroup">
+        <label>Prénom :</label>
+        <input type="text" [(ngModel)]="user.lname" name="lname" placeholder="Prénom" required>
+      </div>
+
+      <div class="inputGroup">
+        <label>Téléphone :</label>
+        <input type="tel" (keyup)="testtel()" [(ngModel)]="user.tel" name="tel" placeholder="Ex: 0600000000" [ngClass]="{'invalid-field': testtel1}" required>
+        <div class="validation-error" *ngIf="testtel1">Ce numéro de téléphone existe déjà.</div>
+      </div>
+
+      <div class="inputGroup">
+        <label>Adresse e-mail :</label>
+        <input type="email" (keyup)="testtel()" [(ngModel)]="user.email" name="email" placeholder="Ex: name@example.com" [ngClass]="{'invalid-field': testemail}" required>
+        <div class="validation-error" *ngIf="testemail">Cet e-mail existe déjà.</div>
+      </div>
+
+      <div class="inputGroup fullWidth">
+        <label>Adresse de livraison :</label>
+        <input type="text" [(ngModel)]="user.adress" name="adress" placeholder="Ex: 12 Rue de Meknès, Centre Ville" required>
+      </div>
+
+      <div class="inputGroup fullWidth">
+        <label>Mot de passe :</label>
+        <input type="password" [(ngModel)]="password" name="password" placeholder="••••••••" required>
+      </div>
+
+      <button type="submit" class="connecter" [ngClass]="{buttoninv: (testemail||testtel1||vein)}">
+        S'inscrire <span class="material-symbols-outlined">person_add</span>
+      </button>
+
+      <div class="loginRedirect">
+        Déjà membre ? <a routerLink="/connexion">Se connecter</a>
+      </div>
+    </form>
+  </div>
 </div>

@@ -1,160 +1,199 @@
-.choice{
-  background-color: white;
+/* Shopping Cart / Checkout - Cooperative Bab Mansour */
+
+.choice {
+  background-color: var(--color-bg-card);
   width: fit-content;
-  box-shadow: 20px 20px 20px -20px rgba(0, 0, 0, 0.2);
-  height: 50px;
-  margin: 0 auto;
-  margin-top: 20pt;
-  border-radius: 8pt;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color);
+  height: 46px;
+  margin: 30px auto;
+  border-radius: var(--border-radius-md);
+  display: flex;
+  overflow: hidden;
 }
-.choice>label{
+
+.choice > label {
   cursor: pointer;
-  color: #FD4D4D;
-}
-.colorback{
-  background-color: #FD4D4D;
-  color: white !important;
-}
-.effectuer{
-  height: 50px;
-  border-top-left-radius: 8pt;
-  border-bottom-left-radius: 8pt;
-  padding: 8pt;
-  transition: 0.3s;
-  text-align: center;
-  border-right: 1px solid #bcbcbc;
-}
-.Noneffectuer{
-  padding: 8pt;
-  height: 50px;
-  transition: 0.3s;
-  border-top-right-radius: 8pt;
-  border-bottom-right-radius: 8pt;
-  text-align: center;
+  color: var(--color-text-muted);
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   height: 100%;
 }
-.not
-{
-  font-size: 12px;
-  background-color: white;
-  font-weight: bolder;
-  width: 17px;
-  display: inline-block;
-  text-align: center;
-  padding-right:2px;
-  border-radius: 50%;
-  color: red;
-  height: 17px;
-}
-.not1
-{
-  color:white;
-  background-color: red;
-}
-.table{
-  padding: 0pt;
-  float: left;
-  margin-left: 15px;
-  height: 483px;
-  margin-top: 20pt;
-  background-color: #fcfcfc;
-  border-radius: 8pt;
-  width: 70%;
-  padding: 15pt;
-  overflow: scroll;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-}
-.proname
-{
-  display: inline-block;
-  font-size: 25px;
-}
-.imm
-{
-  display:inline-block;
-}
-.proprix
-{
-  display: inline-block;
-  font-size: 40px;
-}
-.text
-{
-  outline: none;
-  border:1px solid #dbdbdb;
-  border-radius:8pt;
-  height:34px;
-  margin-top:9px;
-  text-align:center;
-  border-bottom-color:none !important;
-}
-.text:focus
-{
-  border: 1px solid #3f9cb8;
-  box-shadow: 0 0 10px #3f9cb8;
-}
-.text:invalid
-{
-  border: 1px solid #FD6868;
-  box-shadow: 0 0 10px #FD6868;
-}
-.table > :not(:last-child) > :last-child > * {
-  border-bottom-color:#dbdbdb;
+
+.colorback {
+  background-color: var(--color-primary) !important;
+  color: white !important;
 }
 
-input[type="number"] {
-  -webkit-appearance: textfield;
-     -moz-appearance: textfield;
-          appearance: textfield;
+.effectuer {
+  border-right: 1px solid var(--border-color);
+  padding: 0 20px;
+  transition: var(--transition-smooth);
+  text-align: center;
+  display: flex;
+  align-items: center;
+  height: 100%;
 }
-input[type=number]::-webkit-inner-spin-button,
-input[type=number]::-webkit-outer-spin-button {
-  -webkit-appearance: none;
+
+.Noneffectuer {
+  padding: 0 20px;
+  transition: var(--transition-smooth);
+  text-align: center;
+  display: flex;
+  align-items: center;
+  height: 100%;
 }
-.cards
-{
+
+.not {
+  font-size: 0.7rem;
+  background-color: var(--color-bg-card);
+  font-weight: 800;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  color: var(--color-primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 6px;
+}
+
+.not1 {
+  color: white;
+  background-color: var(--color-terracotta);
+}
+
+.cartLayout {
+  display: flex;
+  padding: 0 6%;
+  gap: 30px;
+  align-items: flex-start;
+  width: 100%;
+  margin-bottom: 50px;
+}
+
+.table {
+  flex: 1.4;
+  background-color: var(--color-bg-card);
+  border-radius: var(--border-radius-lg);
+  padding: 30px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+}
+
+.cards {
   margin-top: 15px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   margin-bottom: 15px;
-  border-radius:15px ;
-  background-color: white;
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--border-color);
+  background-color: var(--color-bg-main);
+  padding: 16px;
+  transition: var(--transition-smooth);
 }
-.proqte
-{
+
+.cards:hover {
+  border-color: var(--color-primary);
+}
+
+.proname {
+  font-family: var(--font-serif) !important;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+  margin-bottom: 4px;
+}
+
+.imm {
+  border-radius: var(--border-radius-sm);
+  border: 1px solid var(--border-color);
+  object-fit: contain;
+}
+
+.proprix {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--color-primary);
+}
+
+.text {
+  outline: none;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  height: 38px;
+  margin-top: 9px;
+  text-align: center;
+  font-weight: 700;
+  background-color: var(--color-bg-card);
+  transition: var(--transition-smooth);
+}
+
+.text:focus {
+  border-color: var(--color-primary);
+}
+
+.text:invalid {
+  border-color: var(--color-terracotta);
+}
+
+.proqte {
   width: 60px;
 }
-.billets
-{
-  padding: 0pt;
-  float: left;
-  margin-left: 15px;
-  margin-right: 15px;
-  height: 483px;
-  margin-top: 20pt;
-  background-color: white;
-  border-radius: 8pt;
-  width: 26%;
-  padding: 15pt;
-  padding-top: 0;
-  overflow: scroll;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-}
-.acheter{
-  background: #fd4d4d;
-  border-radius: 10pt;
 
+.billets {
+  flex: 0.6;
+  background-color: var(--color-bg-card);
+  border-radius: var(--border-radius-lg);
+  padding: 30px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.acheter {
+  background-color: var(--color-secondary); /* Elegant natural olive green */
+  border-radius: var(--border-radius-sm);
   border: none;
   color: white;
-  height: 50px;
+  height: 48px;
   width: 100%;
-  margin: 0 auto;
-  transition: 0.3s;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.9rem;
+  transition: var(--transition-smooth);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
-.acheter:hover{
-  background: #fd6868;
+
+.acheter:hover {
+  background-color: var(--color-secondary-hover);
 }
-.tableachat
-{
-  margin: 15pt auto;
+
+.tableachat {
+  margin: 15px auto;
   float: none;
+  width: 100%;
+  max-width: 800px;
+}
+
+/* Responsive Cart adapt */
+@media (max-width: 900px) {
+  .cartLayout {
+    flex-direction: column;
+    padding: 0 4%;
+  }
+  .table, .billets {
+    width: 100%;
+    flex: none;
+  }
 }

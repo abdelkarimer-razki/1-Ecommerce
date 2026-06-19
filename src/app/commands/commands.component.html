@@ -1,19 +1,19 @@
-<div style="width: 85%;background-color: #EFF1F5;height: 100vh;float: left;" >
+<div class="admin-commands-container">
   <div class="choice">
-    <label class="effectuer" (click)="changeEtatN()" [ngClass]="{colorback: !isEffectuer}"><i class="far fa-check-circle"></i> Achat Effectuer</label>
-    <label class="Noneffectuer" (click)="changeEtatP()" [ngClass]="{colorback: isEffectuer}"><i class="far fa-times-circle"></i> Achat Non-Effectuer</label>
+    <label class="effectuer" (click)="changeEtatN()" [ngClass]="{colorback: !isEffectuer}"><span class="material-symbols-outlined">check_circle</span> Achat Effectuer</label>
+    <label class="Noneffectuer" (click)="changeEtatP()" [ngClass]="{colorback: isEffectuer}"><span class="material-symbols-outlined">cancel</span> Achat Non-Effectuer</label>
   </div>
-  <div *ngIf="!isEffectuer" id="search"><i class="far fa-calendar-alt calender" ></i> <input type="date" [(ngModel)]="date" name="" id=""><button (click)="search(date)" ><i class="fas fa-search"></i> Chercher</button></div>
+  <div *ngIf="!isEffectuer" id="search"><input type="date" [(ngModel)]="date" name="" id=""><button (click)="search(date)" ><span class="material-symbols-outlined" style="font-size: 18px; margin-right: 4px;">search</span> Chercher</button></div>
   <div class="table" *ngIf="isEffectuer">
     <div *ngIf="voidNE" style="text-align:center;font-size: 30px;padding-top: 120px;"><img src="../../assets/smallbee.png" alt=""> Tous les commandes sont effectue</div>
     <table *ngIf="!voidNE">
       <tr id="headerTable">
-        <th><i class="fas fa-address-card"></i> Nom</th>
-        <th><i class="fas fa-home"></i> adress</th>
-        <th><i class="fas fa-phone-square-alt"></i> Telephone/E-mail</th>
-        <th><i class="fas fa-store-alt"></i> Produit</th>
-        <th><i class="far fa-calendar-alt"></i> Date de Commande</th>
-        <th><i class="fas fa-shopping-bag"></i> Taille/Prix</th>
+        <th><span class="material-symbols-outlined">person</span> Nom</th>
+        <th><span class="material-symbols-outlined">home</span> Adresse</th>
+        <th><span class="material-symbols-outlined">call</span> Telephone/E-mail</th>
+        <th><span class="material-symbols-outlined">shopping_bag</span> Produit</th>
+        <th><span class="material-symbols-outlined">calendar_today</span> Date de Commande</th>
+        <th><span class="material-symbols-outlined">payments</span> Taille/Prix</th>
         <th>Verifié?</th>
         <th>Effectué?</th>
         <th></th>
@@ -31,16 +31,16 @@
         <td>{{item.prix}} DH/
           {{item.taille}}
         </td>
-        <td><label class="true" *ngIf="item.verifie">Verifié</label><label class="false" *ngIf="!item.verifie">En attent</label></td>
-        <td><label class="true" *ngIf="item.etat">Effecuter</label><label class="false" *ngIf="!item.etat">En attent</label></td>
-        <td><i (click)="showmor(i);disable(i)" class="fas fa-ellipsis-v"></i></td><br>
+        <td><span class="true" *ngIf="item.verifie">Verifié</span><span class="false" *ngIf="!item.verifie">En attent</span></td>
+        <td><span class="true" *ngIf="item.etat">Effecuter</span><span class="false" *ngIf="!item.etat">En attent</span></td>
+        <td><span class="material-symbols-outlined" style="cursor: pointer;" (click)="showmor(i);disable(i)">more_vert</span></td><br>
         <div [id]="i" style="display: none;" class="more">
           <ul>
-            <li [id]="i + '1'" style="display: none;" (click)="validChange(item.adress,item.iduser,item.qte,item.idcommande,item.idproducts);showmor(i);showmor(i+'a');showmor(i+'b');showmor(i+'c');showmor(i+'d')"><i class="fas fa-check"></i> Valider</li>
-            <li [id]="i + '2'" style="display: none;" (click)="showmor(i + '1');showmor(i + '2');showmor(i + '3');showmor(i + '4');showmor(i + '5');showmor(i+'a');showmor(i+'b');showmor(i+'c');showmor(i);showmor(i+'d')"><i class="fas fa-times"></i> Annuler</li>
-            <li [id]="i + '3'" style="display: block;" (click)="Edit();showmor(i + '1');showmor(i + '2');showmor(i + '3');showmor(i + '4');showmor(i + '5');showmor(i+'a');showmor(i+'b');showmor(i+'c');showmor(i);showmor(i+'d')"><i class="far fa-edit"></i> Modifier</li>
-            <li [id]="i + '4'" style="display: block;" (click)="verifie(item.idcommande,item,item.verifie);showmor(i);showComNo()"><i class="far fa-play-circle"></i>  <span for="" *ngIf="!item.verifie">  Verifié</span>  <span for="" *ngIf="item.verifie">  Falsifier</span></li>
-            <li [id]="i + '5'" style="display: block;" (click)="effectue(item.idcommande,item,item.etat);showmor(i);showComNo()"><i class="far fa-stop-circle"></i> Effectué</li>
+            <li [id]="i + '1'" style="display: none;" (click)="validChange(item.adress,item.iduser,item.qte,item.idcommande,item.idproducts);showmor(i);showmor(i+'a');showmor(i+'b');showmor(i+'c');showmor(i+'d')"><span class="material-symbols-outlined">done</span> Valider</li>
+            <li [id]="i + '2'" style="display: none;" (click)="showmor(i + '1');showmor(i + '2');showmor(i + '3');showmor(i + '4');showmor(i + '5');showmor(i+'a');showmor(i+'b');showmor(i+'c');showmor(i);showmor(i+'d')"><span class="material-symbols-outlined">close</span> Annuler</li>
+            <li [id]="i + '3'" style="display: block;" (click)="Edit();showmor(i + '1');showmor(i + '2');showmor(i + '3');showmor(i + '4');showmor(i + '5');showmor(i+'a');showmor(i+'b');showmor(i+'c');showmor(i);showmor(i+'d')"><span class="material-symbols-outlined">edit</span> Modifier</li>
+            <li [id]="i + '4'" style="display: block;" (click)="verifie(item.idcommande,item,item.verifie);showmor(i);showComNo()"><span class="material-symbols-outlined">verified</span> <span for="" *ngIf="!item.verifie">  Verifié</span>  <span for="" *ngIf="item.verifie">  Falsifier</span></li>
+            <li [id]="i + '5'" style="display: block;" (click)="effectue(item.idcommande,item,item.etat);showmor(i);showComNo()"><span class="material-symbols-outlined">check_circle</span> Effectué</li>
           </ul>
       </div>
       </tr>
@@ -50,12 +50,12 @@
   <div *ngIf="voidE" style="text-align:center;font-size: 30px;padding-top: 120px;"><img src="../../assets/smallbee.png" alt=""> Il n'y a pas de Commande effectuer</div>
   <table *ngIf="!voidE">
     <tr id="headerTable">
-      <th><i class="fas fa-address-card"></i> Nom</th>
-      <th><i class="fas fa-home"></i> adress</th>
-      <th><i class="fas fa-phone-square-alt"></i> Telephone/E-mail</th>
-      <th><i class="fas fa-store-alt"></i> Produit</th>
-      <th><i class="far fa-calendar-alt"></i> Date de Commande</th>
-      <th><i class="fas fa-shopping-bag"></i> Taille/Prix</th>
+      <th><span class="material-symbols-outlined">person</span> Nom</th>
+      <th><span class="material-symbols-outlined">home</span> Adresse</th>
+      <th><span class="material-symbols-outlined">call</span> Telephone/E-mail</th>
+      <th><span class="material-symbols-outlined">shopping_bag</span> Produit</th>
+      <th><span class="material-symbols-outlined">calendar_today</span> Date de Commande</th>
+      <th><span class="material-symbols-outlined">payments</span> Taille/Prix</th>
       <th>Verifié?</th>
       <th>Effectué?</th>
       <th></th>
@@ -73,16 +73,16 @@
       <td>{{item.prix}} DH/
         {{item.taille}}
       </td>
-      <td><label class="true" *ngIf="item.verifie">Verifié</label><label class="false" *ngIf="!item.verifie">En attent</label></td>
-      <td><label class="true" *ngIf="item.etat">Effecuter</label><label class="false" *ngIf="!item.etat">En attent</label></td>
-      <td><i (click)="showmor(i);disable(i)" class="fas fa-ellipsis-v"></i></td><br>
+      <td><span class="true" *ngIf="item.verifie">Verifié</span><span class="false" *ngIf="!item.verifie">En attent</span></td>
+      <td><span class="true" *ngIf="item.etat">Effecuter</span><span class="false" *ngIf="!item.etat">En attent</span></td>
+      <td><span class="material-symbols-outlined" style="cursor: pointer;" (click)="showmor(i);disable(i)">more_vert</span></td><br>
       <div [id]="i" style="display: none;" class="more">
         <ul>
-          <li [id]="i + '1'" style="display: none;" (click)="validChange(item.adress,item.iduser,item.qte,item.idcommande,item.idproducts);showmor(i);showmor(i+'a');showmor(i+'b');showmor(i+'c');showmor(i+'d')"><i class="fas fa-check"></i> Valider</li>
-          <li [id]="i + '2'" style="display: none;" (click)="showmor(i + '1');showmor(i + '2');showmor(i + '3');showmor(i + '4');showmor(i + '5');showmor(i+'a');showmor(i+'b');showmor(i+'c');showmor(i);showmor(i+'d')"><i class="fas fa-times"></i> Annuler</li>
-          <li [id]="i + '3'" style="display: block;" (click)="Edit();showmor(i + '1');showmor(i + '2');showmor(i + '3');showmor(i + '4');showmor(i + '5');showmor(i+'a');showmor(i+'b');showmor(i+'c');showmor(i);showmor(i+'d')"><i class="far fa-edit"></i> Modifier</li>
-          <li [id]="i + '4'" style="display: block;" (click)="verifie(item.idcommande,item,item.verifie);showmor(i);showComNo()"><i class="far fa-play-circle"></i>  <span for="" *ngIf="!item.verifie">  Verifié</span>  <span for="" *ngIf="item.verifie">  Falsifier</span></li>
-          <li [id]="i + '5'" style="display: block;" (click)="effectue(item.idcommande,item,item.etat);showmor(i);showComNo()"><i class="far fa-stop-circle"></i> Abandonner</li>
+          <li [id]="i + '1'" style="display: none;" (click)="validChange(item.adress,item.iduser,item.qte,item.idcommande,item.idproducts);showmor(i);showmor(i+'a');showmor(i+'b');showmor(i+'c');showmor(i+'d')"><span class="material-symbols-outlined">done</span> Valider</li>
+          <li [id]="i + '2'" style="display: none;" (click)="showmor(i + '1');showmor(i + '2');showmor(i + '3');showmor(i + '4');showmor(i + '5');showmor(i+'a');showmor(i+'b');showmor(i+'c');showmor(i);showmor(i+'d')"><span class="material-symbols-outlined">close</span> Annuler</li>
+          <li [id]="i + '3'" style="display: block;" (click)="Edit();showmor(i + '1');showmor(i + '2');showmor(i + '3');showmor(i + '4');showmor(i + '5');showmor(i+'a');showmor(i+'b');showmor(i+'c');showmor(i);showmor(i+'d')"><span class="material-symbols-outlined">edit</span> Modifier</li>
+          <li [id]="i + '4'" style="display: block;" (click)="verifie(item.idcommande,item,item.verifie);showmor(i);showComNo()"><span class="material-symbols-outlined">verified</span> <span for="" *ngIf="!item.verifie">  Verifié</span>  <span for="" *ngIf="item.verifie">  Falsifier</span></li>
+          <li [id]="i + '5'" style="display: block;" (click)="effectue(item.idcommande,item,item.etat);showmor(i);showComNo()"><span class="material-symbols-outlined">check_circle</span> Abandonner</li>
         </ul>
     </div>
     </tr>

@@ -15,21 +15,40 @@ import { LoginService } from '../services/login.service';
 export class BuyproductComponent implements OnInit {
    id:String=this.route.snapshot.params['idproducts'];
    loading:boolean=true;
-   prix:boolean=true;
    qte:any=1;
    achate:boolean=false;
    cart:boolean=false;
-   prix2:boolean=false;
-   prix3:boolean=false;
    admin:boolean=false;
+   selectedSize: any = null;
 
    product:products[]=[];
   constructor(private route:ActivatedRoute,private login:LoginService,private router:Router,private buyService:BuyproductService,private sanitizer: DomSanitizer,private titleService:Title) {
    }
 
   ngOnInit(): void {
-   this.buyService.getProducts(this.id).subscribe(data=>{this.product=data;this.loading=false})
-   this.buyService.cartcheck(this.id,localStorage.getItem("userId")).subscribe((data:any)=>
+    this.buyService.getProducts(this.id).subscribe(data=>{
+      this.product=data;
+      this.loading=false;
+      if (this.product && this.product[0]) {
+        if (!this.product[0].sizes || this.product[0].sizes.length === 0) {
+          this.product[0].sizes = [];
+          if (this.product[0].taille && this.product[0].taille !== '0') {
+            this.product[0].sizes.push({ taille: String(this.product[0].taille), prix: Number(this.product[0].prix) });
+          }
+          if (this.product[0].taille2 && this.product[0].taille2 !== '0') {
+            this.product[0].sizes.push({ taille: String(this.product[0].taille2), prix: Number(this.product[0].prix2) });
+          }
+          if (this.product[0].taille3 && this.product[0].taille3 !== '0') {
+            this.product[0].sizes.push({ taille: String(this.product[0].taille3), prix: Number(this.product[0].prix3) });
+          }
+        }
+        if (this.product[0].sizes && this.product[0].sizes.length > 0) {
+          this.selectedSize = this.product[0].sizes[0];
+        }
+      }
+    });
+
+    this.buyService.cartcheck(this.id,localStorage.getItem("userId")).subscribe((data:any)=>
     {
       if(data[0].count>0)
       {
@@ -40,8 +59,8 @@ export class BuyproductComponent implements OnInit {
     {
       this.admin=true;
     }
-    /*this.titleService.setTitle(this.product.);*/
   }
+
   transform(pic:string){
     var re = /kigmfhhh/gi;
     var pic1=pic.replace(re,"/");
@@ -51,70 +70,40 @@ export class BuyproductComponent implements OnInit {
       return this.sanitizer.bypassSecurityTrustUrl(pic1);
     }
   }
-  change(i:Number){
-    if(i == 1)
-    {
-      this.prix=true;
-      this.prix2=false;
-      this.prix3=false;
-    }
-    else if(i == 2)
-    {
-      this.prix=false;
-      this.prix2=true;
-      this.prix3=false;
-    }
-    else if(i == 3)
-    {
-      this.prix=false;
-      this.prix2=false;
-      this.prix3=true;
-    }
+
+  selectSize(size: any) {
+    this.selectedSize = size;
   }
-  acheter(idproducts:any,prix1:any,prix2:any,prix3:any,cart:any,taille1:any,taille2:any,taille3:any)
+
+  acheter(idproducts:any,cart:any)
   {
     if(cart==false)
     {
       this.achate=true;
     }
-    if(!!localStorage.getItem("userId")==false)
+    if(!localStorage.getItem("userId"))
     {
       this.router.navigate(['/connexion']);
+      return;
     }
-    else
-    {
-      if(this.prix==true)
-        this.buyService.acheterorcart(idproducts,localStorage.getItem("userId"),this.qte,this.qte*prix1,cart,taille1).subscribe(data=>{
-          if(cart==true){
-            this.cart=true;
-            localStorage.removeItem('cart');
-            }else
-            {
-              localStorage.setItem('cart','false');
-              this.router.navigate(['/cart']);
-            }
-            this.achate=false;
-          });
-      else if(this.prix2==true)
-        this.buyService.acheterorcart(idproducts,localStorage.getItem("userId"),this.qte,this.qte*prix2,cart,taille2).subscribe(data=>{if(cart==true){
-          this.cart=true;
-          localStorage.removeItem('cart');
-          }else
-          {
-            localStorage.setItem('cart','false');
-            this.router.navigate(['/cart']);
-          }
-          this.achate=false});
-      else if(this.prix3==true)
-        this.buyService.acheterorcart(idproducts,localStorage.getItem("userId"),this.qte,this.qte*prix3,cart,taille3).subscribe(data=>{if(cart==true){
-          this.cart=true;
-          localStorage.removeItem('cart');
-          }else
-          {
-            localStorage.setItem('cart','false');
-            this.router.navigate(['/cart']);
-          }
-          this.achate=false;});
+    if (!this.selectedSize) {
+      this.achate = false;
+      return;
     }
+
+    const price = Number(this.selectedSize.prix);
+    const sizeName = this.selectedSize.taille;
+
+    this.buyService.acheterorcart(idproducts,localStorage.getItem("userId"),this.qte,this.qte*price,cart,sizeName).subscribe(data=>{
+      if(cart==true){
+        this.cart=true;
+        localStorage.removeItem('cart');
+      }else
+      {
+        localStorage.setItem('cart','false');
+        this.router.navigate(['/cart']);
+      }
+      this.achate=false;
+    });
   }
 }

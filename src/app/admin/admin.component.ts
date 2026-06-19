@@ -11,6 +11,7 @@ export class AdminComponent implements OnInit {
   isCommands:boolean=false;
   isProduits:boolean=false;
   isUsers:boolean=false;
+  isSettings:boolean=false;
 
   constructor(private route:Router,private router:ActivatedRoute) {
     route.events.subscribe((val)=>{
@@ -22,6 +23,8 @@ export class AdminComponent implements OnInit {
         this.IsUsers();
       }else if(this.route.url=="/admin/products"){
         this.IsProduits();
+      }else if(this.route.url=="/admin/settings"){
+        this.IsSettings();
       }
 
     })
@@ -35,23 +38,34 @@ export class AdminComponent implements OnInit {
     this.isCommands=false;
     this.isProduits=false;
     this.isUsers=false;
+    this.isSettings=false;
   }
   IsCommands(){
     this.isDashboard=false;
     this.isCommands=true;
     this.isProduits=false;
     this.isUsers=false;
+    this.isSettings=false;
   }
   IsProduits(){
     this.isDashboard=false;
     this.isCommands=false;
     this.isProduits=true;
     this.isUsers=false;
+    this.isSettings=false;
   }
   IsUsers(){
     this.isDashboard=false;
     this.isCommands=false;
     this.isProduits=false;
     this.isUsers=true;
+    this.isSettings=false;
+  }
+  IsSettings(){
+    this.isDashboard=false;
+    this.isCommands=false;
+    this.isProduits=false;
+    this.isUsers=false;
+    this.isSettings=true;
   }
 }

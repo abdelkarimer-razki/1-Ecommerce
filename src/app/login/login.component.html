@@ -1,11 +1,27 @@
 <div class="pageContanaire">
-  <form class="connexionDetails" #userForm="ngForm" novalidate (ngSubmit)="connect()">
-    <h3 class="title">Connexion</h3><br>
-    <input type="email" [(ngModel)]="user.email" (ngModelChange)="test()"  name="email" id="email" placeholder="E-mail,Telephone"><br>
-    <input type="password" [(ngModel)]="password" (ngModelChange)="test()" name="password"  id="password" placeholder="Mot de pass"><br>
-    <button type="submit" class="connecter" [ngClass]="{buttoninv: emailinv}"><span *ngIf="!loading"><i class="fas fa-sign-in-alt"></i> Connecter</span> <img *ngIf="loading" src="../../assets/j1.gif" width="46px" style="position: relative;top:-7px" alt=""></button>
-    <p style="color: red;" *ngIf="incorect">l'email ou le mot de pass est incorrect</p>
-    <hr style="height: 1px;">
-    <p style="font-weight: bold;">vous avez pas de compte? <a routerLink="/inscrire">s'inscrire!</a></p>
-  </form>
+  <div class="connexionDetails">
+    <h2 class="title">Connexion</h2>
+    
+    <div class="errorMsg" *ngIf="incorect">
+      <span class="material-symbols-outlined" style="font-size: 1.1rem; margin-right: 4px;">error</span> E-mail/téléphone ou mot de passe incorrect.
+    </div>
+
+    <div class="inputGroup">
+      <label>E-mail ou Téléphone :</label>
+      <input type="text" [(ngModel)]="user.email" (ngModelChange)="test()" placeholder="Ex: example@email.com ou 0600000000">
+    </div>
+
+    <div class="inputGroup">
+      <label>Mot de passe :</label>
+      <input type="password" [(ngModel)]="password" (ngModelChange)="test()" placeholder="••••••••">
+    </div>
+
+    <button class="connecter" (click)="connect()" [ngClass]="{buttoninv: emailinv}" id="connecter">
+      Se connecter <span class="material-symbols-outlined">login</span>
+    </button>
+
+    <div class="registerRedirect">
+      Nouveau client ? <a routerLink="/inscrire">Créer un compte</a>
+    </div>
+  </div>
 </div>

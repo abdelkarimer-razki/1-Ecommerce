@@ -2,8 +2,24 @@ const express=require("express");
 var cors = require('cors')
 const jwt=require('jsonwebtoken');
 const path = require("path");
+const fs = require('fs');
 const p1=require('./app/backend/db');
 const app=express();
+
+function formatProductRows(rows) {
+  return rows.map(row => {
+    const sizes = row.sizes || [];
+    // Sort sizes by idsize to ensure stable order
+    sizes.sort((a, b) => a.idsize - b.idsize);
+    row.taille = sizes[0] ? sizes[0].taille : '0';
+    row.prix = sizes[0] ? parseFloat(sizes[0].prix) : 0;
+    row.taille2 = sizes[1] ? sizes[1].taille : '0';
+    row.prix2 = sizes[1] ? parseFloat(sizes[1].prix) : 0;
+    row.taille3 = sizes[2] ? sizes[2].taille : '0';
+    row.prix3 = sizes[2] ? parseFloat(sizes[2].prix) : 0;
+    return row;
+  });
+}
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
@@ -23,7 +39,7 @@ var dd = String(today.getDate()).padStart(2, '0');
 
 app.use(cors());
 app.use(express.json());
-app.listen(500);
+app.listen(5000);
 
 
 function verifyToken(req, res, next) {
@@ -63,16 +79,38 @@ app.get('/',async(req,res)=>{
     i=0;
     dd=dd1;
   }
-  const query=await p1.query("SELECT * FROM products ORDER BY RANDOM()");
-  res.json(query.rows);
+  const query=await p1.query(`
+    SELECT p.*, COALESCE(
+      json_agg(
+        json_build_object('idsize', s.idsize, 'taille', s.taille, 'prix', s.prix)
+      ) FILTER (WHERE s.idsize IS NOT NULL),
+      '[]'
+    ) as sizes
+    FROM products p
+    LEFT JOIN product_sizes s ON p.idproducts = s.idproducts
+    GROUP BY p.idproducts
+    ORDER BY RANDOM()
+  `);
+  res.json(formatProductRows(query.rows));
 })
 app.get('/dashboard',verifyToken,async(req,res)=>{
     const query=await p1.query("SELECT * FROM public.commande WHERE cart=false and EXTRACT(MONTH FROM datecommand)=EXTRACT(MONTH FROM now())");
     res.json(query.rows);
 })
 app.get('/productshow',async(req,res)=>{
-  const query=await p1.query("SELECT * FROM products ORDER BY idproducts");
-  res.json(query.rows);
+  const query=await p1.query(`
+    SELECT p.*, COALESCE(
+      json_agg(
+        json_build_object('idsize', s.idsize, 'taille', s.taille, 'prix', s.prix)
+      ) FILTER (WHERE s.idsize IS NOT NULL),
+      '[]'
+    ) as sizes
+    FROM products p
+    LEFT JOIN product_sizes s ON p.idproducts = s.idproducts
+    GROUP BY p.idproducts
+    ORDER BY p.idproducts
+  `);
+  res.json(formatProductRows(query.rows));
 })
 
 app.get('/visits',verifyToken,async(req,res)=>{
@@ -104,36 +142,81 @@ app.get('/revenu/:mois',verifyToken,async(req,res)=>{
 app.post('/p12',verifyToken,async(req,res)=>{
   const id=req.body.idproducts;
   const name=req.body.name;
-  const taille1=req.body.taille;
-  const taille2=req.body.taille2;
-  const taille3=req.body.taille3;
-  const prix1=req.body.prix;
-  const prix2=req.body.prix2;
-  const prix3=req.body.prix3;
-  const prixf=req.body.prixf;
+  const prixf=req.body.prixf || 0;
   const desc=req.body.description;
   const cat=req.body.categorie;
   const mange=req.body.mangable;
-  const pic=req.body.picture
-  const query=await p1.query("UPDATE products SET name=$1,description=$2,categorie=$3,mangable=$4,prixf=$5,taille=$6,taille2=$7,taille3=$8,prix=$9,prix2=$10,prix3=$11,picture=$13 WHERE idproducts=$12 ",[name,desc,cat,mange,prixf,taille1,taille2,taille3,prix1,prix2,prix3,id,pic]);
+  const pic=req.body.picture;
+
+  let sizes = req.body.sizes;
+  if (!sizes || !Array.isArray(sizes)) {
+    sizes = [];
+    if (req.body.taille && req.body.taille !== '0' && req.body.prix) {
+      sizes.push({ taille: req.body.taille, prix: req.body.prix });
+    }
+    if (req.body.taille2 && req.body.taille2 !== '0' && req.body.prix2) {
+      sizes.push({ taille: req.body.taille2, prix: req.body.prix2 });
+    }
+    if (req.body.taille3 && req.body.taille3 !== '0' && req.body.prix3) {
+      sizes.push({ taille: req.body.taille3, prix: req.body.prix3 });
+    }
+  }
+
+  // Update products
+  const query = await p1.query(
+    "UPDATE products SET name=$1,description=$2,categorie=$3,mangable=$4,prixf=$5,picture=$7 WHERE idproducts=$6",
+    [name,desc,cat,mange,prixf,id,pic]
+  );
+
+  // Update sizes (Delete and re-insert)
+  await p1.query("DELETE FROM product_sizes WHERE idproducts = $1", [id]);
+  for (const s of sizes) {
+    if (s.taille && s.taille !== '0' && s.prix) {
+      await p1.query("INSERT INTO product_sizes (idproducts, taille, prix) VALUES ($1, $2, $3)", [id, s.taille, s.prix]);
+    }
+  }
+
   res.json(query.rows);
 })
 //add product
 app.post('/addpro',verifyToken,async(req,res)=>
 {
   const name=req.body.name;
-  const taille1=req.body.taille;
-  const taille2=req.body.taille2;
-  const taille3=req.body.taille3;
-  const prix1=req.body.prix;
-  const prix2=req.body.prix2;
-  const prix3=req.body.prix3;
-  const prixf=req.body.prixf;
+  const prixf=req.body.prixf || 0;
   const desc=req.body.description;
   const pic = req.body.picture;
   const cat=req.body.categorie;
   const mange=req.body.mangable;
-  const query=await p1.query("INSERT INTO products (name,picture,description,prix,categorie,mangable,prixf,prix3,taille,taille2,taille3,prix2) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)",[name,pic,desc,prix1,cat,mange,prixf,prix3,taille1,taille2,taille3,prix2]);
+  
+  let sizes = req.body.sizes;
+  if (!sizes || !Array.isArray(sizes)) {
+    sizes = [];
+    if (req.body.taille && req.body.taille !== '0' && req.body.prix) {
+      sizes.push({ taille: req.body.taille, prix: req.body.prix });
+    }
+    if (req.body.taille2 && req.body.taille2 !== '0' && req.body.prix2) {
+      sizes.push({ taille: req.body.taille2, prix: req.body.prix2 });
+    }
+    if (req.body.taille3 && req.body.taille3 !== '0' && req.body.prix3) {
+      sizes.push({ taille: req.body.taille3, prix: req.body.prix3 });
+    }
+  }
+
+  // Insert product
+  const query = await p1.query(
+    "INSERT INTO products (name,picture,description,categorie,mangable,prixf) VALUES ($1,$2,$3,$4,$5,$6) RETURNING idproducts",
+    [name,pic,desc,cat,mange,prixf]
+  );
+  
+  const idproducts = query.rows[0].idproducts;
+
+  // Insert sizes
+  for (const s of sizes) {
+    if (s.taille && s.taille !== '0' && s.prix) {
+      await p1.query("INSERT INTO product_sizes (idproducts, taille, prix) VALUES ($1, $2, $3)", [idproducts, s.taille, s.prix]);
+    }
+  }
+
   res.json(query.rows);
 })
 
@@ -157,27 +240,86 @@ app.get('/commandEffectuer/:date',async(req,res)=>{
 
 app.get('/:categorie',async(req,res)=>{
   const {categorie}=req.params;
-  const query=await p1.query("SELECT * FROM products WHERE categorie=$1 ORDER BY RANDOM()",[categorie]);
-  res.json(1);
+  const query=await p1.query(`
+    SELECT p.*, COALESCE(
+      json_agg(
+        json_build_object('idsize', s.idsize, 'taille', s.taille, 'prix', s.prix)
+      ) FILTER (WHERE s.idsize IS NOT NULL),
+      '[]'
+    ) as sizes
+    FROM products p
+    LEFT JOIN product_sizes s ON p.idproducts = s.idproducts
+    WHERE p.categorie=$1
+    GROUP BY p.idproducts
+    ORDER BY RANDOM()
+  `,[categorie]);
+  res.json(formatProductRows(query.rows));
 })
+app.get('/categories/all', async(req, res) => {
+  try {
+    const query = await p1.query("SELECT DISTINCT categorie FROM products WHERE categorie IS NOT NULL AND categorie != 'null' AND categorie != ''");
+    res.json(query.rows.map(r => r.categorie));
+  } catch (err) {
+    res.status(500).json([]);
+  }
+});
 
 app.get('/seachC/:categorie',async(req,res)=>{
   const {categorie}=req.params;
-  const query=await p1.query("SELECT * FROM products WHERE categorie=$1 ORDER BY RANDOM()",[categorie]);
-  res.json(query.rows);
+  const query=await p1.query(`
+    SELECT p.*, COALESCE(
+      json_agg(
+        json_build_object('idsize', s.idsize, 'taille', s.taille, 'prix', s.prix)
+      ) FILTER (WHERE s.idsize IS NOT NULL),
+      '[]'
+    ) as sizes
+    FROM products p
+    LEFT JOIN product_sizes s ON p.idproducts = s.idproducts
+    WHERE p.categorie=$1
+    GROUP BY p.idproducts
+    ORDER BY RANDOM()
+  `,[categorie]);
+  res.json(formatProductRows(query.rows));
 })
 
 app.get('/mange/:mangable',async(req,res)=>{
   const {mangable}=req.params;
-  const query=await p1.query("SELECT * FROM products WHERE mangable=$1 ORDER BY RANDOM()",[mangable]);
-  res.json(query.rows);
+  const query=await p1.query(`
+    SELECT p.*, COALESCE(
+      json_agg(
+        json_build_object('idsize', s.idsize, 'taille', s.taille, 'prix', s.prix)
+      ) FILTER (WHERE s.idsize IS NOT NULL),
+      '[]'
+    ) as sizes
+    FROM products p
+    LEFT JOIN product_sizes s ON p.idproducts = s.idproducts
+    WHERE p.mangable=$1
+    GROUP BY p.idproducts
+    ORDER BY RANDOM()
+  `,[mangable]);
+  res.json(formatProductRows(query.rows));
 })
 
 
 app.get('/buyProduct/:id',async(req,res)=>{
   const {id}=req.params;
-  const query=await p1.query("SELECT * FROM products WHERE idproducts=$1 ORDER BY RANDOM()",[id]);
-  res.json(query.rows);
+  if (!id || id === 'null' || isNaN(parseInt(id))) {
+    return res.json([]);
+  }
+  const query=await p1.query(`
+    SELECT p.*, COALESCE(
+      json_agg(
+        json_build_object('idsize', s.idsize, 'taille', s.taille, 'prix', s.prix)
+      ) FILTER (WHERE s.idsize IS NOT NULL),
+      '[]'
+    ) as sizes
+    FROM products p
+    LEFT JOIN product_sizes s ON p.idproducts = s.idproducts
+    WHERE p.idproducts=$1
+    GROUP BY p.idproducts
+    ORDER BY RANDOM()
+  `,[id]);
+  res.json(formatProductRows(query.rows));
 })
 //verifier la commande dashboard
 
@@ -266,6 +408,9 @@ app.get('/acheterorcart/:idproducts&:iduser&:qte&:prix&:cart&:taille',async(req,
 app.get('/cartcount/:id',async(req,res)=>
 {
   const id=req.params.id;
+  if (!id || id === 'null' || isNaN(parseInt(id))) {
+    return res.json([{ count: 0 }]);
+  }
   const query = await p1.query("SELECT COUNT(*) FROM commande WHERE iduser=$1 and cart=true",[id]);
   res.json(query.rows);
 })
@@ -274,19 +419,47 @@ app.get('/checkcart/:iduser&:idproduit',async(req,res)=>
 {
   const iduser=req.params.iduser;
   const idproduit=req.params.idproduit;
+  if (!iduser || iduser === 'null' || isNaN(parseInt(iduser)) || !idproduit || idproduit === 'null' || isNaN(parseInt(idproduit))) {
+    return res.json([{ count: 0 }]);
+  }
   const query = await p1.query("SELECT COUNT(*) FROM commande WHERE (iduser=$1 and idproducts=$2 and cart=true)",[iduser,idproduit]);
   res.json(query.rows);
 })
 //cart commands
 app.get('/allcart/:iduser&:cart',async(req,res)=>
 {
-  /*const iduser=req.params.iduser;
-  const query = await p1.query("SELECT * FROM commande WHERE iduser=$1 and cart=true",[iduser]);
-  res.json(query.rows);*/
   const iduser=req.params.iduser;
   const cart=req.params.cart;
-  const query = await p1.query("SELECT c.idcommande,c.prix,c.qte,p.name,p.picture,c.taille as taille1,p.taille,p.taille2,p.taille3,p.prix as prix1,prix2,prix3 FROM commande c join products p on c.idproducts=p.idproducts WHERE iduser=$1 and cart=$2 and etat=false",[iduser,cart]);
-  res.json(query.rows);
+  if (!iduser || iduser === 'null' || isNaN(parseInt(iduser))) {
+    return res.json([]);
+  }
+  const query = await p1.query(`
+    SELECT c.idcommande, c.prix, c.qte, p.name, p.picture, c.taille as taille1,
+      COALESCE(
+        json_agg(
+          json_build_object('idsize', s.idsize, 'taille', s.taille, 'prix', s.prix)
+        ) FILTER (WHERE s.idsize IS NOT NULL),
+        '[]'
+      ) as sizes
+    FROM commande c
+    JOIN products p ON c.idproducts = p.idproducts
+    LEFT JOIN product_sizes s ON p.idproducts = s.idproducts
+    WHERE c.iduser=$1 AND c.cart=$2 AND c.etat=false
+    GROUP BY c.idcommande, p.idproducts
+  `, [iduser, cart]);
+  
+  const formatted = query.rows.map(row => {
+    const sizes = row.sizes || [];
+    sizes.sort((a, b) => a.idsize - b.idsize);
+    row.taille = sizes[0] ? sizes[0].taille : '0';
+    row.prix1 = sizes[0] ? parseFloat(sizes[0].prix) : 0;
+    row.taille2 = sizes[1] ? sizes[1].taille : '0';
+    row.prix2 = sizes[1] ? parseFloat(sizes[1].prix) : 0;
+    row.taille3 = sizes[2] ? sizes[2].taille : '0';
+    row.prix3 = sizes[2] ? parseFloat(sizes[2].prix) : 0;
+    return row;
+  });
+  res.json(formatted);
 })
 //delete commande
 app.get('/deletecommande/:id',async(req,res)=>
@@ -339,6 +512,28 @@ app.get('/test/:test',async(req,res)=>
   const query=await p1.query("SELECT * FROM users WHERE email=$1 OR tel=$1",[test]);
   res.json(query.rows);
 })
+
+// dynamic site configuration (static text and images)
+app.get('/api/config', (req, res) => {
+  const configPath = path.join(__dirname, 'assets', 'config.json');
+  fs.readFile(configPath, 'utf8', (err, data) => {
+    if (err) {
+      return res.status(500).send('Error reading configuration file');
+    }
+    res.json(JSON.parse(data));
+  });
+});
+
+app.post('/api/config', verifyToken, (req, res) => {
+  const configPath = path.join(__dirname, 'assets', 'config.json');
+  const newConfig = req.body;
+  fs.writeFile(configPath, JSON.stringify(newConfig, null, 2), 'utf8', (err) => {
+    if (err) {
+      return res.status(500).send('Error writing configuration file');
+    }
+    res.json({ success: true });
+  });
+});
  /*app.post('/registre',async(req,res)=>{
    const fname=
  })*/

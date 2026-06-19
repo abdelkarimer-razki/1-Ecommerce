@@ -1,3 +1,10 @@
+export interface ProductSize {
+  idsize?: number;
+  idproducts?: number;
+  taille: string;
+  prix: number;
+}
+
 export interface products{
   idproducts:Number;
   name:string;
@@ -12,6 +19,7 @@ export interface products{
   taille3:String;
   prix2:Number;
   prix3:Number;
+  sizes?: ProductSize[];
 }
 export interface count{
   count:Number;

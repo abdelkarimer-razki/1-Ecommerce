@@ -7,9 +7,9 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ShoppingserviceService {
-  url="http://localhost:500";
-  url1="http://localhost:500/seachC/";
-  url2="http://localhost:500/mange/";
+  url="http://localhost:5000";
+  url1="http://localhost:5000/seachC/";
+  url2="http://localhost:5000/mange/";
   constructor(private http:HttpClient) { }
   getAllProducts():Observable<products[]>{
     return this.http.get<products[]>(this.url);
@@ -21,5 +21,9 @@ export class ShoppingserviceService {
 
   getProductsMangable(mangable:boolean):Observable<products[]>{
     return this.http.get<products[]>(this.url2+mangable);
+  }
+
+  getCategories(): Observable<string[]>{
+    return this.http.get<string[]>(this.url+'/categories/all');
   }
 }

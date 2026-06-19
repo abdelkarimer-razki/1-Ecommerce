@@ -22,6 +22,7 @@ import { CommandsComponent } from './commands/commands.component';
 import { UsersComponent } from './users/users.component';
 import { EncrDecrService } from './services/encr-decr.service';
 import { ProductsComponent } from './products/products.component';
+import { SettingsComponent } from './settings/settings.component';
 const customNotifierOptions: NotifierOptions = {
   position: {
 		horizontal: {
@@ -77,7 +78,8 @@ const customNotifierOptions: NotifierOptions = {
     AdminComponent,
     CommandsComponent,
     UsersComponent,
-    ProductsComponent
+    ProductsComponent,
+    SettingsComponent
   ],
   imports: [
     BrowserModule,

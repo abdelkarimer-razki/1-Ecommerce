@@ -7,7 +7,7 @@ import { users } from '../backend/users';
   providedIn: 'root'
 })
 export class RegistreService {
-  url="http://localhost:500/"
+  url="http://localhost:5000/"
   constructor(private http:HttpClient,private route:Router) { }
   registre(user:users)
   {

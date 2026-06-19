@@ -1,70 +1,76 @@
 <div id="pageContanaire">
     <div class="page1" id="page1">
         <div id="pic">
-            <img src="../../assets/back.jpg" alt="">
+            <img [src]="transformImage(config.heroImage)" alt="Coopérative Bab Mansour">
         </div>
         <div id="welcome">
             <div id="title">
-                <p>Bienvenue dans notre magasin</p>
-                <p style="color:#c1c1c1;font-size: 20px;">COOPERATIVE BABMANSOUR</p>
+                <p>{{ config.heroTitle }}</p>
+                <p>{{ config.heroSubtitle }}</p>
+                <p class="heroDescription">
+                    {{ config.heroDescription }}
+                </p>
                 <div id="bt" routerLink="/shopping">
-                    <a id="btText" >
-                        Faire du shopping <i class="far fa-arrow-alt-circle-right"></i>
+                    <a id="btText">
+                        Découvrir la boutique <span class="material-symbols-outlined">arrow_right_alt</span>
                     </a>
                 </div>
             </div>
         </div>
     </div>
-    <div class="pagination" style="background-color: white;">
+    <div class="pagination">
         <ul class="paginationList">
-            <a style="background-color: #FF3E22;"></a>
-            <a href="#page2" style="background-color: #FF7001;"></a>
-            <a style="background-color: #34B865;" href="#page3"></a>
+            <a href="#topMenu"></a>
+            <a href="#page2"></a>
+            <a href="#page3"></a>
         </ul>
     </div>
     <div class="page2" id="page2">
         <div id="titlePage2">
-            <h1 >Nos principes</h1>
+            <h1>Nos principes</h1>
         </div>
-        <div id="leftCon" class="Con reveal">
-            <img src="../../assets/HoneyMaking2.jpg" alt="">
-            <h3>Meilleur Méthodes de production</h3>
-            <p>Information technology (IT) is the use of computers to store, retrieve, transmit, and manipulate data or information. IT is typically used within the context of business operations as opposed to personal or entertainment technologies. IT is considered to be a subset of information and communications technology (ICT).</p>
-        </div>
-        <div id="rightCon" class="Con reveal">
-            <img src="../../assets/olive_picking_cindysuen.gif"  alt="">
-            <h3>Meilleur matières premières</h3>
-            <p>Information technology (IT) is the use of computers to store, retrieve, transmit, and manipulate data or information. IT is typically used within the context of business operations as opposed to personal or entertainment technologies. IT is considered to be a subset of information and communications technology (ICT).</p>
+        <div class="principlesGrid">
+            <div id="leftCon" class="Con reveal">
+                <img [src]="transformImage(config.principle1Image)" alt="Méthodes de production traditionnelles">
+                <h3>{{ config.principle1Title }}</h3>
+                <p>{{ config.principle1Description }}</p>
+            </div>
+            <div id="rightCon" class="Con reveal">
+                <img [src]="transformImage(config.principle2Image)" alt="Sélection de matières premières de qualité">
+                <h3>{{ config.principle2Title }}</h3>
+                <p>{{ config.principle2Description }}</p>
+            </div>
         </div>
     </div>
-    <div class="pagination" id="pag2">
+    <div class="pagination">
         <ul class="paginationList">
-            <a href="#topMenu" style="background-color: #FF3E22;"></a>
-            <a style="background-color: #FF7001;"></a>
-            <a href="#page3" style="background-color: #34B865;"></a>
+            <a href="#topMenu"></a>
+            <a href="#page2"></a>
+            <a href="#page3"></a>
         </ul>
     </div>
     <div class="page3" id="page3">
         <div id="rightCon2" class="reveal">
-            <div class="oHCon" style="float: left;margin-left: 40pt;">
-                <h3>Sortes de miels</h3>
-                <img src="../../assets/honey3.png" alt="" style="width: 120px;">
-                <p *ngIf="loading"><img class="loading" src="../../assets/loading.gif" alt=""></p>
-                <p class="counter" *ngIf="!loading" style="font-size: 40px;">{{countH}}</p>
+            <div class="statsWrapper">
+                <div class="oHCon">
+                    <h3>Sortes de miels</h3>
+                    <img src="../../assets/honey3.png" alt="">
+                    <p *ngIf="loading"><img class="loading" src="../../assets/loading.gif" alt=""></p>
+                    <p class="counter" *ngIf="!loading">{{countH}}</p>
+                </div>
+                <div class="oHCon">
+                    <h3>Sortes d'huiles</h3>
+                    <img src="../../assets/oil3.png" alt="">
+                    <p *ngIf="loading"><img class="loading" src="../../assets/loading.gif" alt=""></p>
+                    <p class="counter" *ngIf="!loading">{{countO}}</p>
+                </div>
             </div>
-            <div class="oHCon" style="float: right;margin-right: 40pt;">
-                <h3>Sortes d'huiles</h3>
-                <img src="../../assets/oil3.png" alt="" style="width: 120px;">
-                <p *ngIf="loading"><img class="loading" src="../../assets/loading.gif" alt=""></p>
-                <p class="counter" *ngIf="!loading" style="font-size: 40px;">{{countO}}</p>
-            </div>
-            <!--<div class="counter">1356</div>-->
-            <div class="ConBottom" >
-                <label style="font-size: 35px;margin-top: 15pt;color: #2c466f;">Suivez-Nous sur nos plateformes:</label><br>
+            <div class="ConBottom">
+                <label>Suivez-nous sur nos plateformes :</label>
                 <div class="iconsCon">
-                    <a href="https://www.facebook.com/cooperative.officiel/"><i class="fab fa-facebook-square" style="margin-right: 15pt;"></i></a>
-                    <a style="color:black;" href="https://instagram.com/cooperativebabmansour?igshid=eh2xberwe4bn"><i class="fab fa-instagram" style="margin-left: 15pt;margin-right: 15pt;"></i></a>
-                    <a href="" style="color: #34B865;"><i class="fab fa-whatsapp" style="margin-left:15pt;"></i></a>
+                    <a href="https://www.facebook.com/cooperative.officiel/"><i class="fab fa-facebook-square"></i></a>
+                    <a href="https://instagram.com/cooperativebabmansour?igshid=eh2xberwe4bn"><i class="fab fa-instagram"></i></a>
+                    <a href="" style="color: #34B865;"><i class="fab fa-whatsapp"></i></a>
                 </div>
             </div>
         </div>
@@ -73,24 +79,24 @@
                 <input type="email" style="display: block;">
                 <textarea name="" id="" cols="30" rows="10" style="display:block;"></textarea>-->
                 <form id="emailUs">
-                    <h2 style="color: #2c466f;">Contactez-nous</h2>
-                    <label for="">E-mail:</label>
-                    <input id="email" type="email" placeholder="example@email.com" required>
-                    <label for="">Nom et prénom:</label>
-                    <input type="text" placeholder="Nom" required>
-                    <label>Message:</label>
-                    <textarea name="" id="" cols="30" rows="7" style="resize: none;"></textarea>
-                        <button id="bt" href="" style="color: white;border: 0px;margin-top: 5px;">
-                            Envoyez <i class="fas fa-envelope-open-text"></i>
-                        </button>
+                    <h2>Contactez-nous</h2>
+                    <label>E-mail :</label>
+                    <input id="email" type="email" placeholder="votre@email.com" required>
+                    <label>Nom et prénom :</label>
+                    <input type="text" placeholder="Votre nom" required>
+                    <label>Message :</label>
+                    <textarea cols="30" rows="7" placeholder="Votre message..."></textarea>
+                    <button type="submit">
+                        Envoyer <span class="material-symbols-outlined">send</span>
+                    </button>
                 </form>
         </div>
     </div>
-    <div class="pagination" style="width:100%;">
+    <div class="pagination">
         <ul class="paginationList">
-            <a href="#topMenu" style="background-color: #FF3E22;"></a>
-            <a href="#page2" style="background-color: #FF7001;"></a>
-            <a style="background-color: #34B865;"></a>
+            <a href="#topMenu"></a>
+            <a href="#page2"></a>
+            <a href="#page3"></a>
         </ul>
     </div>
 </div>

@@ -7,8 +7,8 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class HomepageService {
-  url="http://localhost:500/seachC/";
-  url1="http://localhost:500/";
+  url="http://localhost:5000/seachC/";
+  url1="http://localhost:5000/";
   constructor(private http:HttpClient) { }
   getCountM(categorie:string):Observable<products[]>{
     return this.http.get<products[]>(this.url+categorie);
@@ -16,5 +16,11 @@ export class HomepageService {
   cartcount(id:any)
   {
     return this.http.get(this.url1+"cartcount/"+id);
+  }
+  getConfig(): Observable<any> {
+    return this.http.get<any>(this.url1 + "api/config");
+  }
+  saveConfig(config: any): Observable<any> {
+    return this.http.post<any>(this.url1 + "api/config", config);
   }
 }

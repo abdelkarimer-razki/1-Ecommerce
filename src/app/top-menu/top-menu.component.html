@@ -4,21 +4,22 @@
     </ul>
     <div id="sTopMenu">
         <ul>
-            <li class="menuElements" routerLink="/" id="Home" (click)="disableMenu()"><i class="fas fa-home"></i><a> Accueil</a></li>
-            <li class="menuElements" routerLink="/shopping" id="Shopping" (click)="disableMenu()"><i class="fas fa-shopping-cart"></i><a> Shopping</a></li>
-            <li class="menuElements" routerLink="/admin/dashboard" id="Home" (click)="disableMenu()" *ngIf="log.isntAdmin()"><i class="fas fa-chart-line"></i><a> Dashboard</a></li>
-            <!--<li class="menuElements" id="Apropos" (click)="disableMenu()"><a routerLink="/Apropos"><i class="fas fa-info-circle"></i> à propos</a></li>-->
-            <li class="menuElements"  id="settings" (click)="showMenu()"><i class="fas fa-cog"></i><span *ngIf="cart!=0" class="not not1">{{cart}}</span></li>
+            <li class="menuElements" routerLink="/" id="Home" (click)="disableMenu()"><span class="material-symbols-outlined">storefront</span><a> Accueil</a></li>
+            <li class="menuElements" routerLink="/shopping" id="Shopping" (click)="disableMenu()"><span class="material-symbols-outlined">shopping_bag</span><a> Shopping</a></li>
+            <li class="menuElements" routerLink="/admin/dashboard" id="Home" (click)="disableMenu()" *ngIf="log.isntAdmin()"><span class="material-symbols-outlined">analytics</span><a> Dashboard</a></li>
+            <!--<li class="menuElements" id="Apropos" (click)="disableMenu()"><a routerLink="/Apropos"><span class="material-symbols-outlined">info</span> à propos</a></li>-->
+            <li class="menuElements"  id="settings" (click)="showMenu()"><span class="material-symbols-outlined">account_circle</span><span *ngIf="cart!=0" class="not not1">{{cart}}</span></li>
         </ul>
     </div>
 </div>
 <div id="menuMore" *ngIf="menuMore">
   <ul>
-    <p *ngIf="log.isToken()" style="text-align: center;margin-top: 8pt;font-weight: bolder;font-size: 20px;">{{name}}</p>
-    <p *ngIf="log.isToken()" style="text-align: center;border-bottom: 1px solid gainsboro;padding-bottom: 8pt;font-size: 13px;color: gray;">{{email}}</p>
-    <li (click)="disableMenu()" *ngIf="!log.isToken()" routerLink="/connexion"><i class="fas fa-sign-in-alt"></i> Connexion</li>
-    <li (click)="disableMenu()" *ngIf="!log.isToken()" routerLink="/inscrire"><i class="fas fa-user-plus"></i>  S'inscrire</li>
-    <li (click)="disableMenu()" routerLink="/cart" *ngIf="log.isuser()"><i class="fas fa-shopping-bag"></i> Commands <span *ngIf="cart!=0" class="not">{{cart}}</span></li>
-    <li (click)="log.logout();disableMenu()" *ngIf="log.isToken()" routerLink="/inscrire"><i class="fas fa-sign-out-alt"></i> Se déconnecter</li>
+    <p *ngIf="log.isToken()" class="username">{{name}}</p>
+    <p *ngIf="log.isToken()" class="email">{{email}}</p>
+    <div class="divider" *ngIf="log.isToken()"></div>
+    <li (click)="disableMenu()" *ngIf="!log.isToken()" routerLink="/connexion"><span class="material-symbols-outlined">login</span> Connexion</li>
+    <li (click)="disableMenu()" *ngIf="!log.isToken()" routerLink="/inscrire"><span class="material-symbols-outlined">person_add</span> S'inscrire</li>
+    <li (click)="disableMenu()" routerLink="/cart" *ngIf="log.isuser()"><span class="material-symbols-outlined">local_mall</span> Commandes <span *ngIf="cart!=0" class="not">{{cart}}</span></li>
+    <li (click)="log.logout();disableMenu()" *ngIf="log.isToken()" routerLink="/inscrire"><span class="material-symbols-outlined">logout</span> Se déconnecter</li>
   </ul>
 </div>
