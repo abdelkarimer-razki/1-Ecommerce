@@ -25,6 +25,10 @@ export class CommandsComponent implements OnInit {
   deleteModalActive: boolean = false;
   orderToDelete: any = null;
   
+  // Action dropdown states
+  morePending: boolean[] = [];
+  moreCompleted: boolean[] = [];
+  
   // Add Manual Command Modal
   addModalActive: boolean = false;
   productsList: any[] = [];
@@ -55,6 +59,8 @@ export class CommandsComponent implements OnInit {
   }
 
   loadTables() {
+    this.morePending = [];
+    this.moreCompleted = [];
     // Load pending (non-effectuées)
     this.dash.allCommandsE().subscribe((data: any) => {
       this.pendingOrders = data || [];
@@ -80,6 +86,8 @@ export class CommandsComponent implements OnInit {
 
   changeTab(isPending: boolean) {
     this.isEffectuer = isPending;
+    this.morePending = [];
+    this.moreCompleted = [];
     if (!isPending) this.searchCompleted(this.date);
   }
 
@@ -253,4 +261,21 @@ export class CommandsComponent implements OnInit {
       }
     );
   }
+
+  turnoffPending(i: any) {
+    for (var j = 0; j < this.morePending.length; j++) {
+      if (i != j) {
+        this.morePending[j] = false;
+      }
+    }
+  }
+
+  turnoffCompleted(i: any) {
+    for (var j = 0; j < this.moreCompleted.length; j++) {
+      if (i != j) {
+        this.moreCompleted[j] = false;
+      }
+    }
+  }
 }
+

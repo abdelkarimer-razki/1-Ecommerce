@@ -57,7 +57,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let order of pendingOrders">
+          <tr *ngFor="let order of pendingOrders; let i = index">
             <td class="order-id">#{{order.idgroup}}</td>
             <td class="order-client">
               <div class="client-name">{{order.fullname}}</div>
@@ -84,16 +84,15 @@
             <td>
               <span class="status-badge pending">En attente</span>
             </td>
-            <td class="action-btns">
-              <button class="icon-btn view" (click)="openDetail(order)" title="Voir les détails">
-                <span class="material-symbols-outlined">visibility</span>
-              </button>
-              <button class="icon-btn effectue" (click)="toggleEffectue(order)" title="Marquer effectuée">
-                <span class="material-symbols-outlined">check_circle</span>
-              </button>
-              <button class="icon-btn del" (click)="openDeleteConfirm(order)" title="Supprimer">
-                <span class="material-symbols-outlined">delete_outline</span>
-              </button>
+            <td class="action-btns" style="position: relative; justify-content: flex-end;">
+              <span class="material-symbols-outlined action-dots" (click)="morePending[i]=!morePending[i];turnoffPending(i)" style="margin-right: 12px;">more_vert</span>
+              <div *ngIf="morePending[i]" class="more" style="right: 12px; top: 100%;">
+                <ul>
+                  <li (click)="openDetail(order);morePending[i]=false;"><span class="material-symbols-outlined">visibility</span> Détails</li>
+                  <li (click)="toggleEffectue(order);morePending[i]=false;"><span class="material-symbols-outlined">check_circle</span> Effectuée</li>
+                  <li (click)="openDeleteConfirm(order);morePending[i]=false;"><span class="material-symbols-outlined">delete</span> Supprimer</li>
+                </ul>
+              </div>
             </td>
           </tr>
         </tbody>
@@ -123,7 +122,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let order of completedOrders">
+          <tr *ngFor="let order of completedOrders; let i = index">
             <td class="order-id">#{{order.idgroup}}</td>
             <td class="order-client">
               <div class="client-name">{{order.fullname}}</div>
@@ -150,13 +149,14 @@
             <td>
               <span class="status-badge done">Effectuée</span>
             </td>
-            <td class="action-btns">
-              <button class="icon-btn view" (click)="openDetail(order)" title="Voir les détails">
-                <span class="material-symbols-outlined">visibility</span>
-              </button>
-              <button class="icon-btn pending-btn" (click)="toggleEffectue(order)" title="Marquer non-effectuée">
-                <span class="material-symbols-outlined">undo</span>
-              </button>
+            <td class="action-btns" style="position: relative; justify-content: flex-end;">
+              <span class="material-symbols-outlined action-dots" (click)="moreCompleted[i]=!moreCompleted[i];turnoffCompleted(i)" style="margin-right: 12px;">more_vert</span>
+              <div *ngIf="moreCompleted[i]" class="more" style="right: 12px; top: 100%;">
+                <ul>
+                  <li (click)="openDetail(order);moreCompleted[i]=false;"><span class="material-symbols-outlined">visibility</span> Détails</li>
+                  <li (click)="toggleEffectue(order);moreCompleted[i]=false;"><span class="material-symbols-outlined">undo</span> En attente</li>
+                </ul>
+              </div>
             </td>
           </tr>
         </tbody>
