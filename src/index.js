@@ -221,12 +221,12 @@ app.post('/addpro',verifyToken,async(req,res)=>
 })
 
 app.get('/commandnonEffectuer',verifyToken,async(req,res)=>{
-  const query=await p1.query("SELECT u.lname||' '||u.fname as fullname,p.idproducts,u.iduser,c.idcommande,c.cart,u.adress,u.tel,p.name,u.email,c.qte,to_char(c.datecommand, 'DD/MM/YYYY'),c.verifie,c.prix,c.taille,c.etat FROM public.users u join public.commande c on u.iduser=c.iduser join public.products p on c.idproducts=p.idproducts where c.etat=false and c.cart=false ORDER BY c.idcommande");
+  const query=await p1.query("SELECT u.lname||' '||u.fname as fullname,p.idproducts,u.iduser,c.idcommande,c.cart,u.adress,u.tel,p.name,u.email,c.qte,to_char(c.datecommand, 'DD/MM/YYYY'),c.verifie,c.prix,c.taille,c.etat,c.source FROM public.users u join public.commande c on u.iduser=c.iduser join public.products p on c.idproducts=p.idproducts where c.etat=false and c.cart=false ORDER BY c.idcommande");
   res.json(query.rows);
 })
 
 app.get('/commandEffectuer',verifyToken,async(req,res)=>{
-  const query=await p1.query("SELECT u.lname||' '||u.fname as fullname,c.idcommande,c.cart,u.adress,u.tel,p.name,u.email,c.qte,to_char(c.datecommand, 'DD/MM/YYYY'),c.verifie,c.taille,c.prix,c.etat FROM public.users u join public.commande c on u.iduser=c.iduser join public.products p on c.idproducts=p.idproducts where c.etat=true and to_char(c.datecommand, 'YYYY-MM') = to_char(current_date, 'YYYY-MM') and c.cart=false ORDER BY c.idcommande");
+  const query=await p1.query("SELECT u.lname||' '||u.fname as fullname,c.idcommande,c.cart,u.adress,u.tel,p.name,u.email,c.qte,to_char(c.datecommand, 'DD/MM/YYYY'),c.verifie,c.taille,c.prix,c.etat,c.source FROM public.users u join public.commande c on u.iduser=c.iduser join public.products p on c.idproducts=p.idproducts where c.etat=true and to_char(c.datecommand, 'YYYY-MM') = to_char(current_date, 'YYYY-MM') and c.cart=false ORDER BY c.idcommande");
   res.json(query.rows);
 })
 
@@ -236,12 +236,41 @@ app.get('/commandEffectuer/:date',async(req,res)=>{
   const {date}=req.params;
   let query;
   if (date && date.length === 7) { // YYYY-MM format
-    query = await p1.query("SELECT u.lname||' '||u.fname as fullname,p.idproducts,c.idcommande,c.cart,u.iduser,u.adress,u.tel,p.name,u.email,c.qte,to_char(c.datecommand, 'DD/MM/YYYY'),c.verifie,c.taille,c.prix,c.etat FROM public.users u join public.commande c on u.iduser=c.iduser join public.products p on c.idproducts=p.idproducts where c.etat=true and to_char(c.datecommand, 'YYYY-MM')=$1 and c.cart=false ORDER BY c.idcommande",[date]);
+    query = await p1.query("SELECT u.lname||' '||u.fname as fullname,p.idproducts,c.idcommande,c.cart,u.iduser,u.adress,u.tel,p.name,u.email,c.qte,to_char(c.datecommand, 'DD/MM/YYYY'),c.verifie,c.taille,c.prix,c.etat,c.source FROM public.users u join public.commande c on u.iduser=c.iduser join public.products p on c.idproducts=p.idproducts where c.etat=true and to_char(c.datecommand, 'YYYY-MM')=$1 and c.cart=false ORDER BY c.idcommande",[date]);
   } else { // YYYY-MM-DD or other format
-    query = await p1.query("SELECT u.lname||' '||u.fname as fullname,p.idproducts,c.idcommande,c.cart,u.iduser,u.adress,u.tel,p.name,u.email,c.qte,to_char(c.datecommand, 'DD/MM/YYYY'),c.verifie,c.taille,c.prix,c.etat FROM public.users u join public.commande c on u.iduser=c.iduser join public.products p on c.idproducts=p.idproducts where c.etat=true and datecommand=$1 and c.cart=false ORDER BY c.idcommande",[date]);
+    query = await p1.query("SELECT u.lname||' '||u.fname as fullname,p.idproducts,c.idcommande,c.cart,u.iduser,u.adress,u.tel,p.name,u.email,c.qte,to_char(c.datecommand, 'DD/MM/YYYY'),c.verifie,c.taille,c.prix,c.etat,c.source FROM public.users u join public.commande c on u.iduser=c.iduser join public.products p on c.idproducts=p.idproducts where c.etat=true and datecommand=$1 and c.cart=false ORDER BY c.idcommande",[date]);
   }
   res.json(query.rows);
 })
+
+// Add manual in-store command
+app.post('/addManualCommand',verifyToken,async(req,res)=>{
+  try {
+    const { fullname, adress, tel, email, idproducts, qte, taille, prix, etat } = req.body;
+    let userId;
+    const userCheck = await p1.query("SELECT iduser FROM public.users WHERE tel=$1 LIMIT 1", [tel]);
+    if (userCheck.rows.length > 0) {
+      userId = userCheck.rows[0].iduser;
+    } else {
+      const parts = fullname ? fullname.trim().split(' ') : ['Client', 'Anonyme'];
+      const fname = parts[0] || 'Client';
+      const lname = parts.slice(1).join(' ') || 'Anonyme';
+      
+      const insertUser = await p1.query("INSERT INTO public.users (fname, lname, adress, tel, email, password, active) VALUES ($1, $2, $3, $4, $5, 'manual_guest_pwd', false) RETURNING iduser", [fname, lname, adress, tel || '0000000000', email || '']);
+      userId = insertUser.rows[0].iduser;
+    }
+
+    const result = await p1.query(
+      "INSERT INTO public.commande (idproducts, iduser, qte, prix, datecommand, cart, taille, verifie, etat, source) VALUES ($1, $2, $3, $4, CURRENT_DATE, false, $5, true, $6, 'magasin') RETURNING *",
+      [idproducts, userId, qte, prix, taille, etat === undefined ? false : etat]
+    );
+
+    res.status(201).json({ success: true, command: result.rows[0] });
+  } catch (err) {
+    console.error("Error adding manual command:", err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
 
 app.get('/:categorie',async(req,res)=>{
   const {categorie}=req.params;

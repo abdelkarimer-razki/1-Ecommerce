@@ -105,4 +105,9 @@ export class DashboardService {
   {
     return this.http.get(this.url1+"cartotachat/"+id);
   }
+
+  addManualCommand(command: any)
+  {
+    return this.http.post(this.url1 + "addManualCommand", command);
+  }
 }

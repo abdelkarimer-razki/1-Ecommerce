@@ -1,12 +1,27 @@
 <div class="admin-commands-container">
-  <div class="choice">
+  <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 16px; margin-top: 15px;">
+    <h1 class="title" style="font-family: var(--font-serif) !important; font-size: 1.6rem; font-weight: 700; color: var(--color-text-main); display: flex; align-items: center; gap: 12px; margin: 0;">
+      <span class="material-symbols-outlined" style="color: var(--color-secondary);">receipt_long</span> Commandes
+    </h1>
+    <div id="buttonid" (click)="openAddModal()" style="background-color: var(--color-primary); color: white; border-radius: var(--border-radius-sm); padding: 10px 20px; font-family: var(--font-sans); font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: var(--transition-smooth); display: flex; align-items: center; justify-content: center; gap: 8px;">
+      <span class="material-symbols-outlined" style="font-size: 1.2rem;">add</span> Commande Manuelle
+    </div>
+  </div>
+
+  <div class="choice" style="margin-top: 24px;">
     <label class="effectuer" (click)="changeEtatN()" [ngClass]="{colorback: !isEffectuer}"><span class="material-symbols-outlined">check_circle</span> Achat Effectuer</label>
     <label class="Noneffectuer" (click)="changeEtatP()" [ngClass]="{colorback: isEffectuer}"><span class="material-symbols-outlined">cancel</span> Achat Non-Effectuer</label>
   </div>
-  <div *ngIf="!isEffectuer" id="search">
-    <span class="material-symbols-outlined search-calendar-icon" style="color: var(--color-text-light); padding-left: 16px; font-size: 1.25rem; display: inline-flex; align-items: center;">calendar_month</span>
-    <input type="month" [(ngModel)]="date" (ngModelChange)="search(date)" name="month-picker" id="month-picker">
-    <button (click)="search(date)"><span class="material-symbols-outlined" style="font-size: 18px; margin-right: 4px;">search</span> Chercher</button>
+  
+  <div *ngIf="!isEffectuer" id="search" style="display: flex; align-items: center;">
+    <button type="button" class="btn-arrow" (click)="prevMonth()" title="Mois précédent" style="background: none; border: none; color: var(--color-text-light); padding: 0 12px; cursor: pointer; display: inline-flex; align-items: center; height: 100%; transition: var(--transition-smooth);">
+      <span class="material-symbols-outlined" style="font-size: 1.3rem;">chevron_left</span>
+    </button>
+    <input type="month" [(ngModel)]="date" (ngModelChange)="search(date)" name="month-picker" id="month-picker" style="text-align: center; border-left: 1px solid var(--border-color); border-right: 1px solid var(--border-color); border-radius: 0;">
+    <button type="button" class="btn-arrow" (click)="nextMonth()" title="Mois suivant" style="background: none; border: none; color: var(--color-text-light); padding: 0 12px; cursor: pointer; display: inline-flex; align-items: center; height: 100%; transition: var(--transition-smooth);">
+      <span class="material-symbols-outlined" style="font-size: 1.3rem;">chevron_right</span>
+    </button>
+    <button (click)="search(date)" style="border-top-left-radius: 0; border-bottom-left-radius: 0;"><span class="material-symbols-outlined" style="font-size: 18px; margin-right: 4px;">search</span> Chercher</button>
   </div>
   <div class="table" *ngIf="isEffectuer">
     <div *ngIf="voidNE" style="text-align:center;font-size: 30px;padding-top: 120px;"><img src="../../assets/smallbee.png" alt=""> Tous les commandes sont effectue</div>
@@ -23,7 +38,16 @@
         <th></th>
       </tr>
       <tr class="TableElement" *ngFor="let item of table;index as i">
-        <td>{{item.fullname}}</td>
+        <td>
+          <div style="font-weight: 700; color: var(--color-text-main);">{{item.fullname}}</div>
+          <!-- Type/Source badge -->
+          <span class="ticket-source magasin" *ngIf="item.source === 'magasin'" style="display: inline-flex; align-items: center; gap: 4px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; background-color: var(--color-primary-light); color: var(--color-primary); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(180, 83, 9, 0.15); margin-top: 4px;">
+            <span class="material-symbols-outlined" style="font-size: 0.8rem;">store</span> Magasin
+          </span>
+          <span class="ticket-source site" *ngIf="item.source !== 'magasin'" style="display: inline-flex; align-items: center; gap: 4px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; background-color: var(--color-secondary-light); color: var(--color-secondary); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(63, 98, 18, 0.15); margin-top: 4px;">
+            <span class="material-symbols-outlined" style="font-size: 0.8rem;">language</span> En ligne
+          </span>
+        </td>
         <td style="display:block" class = "edits" [id]="i + 'c'">{{item.adress}}</td>
         <td style="display:none" [id]="i + 'b'" class = "edits"><input type="text" class="editers"  name="" id="" value={{item.adress}} [(ngModel)]="item.adress"></td>
         <td><label id="phone">{{item.tel}}</label>
@@ -65,7 +89,16 @@
       <th></th>
     </tr>
     <tr class="TableElement" *ngFor="let item of table2;index as i">
-      <td>{{item.fullname}}</td>
+      <td>
+        <div style="font-weight: 700; color: var(--color-text-main);">{{item.fullname}}</div>
+        <!-- Type/Source badge -->
+        <span class="ticket-source magasin" *ngIf="item.source === 'magasin'" style="display: inline-flex; align-items: center; gap: 4px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; background-color: var(--color-primary-light); color: var(--color-primary); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(180, 83, 9, 0.15); margin-top: 4px;">
+          <span class="material-symbols-outlined" style="font-size: 0.8rem;">store</span> Magasin
+        </span>
+        <span class="ticket-source site" *ngIf="item.source !== 'magasin'" style="display: inline-flex; align-items: center; gap: 4px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; background-color: var(--color-secondary-light); color: var(--color-secondary); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(63, 98, 18, 0.15); margin-top: 4px;">
+          <span class="material-symbols-outlined" style="font-size: 0.8rem;">language</span> En ligne
+        </span>
+      </td>
       <td style="display:block" class ="edits" [id]="i + 'c'">{{item.adress}}</td>
       <td style="display:none" [id]="i + 'b'" class = "edits"><input class="editers" type="text" name="" id="" value={{item.adress}} [(ngModel)]="item.adress"></td>
       <td><label id="phone">{{item.tel}}</label>
@@ -91,4 +124,92 @@
     </div>
     </tr>
   </table>
+</div>
+
+<!-- Modal Add Manual Command Backdrop -->
+<div class="modal-backdrop" *ngIf="addModalActive" (click)="closeAddModal()"></div>
+
+<!-- Modal Add Manual Command Window -->
+<div class="modal-window" *ngIf="addModalActive" style="max-width: 500px;">
+  <div class="modal-header">
+    <h3>Ajouter une Commande Manuelle</h3>
+    <button class="modal-close-btn" (click)="closeAddModal()"><span class="material-symbols-outlined">close</span></button>
+  </div>
+
+  <div class="modal-body">
+    <div class="modal-form-grid" style="display: flex; flex-direction: column; gap: 16px;">
+      <!-- Client Full Name -->
+      <div class="input-group">
+        <label>Nom complet du client</label>
+        <input class="text" type="text" [(ngModel)]="newCommand.fullname" placeholder="Ex: Karim Bensouda" required>
+      </div>
+
+      <!-- Client Tel & Email -->
+      <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div class="input-group">
+          <label>Téléphone</label>
+          <input class="text" type="text" [(ngModel)]="newCommand.tel" placeholder="Ex: 0612345678" required>
+        </div>
+        <div class="input-group">
+          <label>E-mail (facultatif)</label>
+          <input class="text" type="email" [(ngModel)]="newCommand.email" placeholder="Ex: client@gmail.com">
+        </div>
+      </div>
+
+      <!-- Client Address -->
+      <div class="input-group">
+        <label>Adresse de livraison / Magasin</label>
+        <input class="text" type="text" [(ngModel)]="newCommand.adress" placeholder="Ex: Riad El Mansour, Meknès">
+      </div>
+
+      <hr style="border: 0; border-top: 1px dashed var(--border-color); margin: 8px 0;">
+
+      <!-- Product Selector -->
+      <div class="input-group">
+        <label>Sélectionner le produit</label>
+        <select class="optionP" [ngModel]="newCommand.idproducts" (ngModelChange)="onProductSelect($event)">
+          <option value="" disabled selected>-- Choisir un produit --</option>
+          <option *ngFor="let prod of productsList" [value]="prod.idproducts">{{prod.name}}</option>
+        </select>
+      </div>
+
+      <!-- Sizing Variation & Quantity -->
+      <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;" *ngIf="sizesList.length > 0">
+        <div class="input-group">
+          <label>Taille / Conditionnement</label>
+          <select class="optionP" [ngModel]="selectedSizeObj" (ngModelChange)="selectedSizeObj = $event; onSizeSelect($event)">
+            <option *ngFor="let size of sizesList" [ngValue]="size">{{size.taille}}</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label>Quantité</label>
+          <input class="text" type="number" [(ngModel)]="newCommand.qte" min="1" required>
+        </div>
+      </div>
+
+      <!-- Pricing Summary & Etat -->
+      <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div class="input-group">
+          <label>Prix total calculé (DH)</label>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <input class="text" type="number" [(ngModel)]="newCommand.prix" style="flex-grow: 1;">
+            <span style="font-weight: 700; color: var(--color-text-muted);">DH</span>
+          </div>
+        </div>
+        <div class="input-group">
+          <label>Statut de la commande</label>
+          <select class="optionP" [(ngModel)]="newCommand.etat">
+            <option [ngValue]="false">En attente (Non-effectuée)</option>
+            <option [ngValue]="true">Livrée / Effectuée</option>
+          </select>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn-cancel" (click)="closeAddModal()">Annuler</button>
+    <button class="btn-save" (click)="submitManualCommand()">Enregistrer</button>
+  </div>
 </div>
