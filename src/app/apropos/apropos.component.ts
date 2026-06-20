@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { DashboardService } from '../services/dashboard.service';
 import { DomSanitizer } from '@angular/platform-browser';
+import { DashboardService } from '../services/dashboard.service';
 import { BuyproductService } from '../services/buyproduct.service';
+import { TranslationService } from '../services/translation.service';
+
 @Component({
   selector: 'app-apropos',
   templateUrl: './apropos.component.html',
@@ -17,10 +19,16 @@ export class AproposComponent implements OnInit {
   nocart:any=false;
   product:any;
   total:any=0;
-  constructor(private sanitizer: DomSanitizer,private titleService:Title,private dash:DashboardService,private buy:BuyproductService) { }
+  constructor(
+    private sanitizer: DomSanitizer,
+    private titleService:Title,
+    private dash:DashboardService,
+    private buy:BuyproductService,
+    public trans: TranslationService
+  ) { }
 
   ngOnInit(): void {
-    this.titleService.setTitle("Panier");
+    this.titleService.setTitle(this.trans.t('PANIER'));
     this.cartcount=localStorage.getItem("count");
     if(!!localStorage.getItem('cart')==true)
     {

@@ -1,0 +1,76 @@
+<div class="messages-page" [style.direction]="trans.isRtl() ? 'rtl' : 'ltr'">
+  <!-- PAGE HEADER -->
+  <div class="page-header" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+    <div class="page-title" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+      <span class="material-symbols-outlined">forum</span>
+      <h1>{{trans.t('MESSAGES')}}</h1>
+    </div>
+  </div>
+
+  <!-- LOADING SPINNER -->
+  <div class="loading-wrapper" *ngIf="loading">
+    <img src="../../assets/loading.gif" [alt]="trans.t('CHARGEMENT')">
+  </div>
+
+  <!-- EMPTY STATE -->
+  <div class="empty-state" *ngIf="!loading && messages.length === 0">
+    <span class="material-symbols-outlined">mail_outline</span>
+    <p>{{trans.t('AUCUN_MESSAGE')}}</p>
+  </div>
+
+  <!-- MESSAGES LIST -->
+  <div class="messages-grid" *ngIf="!loading && messages.length > 0">
+    <div class="message-card" *ngFor="let msg of messages">
+      <div class="card-header" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+        <div class="sender-info" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+          <h4 class="sender-name">{{msg.name}}</h4>
+          <div class="sender-tel" style="display: flex; align-items: center; gap: 4px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+            <span class="material-symbols-outlined" style="font-size: 1.05rem;">call</span>
+            <span>{{msg.tel}}</span>
+          </div>
+        </div>
+        <div class="header-right" style="display: flex; gap: 12px; align-items: center;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+          <span class="date-badge">{{msg.date_formatted}}</span>
+          <button class="btn-delete" (click)="confirmDelete(msg)" [title]="trans.t('SUPPRIMER')">
+            <span class="material-symbols-outlined">delete</span>
+          </button>
+        </div>
+      </div>
+      <div class="card-body" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+        <p class="message-content">{{msg.message}}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Delete Confirmation Backdrop -->
+<div class="modal-backdrop" *ngIf="deleteModalActive" (click)="closeDeleteModal()"></div>
+
+<!-- Modal Delete Confirmation Window -->
+<div class="modal-window delete-modal" *ngIf="deleteModalActive && deletingMessage" style="max-width: 450px;" [style.direction]="trans.isRtl() ? 'rtl' : 'ltr'">
+  <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+    <h3 style="margin: 0;">{{trans.t('CONFIRMATION_SUPPRESSION')}}</h3>
+    <button class="modal-close-btn" (click)="closeDeleteModal()"><span class="material-symbols-outlined">close</span></button>
+  </div>
+
+  <div class="modal-body" style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 16px; padding: 30px 24px;">
+    <!-- Large Warning/Delete Icon in circle -->
+    <div style="width: 60px; height: 60px; border-radius: 50%; background-color: var(--color-terracotta-light); display: flex; align-items: center; justify-content: center; border: 1px solid rgba(194, 65, 12, 0.2);">
+      <span class="material-symbols-outlined" style="font-size: 2rem; color: var(--color-terracotta);">delete_forever</span>
+    </div>
+    
+    <div>
+      <h4 style="font-family: var(--font-serif) !important; font-size: 1.25rem; font-weight: 700; color: var(--color-text-main); margin-bottom: 8px;">{{trans.t('SUPPRIMER_CATEGORIE_QUESTION')}}</h4>
+      <p style="font-size: 0.95rem; color: var(--color-text-muted); line-height: 1.5; margin: 0;">
+        {{trans.t('SUPPRIMER_CATEGORIE_WARN_START')}} <strong>"{{deletingMessage.name}}"</strong>?
+      </p>
+    </div>
+  </div>
+
+  <div class="modal-footer" style="background-color: var(--color-bg-main); border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 12px; padding: 16px 24px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+    <button class="btn-cancel" (click)="closeDeleteModal()" style="margin: 0;">{{trans.t('ANNULER')}}</button>
+    <button class="btn-save" (click)="executeDelete()" style="background-color: var(--color-terracotta); margin: 0;">
+      {{trans.t('SUPPRIMER')}}
+    </button>
+  </div>
+</div>

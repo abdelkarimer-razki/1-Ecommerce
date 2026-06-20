@@ -110,16 +110,56 @@
 /* ====================================
    MONTH NAVIGATOR
    ==================================== */
+.month-nav-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
 .month-nav {
   display: flex;
   align-items: center;
   gap: 0;
-  margin-bottom: 20px;
   background: var(--color-bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-md);
   width: fit-content;
   overflow: hidden;
+}
+
+.btn-pdf-export {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius-sm);
+  padding: 10px 18px;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  box-shadow: 0 4px 6px -1px rgba(180, 83, 9, 0.15);
+}
+
+.btn-pdf-export:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+  transform: translateY(-1px);
+}
+
+.btn-pdf-export:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.btn-pdf-export .material-symbols-outlined {
+  font-size: 1.15rem;
 }
 
 .arrow-btn {

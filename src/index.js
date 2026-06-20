@@ -40,6 +40,68 @@ app.use(cors());
 app.use(express.json());
 app.listen(5000);
 
+async function initCategoriesTable() {
+  try {
+    // Add highlighted column if not exists
+    await p1.query(`
+      ALTER TABLE products ADD COLUMN IF NOT EXISTS highlighted BOOLEAN DEFAULT FALSE
+    `);
+
+    await p1.query(`
+      CREATE TABLE IF NOT EXISTS categories (
+        idcategory SERIAL PRIMARY KEY,
+        name VARCHAR(100) UNIQUE NOT NULL
+      )
+    `);
+    
+    // Insert defaults
+    await p1.query(`
+      INSERT INTO categories (name) VALUES ('MIEL'), ('HUILE') ON CONFLICT DO NOTHING
+    `);
+
+    // Migrate categories from products
+    const prodCats = await p1.query(`
+      SELECT DISTINCT categorie FROM products 
+      WHERE categorie IS NOT NULL AND categorie != 'null' AND categorie != ''
+    `);
+    for (const r of prodCats.rows) {
+      if (r.categorie && r.categorie.trim() !== '') {
+        await p1.query(`
+          INSERT INTO categories (name) VALUES ($1) ON CONFLICT DO NOTHING
+        `, [r.categorie.trim().toUpperCase()]);
+      }
+    }
+
+    // Create messages table for reclamations
+    await p1.query(`
+      CREATE TABLE IF NOT EXISTS messages (
+        idmessage SERIAL PRIMARY KEY,
+        name VARCHAR(100) NOT NULL,
+        tel VARCHAR(20) NOT NULL,
+        message TEXT NOT NULL,
+        date_sent TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    console.log("Categories and Messages tables initialized successfully!");
+  } catch (err) {
+    console.error("Failed to initialize categories table:", err);
+  }
+}
+initCategoriesTable();
+
+app.post('/toggle-highlight', verifyToken, async (req, res) => {
+  try {
+    const id = req.body.idproducts;
+    const highlighted = req.body.highlighted || false;
+    await p1.query("UPDATE products SET highlighted=$1 WHERE idproducts=$2", [highlighted, id]);
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error updating highlight status");
+  }
+});
+
 
 function verifyToken(req, res, next) {
   if(!req.headers.authorization) {
@@ -134,8 +196,10 @@ app.get('/users',verifyToken,async(req,res)=>{
 
 app.get('/revenu/:mois',verifyToken,async(req,res)=>{
   const {mois}=req.params;
-  const query=await p1.query("SELECT SUM(prix_total) from public.order_group where (EXTRACT(YEAR FROM datecommand)=EXTRACT(YEAR FROM now())) and (etat=true) and (EXTRACT(MONTH FROM datecommand)=$1)",[mois]);
-  res.json(parseInt(query.rows[0].sum));
+  const year = req.query.year || new Date().getFullYear();
+  const query=await p1.query("SELECT SUM(prix_total) from public.order_group where (EXTRACT(YEAR FROM datecommand)=$1) and (etat=true) and (EXTRACT(MONTH FROM datecommand)=$2)",[year, mois]);
+  const sum = query.rows[0].sum;
+  res.json(sum ? parseInt(sum) : 0);
 })
 
 //update product
@@ -160,6 +224,10 @@ app.post('/p12',verifyToken,async(req,res)=>{
     if (req.body.taille3 && req.body.taille3 !== '0' && req.body.prix3) {
       sizes.push({ taille: req.body.taille3, prix: req.body.prix3 });
     }
+  }
+
+  if (cat && cat.trim() !== '') {
+    await p1.query("INSERT INTO categories (name) VALUES ($1) ON CONFLICT DO NOTHING", [cat.trim().toUpperCase()]);
   }
 
   const query = await p1.query(
@@ -199,6 +267,10 @@ app.post('/addpro',verifyToken,async(req,res)=>
     if (req.body.taille3 && req.body.taille3 !== '0' && req.body.prix3) {
       sizes.push({ taille: req.body.taille3, prix: req.body.prix3 });
     }
+  }
+
+  if (cat && cat.trim() !== '') {
+    await p1.query("INSERT INTO categories (name) VALUES ($1) ON CONFLICT DO NOTHING", [cat.trim().toUpperCase()]);
   }
 
   const query = await p1.query(
@@ -504,10 +576,37 @@ app.get('/:categorie',async(req,res)=>{
 
 app.get('/categories/all', async(req, res) => {
   try {
-    const query = await p1.query("SELECT DISTINCT categorie FROM products WHERE categorie IS NOT NULL AND categorie != 'null' AND categorie != ''");
-    res.json(query.rows.map(r => r.categorie));
+    const query = await p1.query("SELECT name FROM categories ORDER BY name ASC");
+    res.json(query.rows.map(r => r.name));
   } catch (err) {
+    console.error(err);
     res.status(500).json([]);
+  }
+});
+
+app.post('/categories/add', async(req, res) => {
+  const { name } = req.body;
+  if (!name || name.trim() === '') {
+    return res.status(400).send('Category name is required');
+  }
+  const cleanName = name.trim().toUpperCase();
+  try {
+    await p1.query("INSERT INTO categories (name) VALUES ($1) ON CONFLICT DO NOTHING", [cleanName]);
+    res.status(201).json({ success: true, name: cleanName });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Server error');
+  }
+});
+
+app.delete('/categories/:name', async(req, res) => {
+  const { name } = req.params;
+  try {
+    await p1.query("DELETE FROM categories WHERE name = $1", [name]);
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Server error');
   }
 });
 
@@ -768,6 +867,51 @@ app.get('/checkcart/:iduser&:idproduit',async(req,res)=>{
   const query=await p1.query("SELECT COUNT(*) FROM commande WHERE iduser=$1 and idproducts=$2 and cart=true",[iduser,idproduit]);
   res.json(query.rows);
 })
+
+// ============================================================
+// MESSAGES/RECLAMATIONS ENDPOINTS
+// ============================================================
+
+// Submit a reclamation/message
+app.post('/api/messages', async (req, res) => {
+  try {
+    const { name, tel, message } = req.body;
+    if (!name || !tel || !message || name.trim() === '' || tel.trim() === '' || message.trim() === '') {
+      return res.status(400).json({ success: false, error: 'Missing required fields' });
+    }
+    await p1.query(
+      "INSERT INTO messages (name, tel, message) VALUES ($1, $2, $3)",
+      [name.trim(), tel.trim(), message.trim()]
+    );
+    res.status(201).json({ success: true });
+  } catch (err) {
+    console.error("Error saving message:", err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Get all reclamations/messages for Admin
+app.get('/api/messages', verifyToken, async (req, res) => {
+  try {
+    const query = await p1.query("SELECT *, to_char(date_sent, 'DD/MM/YYYY HH24:MI') as date_formatted FROM messages ORDER BY idmessage DESC");
+    res.json(query.rows);
+  } catch (err) {
+    console.error("Error loading messages:", err);
+    res.status(500).send("Error loading messages");
+  }
+});
+
+// Delete reclamation/message
+app.delete('/api/messages/:id', verifyToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    await p1.query("DELETE FROM messages WHERE idmessage = $1", [id]);
+    res.json({ success: true });
+  } catch (err) {
+    console.error("Error deleting message:", err);
+    res.status(500).send("Error deleting message");
+  }
+});
 
 // dynamic site configuration
 app.get('/api/config', (req, res) => {

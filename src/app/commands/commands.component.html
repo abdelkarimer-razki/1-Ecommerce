@@ -1,37 +1,44 @@
 <div class="commands-page">
   <!-- PAGE HEADER -->
-  <div class="page-header">
-    <div class="page-title">
+  <div class="page-header" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+    <div class="page-title" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
       <span class="material-symbols-outlined">receipt_long</span>
-      <h1>Commandes</h1>
+      <h1>{{trans.t('COMMANDES')}}</h1>
     </div>
-    <button class="btn-add-manual" (click)="openAddModal()">
+    <button class="btn-add-manual" (click)="openAddModal()" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
       <span class="material-symbols-outlined">add_shopping_cart</span>
-      Commande Manuelle
+      {{trans.t('CREER_COMMANDE_MANUELLE')}}
     </button>
   </div>
 
   <!-- TABS -->
-  <div class="tabs">
-    <button class="tab-btn" [class.active]="isEffectuer" (click)="changeTab(true)">
+  <div class="tabs" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+    <button class="tab-btn" [class.active]="isEffectuer" (click)="changeTab(true)" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
       <span class="material-symbols-outlined">pending_actions</span>
-      En attente
+      {{trans.t('EN_ATTENTE')}}
       <span class="tab-badge" *ngIf="pendingOrders.length > 0">{{pendingOrders.length}}</span>
     </button>
-    <button class="tab-btn" [class.active]="!isEffectuer" (click)="changeTab(false)">
+    <button class="tab-btn" [class.active]="!isEffectuer" (click)="changeTab(false)" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
       <span class="material-symbols-outlined">check_circle</span>
-      Effectuées
+      {{trans.t('EFFECTUEE')}}
     </button>
   </div>
 
   <!-- MONTH NAVIGATOR (for Effectuées tab) -->
-  <div class="month-nav" *ngIf="!isEffectuer">
-    <button class="arrow-btn" (click)="prevMonth()" title="Mois précédent">
-      <span class="material-symbols-outlined">chevron_left</span>
-    </button>
-    <span class="month-label">{{getMonthLabel()}}</span>
-    <button class="arrow-btn" (click)="nextMonth()" title="Mois suivant">
-      <span class="material-symbols-outlined">chevron_right</span>
+  <div class="month-nav-row" *ngIf="!isEffectuer" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+    <div class="month-nav" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+      <button class="arrow-btn" (click)="prevMonth()" [title]="trans.t('MOIS_PRECEDENT')">
+        <span class="material-symbols-outlined">chevron_left</span>
+      </button>
+      <span class="month-label">{{getMonthLabel()}}</span>
+      <button class="arrow-btn" (click)="nextMonth()" [title]="trans.t('MOIS_SUIVANT')">
+        <span class="material-symbols-outlined">chevron_right</span>
+      </button>
+    </div>
+
+    <button class="btn-pdf-export" (click)="generateMonthlyReport()" [disabled]="completedOrders.length === 0" [title]="trans.t('EXPORTER_PDF')" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+      <span class="material-symbols-outlined">picture_as_pdf</span>
+      {{trans.t('EXPORTER_PDF')}}
     </button>
   </div>
 
@@ -39,50 +46,50 @@
   <div *ngIf="isEffectuer">
     <div class="empty-state" *ngIf="voidPending">
       <span class="material-symbols-outlined">check_circle</span>
-      <p>Toutes les commandes ont été effectuées !</p>
+      <p>{{trans.t('TOUTES_COMMANDES_EFFECTUEES')}}</p>
     </div>
     <div class="orders-table-wrap" *ngIf="!voidPending">
-      <table class="orders-table">
+      <table class="orders-table" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
         <thead>
-          <tr>
+          <tr [style.text-align]="trans.isRtl() ? 'right' : 'left'">
             <th>#</th>
-            <th>Client</th>
-            <th>Téléphone</th>
-            <th>Produits</th>
-            <th>Total</th>
-            <th>Date</th>
-            <th>Source</th>
-            <th>Statut</th>
-            <th>Actions</th>
+            <th>{{trans.t('CLIENT')}}</th>
+            <th>{{trans.t('TELEPHONE')}}</th>
+            <th>{{trans.t('PRODUITS')}}</th>
+            <th>{{trans.t('TOTAL')}}</th>
+            <th>{{trans.t('DATE')}}</th>
+            <th>{{trans.t('SOURCE')}}</th>
+            <th>{{trans.t('STATUT')}}</th>
+            <th>{{trans.t('ACTIONS_HEADER')}}</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let order of pendingOrders; let i = index">
             <td class="order-id">#{{order.idgroup}}</td>
-            <td class="order-client">
+            <td class="order-client" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
               <div class="client-name">{{order.fullname}}</div>
               <div class="client-addr" *ngIf="order.adress">{{order.adress}}</div>
             </td>
             <td>{{order.tel}}</td>
             <td class="order-products">
-              <div class="product-pills">
-                <span class="product-pill" *ngFor="let it of (order.items || [])">
-                  {{it.name}} <span class="pill-qte">×{{it.qte}}</span>
+              <div class="product-pills" [style.justify-content]="trans.isRtl() ? 'flex-end' : 'flex-start'">
+                <span class="product-pill" *ngFor="let it of (order.items || [])" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+                  {{trans.t(it.name)}} <span class="pill-qte">×{{it.qte}}</span>
                 </span>
               </div>
             </td>
             <td class="order-total">{{order.prix_total | number:'1.0-0'}} DH</td>
             <td class="order-date">{{order.to_char}}</td>
             <td>
-              <span class="source-badge magasin" *ngIf="order.source === 'magasin'">
-                <span class="material-symbols-outlined">store</span> Magasin
+              <span class="source-badge magasin" *ngIf="order.source === 'magasin'" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+                <span class="material-symbols-outlined">store</span> {{trans.t('MAGASIN')}}
               </span>
-              <span class="source-badge site" *ngIf="order.source !== 'magasin'">
-                <span class="material-symbols-outlined">language</span> En ligne
+              <span class="source-badge site" *ngIf="order.source !== 'magasin'" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+                <span class="material-symbols-outlined">language</span> {{trans.t('EN_LIGNE')}}
               </span>
             </td>
             <td>
-              <span class="status-badge pending">En attente</span>
+              <span class="status-badge pending">{{trans.t('EN_ATTENTE')}}</span>
             </td>
             <td class="action-btns" style="justify-content: flex-end;">
               <span class="material-symbols-outlined action-dots" (click)="toggleDropdown($event, order, true)" style="margin-right: 12px;">more_vert</span>
@@ -97,50 +104,50 @@
   <div *ngIf="!isEffectuer">
     <div class="empty-state" *ngIf="voidCompleted">
       <span class="material-symbols-outlined">calendar_month</span>
-      <p>Aucune commande effectuée en {{getMonthLabel()}}.</p>
+      <p>{{trans.t('NO_COMMANDE_MOIS')}} {{getMonthLabel()}}.</p>
     </div>
     <div class="orders-table-wrap" *ngIf="!voidCompleted">
-      <table class="orders-table">
+      <table class="orders-table" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
         <thead>
-          <tr>
+          <tr [style.text-align]="trans.isRtl() ? 'right' : 'left'">
             <th>#</th>
-            <th>Client</th>
-            <th>Téléphone</th>
-            <th>Produits</th>
-            <th>Total</th>
-            <th>Date</th>
-            <th>Source</th>
-            <th>Statut</th>
-            <th>Actions</th>
+            <th>{{trans.t('CLIENT')}}</th>
+            <th>{{trans.t('TELEPHONE')}}</th>
+            <th>{{trans.t('PRODUITS')}}</th>
+            <th>{{trans.t('TOTAL')}}</th>
+            <th>{{trans.t('DATE')}}</th>
+            <th>{{trans.t('SOURCE')}}</th>
+            <th>{{trans.t('STATUT')}}</th>
+            <th>{{trans.t('ACTIONS_HEADER')}}</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let order of completedOrders; let i = index">
             <td class="order-id">#{{order.idgroup}}</td>
-            <td class="order-client">
+            <td class="order-client" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
               <div class="client-name">{{order.fullname}}</div>
               <div class="client-addr" *ngIf="order.adress">{{order.adress}}</div>
             </td>
             <td>{{order.tel}}</td>
             <td class="order-products">
-              <div class="product-pills">
-                <span class="product-pill" *ngFor="let it of (order.items || [])">
-                  {{it.name}} <span class="pill-qte">×{{it.qte}}</span>
+              <div class="product-pills" [style.justify-content]="trans.isRtl() ? 'flex-end' : 'flex-start'">
+                <span class="product-pill" *ngFor="let it of (order.items || [])" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+                  {{trans.t(it.name)}} <span class="pill-qte">×{{it.qte}}</span>
                 </span>
               </div>
             </td>
             <td class="order-total">{{order.prix_total | number:'1.0-0'}} DH</td>
             <td class="order-date">{{order.to_char}}</td>
             <td>
-              <span class="source-badge magasin" *ngIf="order.source === 'magasin'">
-                <span class="material-symbols-outlined">store</span> Magasin
+              <span class="source-badge magasin" *ngIf="order.source === 'magasin'" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+                <span class="material-symbols-outlined">store</span> {{trans.t('MAGASIN')}}
               </span>
-              <span class="source-badge site" *ngIf="order.source !== 'magasin'">
-                <span class="material-symbols-outlined">language</span> En ligne
+              <span class="source-badge site" *ngIf="order.source !== 'magasin'" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+                <span class="material-symbols-outlined">language</span> {{trans.t('EN_LIGNE')}}
               </span>
             </td>
             <td>
-              <span class="status-badge done">Effectuée</span>
+              <span class="status-badge done">{{trans.t('EFFECTUEE')}}</span>
             </td>
             <td class="action-btns" style="justify-content: flex-end;">
               <span class="material-symbols-outlined action-dots" (click)="toggleDropdown($event, order, false)" style="margin-right: 12px;">more_vert</span>
@@ -156,19 +163,19 @@
 <!-- ORDER DETAIL MODAL -->
 <!-- ============================================ -->
 <div class="modal-backdrop" *ngIf="detailModalActive" (click)="closeDetail()"></div>
-<div class="modal-window detail-modal" *ngIf="detailModalActive">
-  <div class="modal-header">
+<div class="modal-window detail-modal" *ngIf="detailModalActive" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+  <div class="modal-header" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
     <div>
-      <h3>Commande #{{selectedOrder?.idgroup}}</h3>
-      <div class="detail-meta">
-        <span class="source-badge magasin" *ngIf="selectedOrder?.source === 'magasin'">
-          <span class="material-symbols-outlined">store</span> Magasin
+      <h3>{{trans.t('COMMANDE')}} #{{selectedOrder?.idgroup}}</h3>
+      <div class="detail-meta" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+        <span class="source-badge magasin" *ngIf="selectedOrder?.source === 'magasin'" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+          <span class="material-symbols-outlined">store</span> {{trans.t('MAGASIN')}}
         </span>
-        <span class="source-badge site" *ngIf="selectedOrder?.source !== 'magasin'">
-          <span class="material-symbols-outlined">language</span> En ligne
+        <span class="source-badge site" *ngIf="selectedOrder?.source !== 'magasin'" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+          <span class="material-symbols-outlined">language</span> {{trans.t('EN_LIGNE')}}
         </span>
-        <span class="status-badge done" *ngIf="selectedOrder?.etat">Effectuée</span>
-        <span class="status-badge pending" *ngIf="!selectedOrder?.etat">En attente</span>
+        <span class="status-badge done" *ngIf="selectedOrder?.etat">{{trans.t('EFFECTUEE')}}</span>
+        <span class="status-badge pending" *ngIf="!selectedOrder?.etat">{{trans.t('EN_ATTENTE')}}</span>
       </div>
     </div>
     <button class="modal-close-btn" (click)="closeDetail()">
@@ -179,17 +186,17 @@
   <div class="modal-body" *ngIf="selectedOrder">
     <!-- Client Info -->
     <div class="detail-section">
-      <div class="detail-section-title">
+      <div class="detail-section-title" [style.display]="'flex'" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'" [style.align-items]="'center'" [style.gap]="'6px'">
         <span class="material-symbols-outlined">person</span>
-        Informations client
+        {{trans.t('INFORMATIONS_CLIENT')}}
       </div>
       <div class="detail-grid">
         <div class="detail-field">
-          <span class="detail-label">Nom complet</span>
+          <span class="detail-label">{{trans.t('NOM_COMPLET')}}</span>
           <span class="detail-val">{{selectedOrder.fullname}}</span>
         </div>
         <div class="detail-field">
-          <span class="detail-label">Téléphone</span>
+          <span class="detail-label">{{trans.t('TELEPHONE')}}</span>
           <span class="detail-val">{{selectedOrder.tel}}</span>
         </div>
         <div class="detail-field" *ngIf="selectedOrder.email">
@@ -197,11 +204,11 @@
           <span class="detail-val">{{selectedOrder.email}}</span>
         </div>
         <div class="detail-field" *ngIf="selectedOrder.adress">
-          <span class="detail-label">Adresse</span>
+          <span class="detail-label">{{trans.t('ADRESSE')}}</span>
           <span class="detail-val">{{selectedOrder.adress}}</span>
         </div>
         <div class="detail-field">
-          <span class="detail-label">Date</span>
+          <span class="detail-label">{{trans.t('DATE')}}</span>
           <span class="detail-val">{{selectedOrder.to_char}}</span>
         </div>
       </div>
@@ -209,38 +216,38 @@
 
     <!-- Products list -->
     <div class="detail-section">
-      <div class="detail-section-title">
+      <div class="detail-section-title" [style.display]="'flex'" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'" [style.align-items]="'center'" [style.gap]="'6px'">
         <span class="material-symbols-outlined">shopping_bag</span>
-        Produits commandés
+        {{trans.t('PRODUITS_COMMANDES')}}
       </div>
       <div class="detail-items">
-        <div class="detail-item" *ngFor="let it of selectedOrder.items">
-          <div class="detail-item-info">
-            <div class="di-name">{{it.name}}</div>
-            <div class="di-taille" *ngIf="it.taille && it.taille !== '0'">{{it.taille}}</div>
+        <div class="detail-item" *ngFor="let it of selectedOrder.items" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+          <div class="detail-item-info" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+            <div class="di-name">{{trans.t(it.name)}}</div>
+            <div class="di-taille" *ngIf="it.taille && it.taille !== '0'">{{trans.t(it.taille)}}</div>
           </div>
-          <div class="detail-item-right">
+          <div class="detail-item-right" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
             <span class="di-qte">×{{it.qte}}</span>
             <span class="di-prix">{{(it.prix * it.qte) | number:'1.0-0'}} DH</span>
           </div>
         </div>
       </div>
-      <div class="detail-total">
-        <span>Total</span>
+      <div class="detail-total" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+        <span>{{trans.t('TOTAL')}}</span>
         <strong>{{selectedOrder.prix_total | number:'1.0-0'}} DH</strong>
       </div>
     </div>
   </div>
 
-  <div class="modal-footer">
-    <button class="btn-cancel" (click)="closeDetail()">Fermer</button>
+  <div class="modal-footer" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+    <button class="btn-cancel" (click)="closeDetail()">{{trans.t('FERMER')}}</button>
     <button class="btn-effectue" *ngIf="!selectedOrder?.etat" (click)="toggleEffectue(selectedOrder); closeDetail()">
       <span class="material-symbols-outlined">check_circle</span>
-      Marquer effectuée
+      {{trans.t('MARQUER_EFFECTUEE')}}
     </button>
     <button class="btn-undo" *ngIf="selectedOrder?.etat" (click)="toggleEffectue(selectedOrder); closeDetail()">
       <span class="material-symbols-outlined">undo</span>
-      Marquer en attente
+      {{trans.t('MARQUER_EN_ATTENTE')}}
     </button>
   </div>
 </div>
@@ -249,25 +256,26 @@
 <!-- DELETE CONFIRM MODAL -->
 <!-- ============================================ -->
 <div class="modal-backdrop" *ngIf="deleteModalActive" (click)="closeDeleteConfirm()"></div>
-<div class="modal-window delete-modal" *ngIf="deleteModalActive">
-  <div class="modal-header">
-    <h3>Supprimer la commande</h3>
+<div class="modal-window delete-modal" *ngIf="deleteModalActive" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+  <div class="modal-header" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+    <h3>{{trans.t('SUPPRIMER_COMMANDE')}}</h3>
     <button class="modal-close-btn" (click)="closeDeleteConfirm()">
       <span class="material-symbols-outlined">close</span>
     </button>
   </div>
   <div class="modal-body">
-    <div class="confirm-text">
+    <div class="confirm-text" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'" [style.align-items]="'center'" [style.gap]="'12px'">
       <span class="material-symbols-outlined warn-icon">warning</span>
-      <p>Êtes-vous sûr de vouloir supprimer la commande <strong>#{{orderToDelete?.idgroup}}</strong> de <strong>{{orderToDelete?.fullname}}</strong> ?<br>
-      Cette action est irréversible.</p>
+      <p style="margin: 0;" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+        {{trans.t('CONFIRM_DELETE_ORDER_START')}}<strong>#{{orderToDelete?.idgroup}}</strong>{{trans.t('CONFIRM_DELETE_ORDER_MID')}}<strong>{{orderToDelete?.fullname}}</strong>{{trans.t('CONFIRM_DELETE_ORDER_END')}}
+      </p>
     </div>
   </div>
-  <div class="modal-footer">
-    <button class="btn-cancel" (click)="closeDeleteConfirm()">Annuler</button>
+  <div class="modal-footer" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+    <button class="btn-cancel" (click)="closeDeleteConfirm()">{{trans.t('ANNULER')}}</button>
     <button class="btn-delete" (click)="confirmDelete()">
       <span class="material-symbols-outlined">delete_forever</span>
-      Supprimer définitivement
+      {{trans.t('SUPPRIMER_DEFINITIVEMENT')}}
     </button>
   </div>
 </div>
@@ -276,9 +284,9 @@
 <!-- ADD MANUAL COMMAND MODAL (multi-product) -->
 <!-- ============================================ -->
 <div class="modal-backdrop" *ngIf="addModalActive" (click)="closeAddModal()"></div>
-<div class="modal-window manual-modal" *ngIf="addModalActive">
-  <div class="modal-header">
-    <h3>Nouvelle commande manuelle</h3>
+<div class="modal-window manual-modal" *ngIf="addModalActive" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+  <div class="modal-header" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+    <h3>{{trans.t('NOUVELLE_COMMANDE_MANUELLE')}}</h3>
     <button class="modal-close-btn" (click)="closeAddModal()">
       <span class="material-symbols-outlined">close</span>
     </button>
@@ -286,31 +294,31 @@
 
   <div class="modal-body">
     <!-- Customer Info -->
-    <div class="detail-section-title" style="margin-bottom: 12px;">
-      <span class="material-symbols-outlined">person</span> Informations client
+    <div class="detail-section-title" style="margin-bottom: 12px;" [style.display]="'flex'" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'" [style.align-items]="'center'" [style.gap]="'6px'">
+      <span class="material-symbols-outlined">person</span> {{trans.t('INFORMATIONS_CLIENT')}}
     </div>
     <div class="modal-form-grid">
       <div class="input-group" style="grid-column: 1 / -1;">
-        <label>Nom complet *</label>
+        <label>{{trans.t('NOM_COMPLET_REQUIS')}}</label>
         <input class="text" type="text" [(ngModel)]="manualCustomer.fullname" placeholder="Ex: Karim Bensouda">
       </div>
       <div class="input-group">
-        <label>Téléphone *</label>
+        <label>{{trans.t('TELEPHONE_REQUIS')}}</label>
         <input class="text" type="tel" [(ngModel)]="manualCustomer.tel" placeholder="Ex: 0612345678">
       </div>
       <div class="input-group">
-        <label>E-mail (facultatif)</label>
+        <label>{{trans.t('EMAIL_FACULTATIF')}}</label>
         <input class="text" type="email" [(ngModel)]="manualCustomer.email" placeholder="Ex: client@gmail.com">
       </div>
       <div class="input-group" style="grid-column: 1 / -1;">
-        <label>Adresse (facultatif)</label>
+        <label>{{trans.t('ADRESSE_FACULTATIF')}}</label>
         <input class="text" type="text" [(ngModel)]="manualCustomer.adress" placeholder="Ex: Riad El Mansour, Meknès">
       </div>
       <div class="input-group" style="grid-column: 1 / -1;">
-        <label>Statut initial</label>
+        <label>{{trans.t('STATUT_INITIAL')}}</label>
         <select class="optionP" [(ngModel)]="manualCustomer.etat">
-          <option [ngValue]="false">En attente</option>
-          <option [ngValue]="true">Livrée / Effectuée</option>
+          <option [ngValue]="false">{{trans.t('EN_ATTENTE')}}</option>
+          <option [ngValue]="true">{{trans.t('LIVREE_EFFECTUEE')}}</option>
         </select>
       </div>
     </div>
@@ -318,47 +326,47 @@
     <hr style="border:0; border-top: 1px dashed var(--border-color); margin: 16px 0;">
 
     <!-- Product Adder -->
-    <div class="detail-section-title" style="margin-bottom: 12px;">
-      <span class="material-symbols-outlined">add_shopping_cart</span> Ajouter un produit
+    <div class="detail-section-title" style="margin-bottom: 12px;" [style.display]="'flex'" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'" [style.align-items]="'center'" [style.gap]="'6px'">
+      <span class="material-symbols-outlined">add_shopping_cart</span> {{trans.t('AJOUTER_UN_PRODUIT')}}
     </div>
     <div class="modal-form-grid">
       <div class="input-group" style="grid-column: 1 / -1;">
-        <label>Produit</label>
+        <label>{{trans.t('PRODUIT')}}</label>
         <select class="optionP" [ngModel]="manualProductSelect.idproducts" (ngModelChange)="manualProductSelect.idproducts = $event; onManualProductSelect($event)">
-          <option value="" disabled>-- Choisir un produit --</option>
-          <option *ngFor="let p of productsList" [value]="p.idproducts">{{p.name}}</option>
+          <option value="" disabled>{{trans.t('CHOISIR_PRODUIT')}}</option>
+          <option *ngFor="let p of productsList" [value]="p.idproducts">{{trans.t(p.name)}}</option>
         </select>
       </div>
       <div class="input-group" *ngIf="manualSizesList.length > 0">
-        <label>Taille</label>
+        <label>{{trans.t('TAILLE_ONLY')}}</label>
         <select class="optionP" [ngModel]="manualSelectedSize" (ngModelChange)="manualSelectedSize = $event">
-          <option *ngFor="let s of manualSizesList" [ngValue]="s">{{s.taille}} — {{s.prix}} DH</option>
+          <option *ngFor="let s of manualSizesList" [ngValue]="s">{{trans.t(s.taille)}} — {{s.prix}} DH</option>
         </select>
       </div>
       <div class="input-group">
-        <label>Quantité</label>
+        <label>{{trans.t('QUANTITE')}}</label>
         <input class="text" type="number" [(ngModel)]="manualProductSelect.qte" min="1">
       </div>
       <div class="input-group" style="grid-column: 1 / -1;">
         <button class="btn-add-item" [disabled]="!manualSelectedProduct || !manualSelectedSize" (click)="addItemToManualCart()">
           <span class="material-symbols-outlined">add_circle</span>
-          Ajouter au panier de la commande
+          {{trans.t('AJOUTER_PANIER_COMMANDE')}}
         </button>
       </div>
     </div>
 
     <!-- Manual Cart Preview -->
     <div class="manual-cart" *ngIf="manualCartItems.length > 0">
-      <div class="detail-section-title" style="margin: 16px 0 10px;">
-        <span class="material-symbols-outlined">shopping_cart</span> Panier ({{manualCartItems.length}} article(s))
+      <div class="detail-section-title" style="margin: 16px 0 10px;" [style.display]="'flex'" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'" [style.align-items]="'center'" [style.gap]="'6px'">
+        <span class="material-symbols-outlined">shopping_cart</span> {{trans.t('PANIER')}} ({{manualCartItems.length}} {{trans.t('ARTICLES')}})
       </div>
       <div class="detail-items">
-        <div class="detail-item" *ngFor="let it of manualCartItems; let i = index">
-          <div class="detail-item-info">
-            <div class="di-name">{{it.name}}</div>
-            <div class="di-taille" *ngIf="it.taille">{{it.taille}}</div>
+        <div class="detail-item" *ngFor="let it of manualCartItems; let i = index" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+          <div class="detail-item-info" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+            <div class="di-name">{{trans.t(it.name)}}</div>
+            <div class="di-taille" *ngIf="it.taille">{{trans.t(it.taille)}}</div>
           </div>
-          <div class="detail-item-right">
+          <div class="detail-item-right" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
             <span class="di-qte">×{{it.qte}}</span>
             <span class="di-prix">{{(it.prix * it.qte) | number:'1.0-0'}} DH</span>
             <button class="remove-item-btn" (click)="removeManualItem(i)">
@@ -367,18 +375,18 @@
           </div>
         </div>
       </div>
-      <div class="detail-total">
-        <span>Total estimé</span>
+      <div class="detail-total" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+        <span>{{trans.t('TOTAL_ESTIME')}}</span>
         <strong>{{getManualTotal() | number:'1.0-0'}} DH</strong>
       </div>
     </div>
   </div>
 
-  <div class="modal-footer">
-    <button class="btn-cancel" (click)="closeAddModal()">Annuler</button>
+  <div class="modal-footer" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+    <button class="btn-cancel" (click)="closeAddModal()">{{trans.t('ANNULER')}}</button>
     <button class="btn-save" (click)="submitManualCommand()" [disabled]="manualCartItems.length === 0">
       <span class="material-symbols-outlined">save</span>
-      Enregistrer la commande
+      {{trans.t('ENREGISTRER_COMMANDE')}}
     </button>
   </div>
 </div>
@@ -390,12 +398,12 @@
      [style.left.px]="dropdownPosition.left" 
      style="z-index: 2000; margin: 0;">
   <ul *ngIf="isPendingDropdown">
-    <li (click)="openDetail(activeDropdownOrder); showDropdown = false;"><span class="material-symbols-outlined">visibility</span> Détails</li>
-    <li (click)="toggleEffectue(activeDropdownOrder); showDropdown = false;"><span class="material-symbols-outlined">check_circle</span> Effectuée</li>
-    <li (click)="openDeleteConfirm(activeDropdownOrder); showDropdown = false;"><span class="material-symbols-outlined">delete</span> Supprimer</li>
+    <li (click)="openDetail(activeDropdownOrder); showDropdown = false;"><span class="material-symbols-outlined">visibility</span> {{trans.t('DETAILS')}}</li>
+    <li (click)="toggleEffectue(activeDropdownOrder); showDropdown = false;"><span class="material-symbols-outlined">check_circle</span> {{trans.t('EFFECTUEE')}}</li>
+    <li (click)="openDeleteConfirm(activeDropdownOrder); showDropdown = false;"><span class="material-symbols-outlined">delete</span> {{trans.t('SUPPRIMER')}}</li>
   </ul>
   <ul *ngIf="!isPendingDropdown">
-    <li (click)="openDetail(activeDropdownOrder); showDropdown = false;"><span class="material-symbols-outlined">visibility</span> Détails</li>
-    <li (click)="toggleEffectue(activeDropdownOrder); showDropdown = false;"><span class="material-symbols-outlined">undo</span> En attente</li>
+    <li (click)="openDetail(activeDropdownOrder); showDropdown = false;"><span class="material-symbols-outlined">visibility</span> {{trans.t('DETAILS')}}</li>
+    <li (click)="toggleEffectue(activeDropdownOrder); showDropdown = false;"><span class="material-symbols-outlined">undo</span> {{trans.t('EN_ATTENTE')}}</li>
   </ul>
 </div>

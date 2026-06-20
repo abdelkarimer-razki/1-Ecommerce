@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { LoginService } from '../services/login.service';
 import { HomepageService } from '../services/homepage.service';
 import { CartService } from '../services/cart.service';
+import { TranslationService } from '../services/translation.service';
 
 @Component({
   selector: 'app-top-menu',
@@ -19,7 +20,8 @@ export class TopMenuComponent implements OnInit {
     public log: LoginService,
     private route: Router,
     private homepage: HomepageService,
-    private cartService: CartService
+    private cartService: CartService,
+    public trans: TranslationService
   ) {
     route.events.subscribe((val) => {
       this.disableMenu();

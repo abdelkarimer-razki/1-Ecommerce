@@ -1,27 +1,35 @@
 <div class="pageContanaire">
-  <div class="connexionDetails">
-    <h2 class="title">Connexion</h2>
+  <div class="connexionDetails" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+    <h2 class="title" [style.text-align]="trans.isRtl() ? 'right' : 'left'">{{trans.t('CONNEXION')}}</h2>
     
-    <div class="errorMsg" *ngIf="incorect">
-      <span class="material-symbols-outlined" style="font-size: 1.1rem; margin-right: 4px;">error</span> E-mail/téléphone ou mot de passe incorrect.
+    <div class="errorMsg" *ngIf="incorect" [style.direction]="trans.isRtl() ? 'rtl' : 'ltr'">
+      <span class="material-symbols-outlined" style="font-size: 1.1rem; margin-right: 4px;">error</span> {{trans.t('LOGIN_ERROR')}}
     </div>
 
     <div class="inputGroup">
-      <label>E-mail ou Téléphone :</label>
-      <input type="text" [(ngModel)]="user.email" (ngModelChange)="test()" placeholder="Ex: example@email.com ou 0600000000">
+      <label style="display: flex; justify-content: space-between;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+        <span>{{trans.t('EMAIL_TEL_LABEL')}} <span style="color: #dc2626;">*</span></span>
+        <span style="font-size: 0.75rem; color: #dc2626; font-weight: normal;">({{trans.t('REQUIS')}})</span>
+      </label>
+      <input type="text" [(ngModel)]="user.email" (ngModelChange)="test()" placeholder="Ex: example@email.com ou 0600000000" [style.border-color]="loginFormSubmitted && !user.email ? '#dc2626' : ''" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+      <span *ngIf="loginFormSubmitted && !user.email" style="color: #dc2626; font-size: 0.75rem; display: block; margin-top: 4px; font-weight: 600;">{{trans.t('CHAMP_REQUIS')}}</span>
     </div>
 
     <div class="inputGroup">
-      <label>Mot de passe :</label>
-      <input type="password" [(ngModel)]="password" (ngModelChange)="test()" placeholder="••••••••">
+      <label style="display: flex; justify-content: space-between;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+        <span>{{trans.t('PASSWORD_LABEL')}} <span style="color: #dc2626;">*</span></span>
+        <span style="font-size: 0.75rem; color: #dc2626; font-weight: normal;">({{trans.t('REQUIS')}})</span>
+      </label>
+      <input type="password" [(ngModel)]="password" (ngModelChange)="test()" placeholder="••••••••" [style.border-color]="loginFormSubmitted && !password ? '#dc2626' : ''" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+      <span *ngIf="loginFormSubmitted && !password" style="color: #dc2626; font-size: 0.75rem; display: block; margin-top: 4px; font-weight: 600;">{{trans.t('CHAMP_REQUIS')}}</span>
     </div>
 
     <button class="connecter" (click)="connect()" [ngClass]="{buttoninv: emailinv}" id="connecter">
-      Se connecter <span class="material-symbols-outlined">login</span>
+      {{trans.t('SE_CONNECTER')}} <span class="material-symbols-outlined">login</span>
     </button>
 
-    <div class="registerRedirect">
-      Nouveau client ? <a routerLink="/inscrire">Créer un compte</a>
+    <div class="registerRedirect" [style.direction]="trans.isRtl() ? 'rtl' : 'ltr'">
+      {{trans.t('NOUVEAU_CLIENT')}} <a routerLink="/inscrire">{{trans.t('CREER_COMPTE')}}</a>
     </div>
   </div>
 </div>

@@ -1,50 +1,74 @@
 <div class="pageContanaire">
-  <div class="connexionDetails">
-    <h2 class="title">Créer un compte</h2>
+  <div class="connexionDetails" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+    <h2 class="title" [style.text-align]="trans.isRtl() ? 'right' : 'left'">{{trans.t('CREER_COMPTE')}}</h2>
     
-    <div class="successMsg" *ngIf="unmatch">
-      <span class="material-symbols-outlined" style="vertical-align: middle; font-size: 1.1rem; margin-right: 4px;">check_circle</span> Inscription réussie ! Redirection vers la page de connexion...
+    <div class="successMsg" *ngIf="unmatch" [style.direction]="trans.isRtl() ? 'rtl' : 'ltr'">
+      <span class="material-symbols-outlined" style="vertical-align: middle; font-size: 1.1rem; margin-right: 4px;">check_circle</span> {{trans.t('REGISTRE_SUCCESS')}}
     </div>
 
-    <form (ngSubmit)="registre()" class="formGrid" #userForm="ngForm" novalidate>
+    <form (ngSubmit)="registre()" class="formGrid" #userForm="ngForm" novalidate [style.direction]="trans.isRtl() ? 'rtl' : 'ltr'">
       <div class="inputGroup">
-        <label>Nom :</label>
-        <input type="text" [(ngModel)]="user.fname" name="fname" placeholder="Nom" required>
+        <label style="display: flex; justify-content: space-between;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+          <span>{{trans.t('NOM_LABEL')}} <span style="color: #dc2626;">*</span></span>
+          <span style="font-size: 0.75rem; color: #dc2626; font-weight: normal;">({{trans.t('REQUIS')}})</span>
+        </label>
+        <input type="text" [(ngModel)]="user.fname" name="fname" placeholder="Nom" required [style.border-color]="registreFormSubmitted && !user.fname ? '#dc2626' : ''" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+        <span *ngIf="registreFormSubmitted && !user.fname" style="color: #dc2626; font-size: 0.75rem; display: block; margin-top: 4px; font-weight: 600;">{{trans.t('CHAMP_REQUIS')}}</span>
       </div>
 
       <div class="inputGroup">
-        <label>Prénom :</label>
-        <input type="text" [(ngModel)]="user.lname" name="lname" placeholder="Prénom" required>
+        <label style="display: flex; justify-content: space-between;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+          <span>{{trans.t('PRENOM_LABEL')}} <span style="color: #dc2626;">*</span></span>
+          <span style="font-size: 0.75rem; color: #dc2626; font-weight: normal;">({{trans.t('REQUIS')}})</span>
+        </label>
+        <input type="text" [(ngModel)]="user.lname" name="lname" placeholder="Prénom" required [style.border-color]="registreFormSubmitted && !user.lname ? '#dc2626' : ''" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+        <span *ngIf="registreFormSubmitted && !user.lname" style="color: #dc2626; font-size: 0.75rem; display: block; margin-top: 4px; font-weight: 600;">{{trans.t('CHAMP_REQUIS')}}</span>
       </div>
 
       <div class="inputGroup">
-        <label>Téléphone :</label>
-        <input type="tel" (keyup)="testtel()" [(ngModel)]="user.tel" name="tel" placeholder="Ex: 0600000000" [ngClass]="{'invalid-field': testtel1}" required>
-        <div class="validation-error" *ngIf="testtel1">Ce numéro de téléphone existe déjà.</div>
+        <label style="display: flex; justify-content: space-between;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+          <span>{{trans.t('TELEPHONE')}} <span style="color: #dc2626;">*</span></span>
+          <span style="font-size: 0.75rem; color: #dc2626; font-weight: normal;">({{trans.t('REQUIS')}})</span>
+        </label>
+        <input type="tel" (keyup)="testtel()" [(ngModel)]="user.tel" name="tel" placeholder="Ex: 0600000000" [ngClass]="{'invalid-field': testtel1}" [style.border-color]="registreFormSubmitted && !user.tel ? '#dc2626' : ''" required [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+        <span *ngIf="registreFormSubmitted && !user.tel" style="color: #dc2626; font-size: 0.75rem; display: block; margin-top: 4px; font-weight: 600;">{{trans.t('CHAMP_REQUIS')}}</span>
+        <div class="validation-error" *ngIf="testtel1">{{trans.t('TEL_EXIST_ERROR')}}</div>
       </div>
 
       <div class="inputGroup">
-        <label>Adresse e-mail :</label>
-        <input type="email" (keyup)="testtel()" [(ngModel)]="user.email" name="email" placeholder="Ex: name@example.com" [ngClass]="{'invalid-field': testemail}" required>
-        <div class="validation-error" *ngIf="testemail">Cet e-mail existe déjà.</div>
+        <label style="display: flex; justify-content: space-between;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+          <span>E-mail <span style="color: #dc2626;">*</span></span>
+          <span style="font-size: 0.75rem; color: #dc2626; font-weight: normal;">({{trans.t('REQUIS')}})</span>
+        </label>
+        <input type="email" (keyup)="testtel()" [(ngModel)]="user.email" name="email" placeholder="Ex: name@example.com" [ngClass]="{'invalid-field': testemail}" [style.border-color]="registreFormSubmitted && !user.email ? '#dc2626' : ''" required [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+        <span *ngIf="registreFormSubmitted && !user.email" style="color: #dc2626; font-size: 0.75rem; display: block; margin-top: 4px; font-weight: 600;">{{trans.t('CHAMP_REQUIS')}}</span>
+        <div class="validation-error" *ngIf="testemail">{{trans.t('EMAIL_EXIST_ERROR')}}</div>
       </div>
 
       <div class="inputGroup fullWidth">
-        <label>Adresse de livraison :</label>
-        <input type="text" [(ngModel)]="user.adress" name="adress" placeholder="Ex: 12 Rue de Meknès, Centre Ville" required>
+        <label style="display: flex; justify-content: space-between;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+          <span>{{trans.t('ADRESSE_LIVRAISON_LABEL')}} <span style="color: #dc2626;">*</span></span>
+          <span style="font-size: 0.75rem; color: #dc2626; font-weight: normal;">({{trans.t('REQUIS')}})</span>
+        </label>
+        <input type="text" [(ngModel)]="user.adress" name="adress" placeholder="Ex: 12 Rue de Meknès, Centre Ville" required [style.border-color]="registreFormSubmitted && !user.adress ? '#dc2626' : ''" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+        <span *ngIf="registreFormSubmitted && !user.adress" style="color: #dc2626; font-size: 0.75rem; display: block; margin-top: 4px; font-weight: 600;">{{trans.t('CHAMP_REQUIS')}}</span>
       </div>
 
       <div class="inputGroup fullWidth">
-        <label>Mot de passe :</label>
-        <input type="password" [(ngModel)]="password" name="password" placeholder="••••••••" required>
+        <label style="display: flex; justify-content: space-between;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+          <span>{{trans.t('PASSWORD_LABEL')}} <span style="color: #dc2626;">*</span></span>
+          <span style="font-size: 0.75rem; color: #dc2626; font-weight: normal;">({{trans.t('REQUIS')}})</span>
+        </label>
+        <input type="password" [(ngModel)]="password" name="password" placeholder="••••••••" required [style.border-color]="registreFormSubmitted && !password ? '#dc2626' : ''" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+        <span *ngIf="registreFormSubmitted && !password" style="color: #dc2626; font-size: 0.75rem; display: block; margin-top: 4px; font-weight: 600;">{{trans.t('CHAMP_REQUIS')}}</span>
       </div>
 
       <button type="submit" class="connecter" [ngClass]="{buttoninv: (testemail||testtel1||vein)}">
-        S'inscrire <span class="material-symbols-outlined">person_add</span>
+        {{trans.t('INSCRIPTION')}} <span class="material-symbols-outlined">person_add</span>
       </button>
 
-      <div class="loginRedirect">
-        Déjà membre ? <a routerLink="/connexion">Se connecter</a>
+      <div class="loginRedirect" [style.direction]="trans.isRtl() ? 'rtl' : 'ltr'">
+        {{trans.t('DEJA_MEMBRE')}} <a routerLink="/connexion">{{trans.t('SE_CONNECTER')}}</a>
       </div>
     </form>
   </div>

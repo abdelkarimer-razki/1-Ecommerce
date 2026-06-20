@@ -1,83 +1,93 @@
-<div class="admin-settings-container">
-  <div class="settings-header">
-    <h1 class="title"><span class="material-symbols-outlined">settings</span> Personnalisation du site</h1>
-    <button class="save-btn" (click)="saveConfig()"><span class="material-symbols-outlined">save</span> Enregistrer les modifications</button>
+<div class="admin-settings-container" [style.direction]="trans.isRtl() ? 'rtl' : 'ltr'">
+  <div class="settings-header" style="display: flex; justify-content: space-between; align-items: center;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+    <h1 class="title" style="display: flex; align-items: center; gap: 8px; margin: 0;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+      <span class="material-symbols-outlined">settings</span> {{trans.t('PERSONNALISATION_SITE')}}
+    </h1>
+    <button class="save-btn" (click)="saveConfig()" style="display: inline-flex; align-items: center; gap: 8px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+      <span class="material-symbols-outlined">save</span> {{trans.t('ENREGISTRER_MODIFICATIONS')}}
+    </button>
   </div>
 
   <div *ngIf="loading" class="loading-wrapper">
-    <img src="../../assets/loading.gif" alt="Chargement...">
+    <img src="../../assets/loading.gif" [alt]="trans.t('CHARGEMENT')">
   </div>
 
-  <div *ngIf="!loading" class="settings-form">
+  <div *ngIf="!loading" class="settings-form" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
     <!-- Hero Section Content -->
     <div class="form-section">
-      <h3>Section Accueil (Hero Banner)</h3>
+      <h3 [style.text-align]="trans.isRtl() ? 'right' : 'left'">{{trans.t('SECTION_ACCUEIL_HERO')}}</h3>
       <div class="form-grid">
         <div class="input-group full-width">
-          <label>Titre principal</label>
+          <label>{{trans.t('TITRE_PRINCIPAL')}}</label>
           <input class="text" type="text" [(ngModel)]="config.heroTitle" placeholder="Ex: Miels Rares & Huiles d'Exception">
         </div>
         <div class="input-group full-width">
-          <label>Sous-titre / Coopérative</label>
+          <label>{{trans.t('SOUS_TITRE_COOP')}}</label>
           <input class="text" type="text" [(ngModel)]="config.heroSubtitle" placeholder="Ex: Coopérative Bab Mansour">
         </div>
         <div class="input-group full-width">
-          <label>Description marketing</label>
+          <label>{{trans.t('DESCRIPTION_MARKETING')}}</label>
           <textarea class="text textarea" rows="4" [(ngModel)]="config.heroDescription" placeholder="Description de l'histoire et des produits..."></textarea>
         </div>
         <div class="input-group file-group full-width">
-          <label>Image d'arrière-plan du Hero</label>
+          <label>{{trans.t('IMAGE_BG_HERO')}}</label>
           <div class="image-preview">
             <img [src]="transformImage(config.heroImage)" alt="Hero Preview">
           </div>
           <input type="file" id="hero-img-input" style="display: none;" (change)="onImageChange($event, 'heroImage')">
-          <label for="hero-img-input" class="upload-btn"><span class="material-symbols-outlined" style="margin-right: 6px; font-size: 1.15rem;">upload</span> Remplacer l'image du Hero</label>
+          <label for="hero-img-input" class="upload-btn" style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+            <span class="material-symbols-outlined" style="font-size: 1.15rem;">upload</span> {{trans.t('REMPLACER_IMAGE_HERO')}}
+          </label>
         </div>
       </div>
     </div>
 
     <!-- Principle 1 Section Content -->
     <div class="form-section">
-      <h3>Principe 1 (Production & Méthodes)</h3>
+      <h3 [style.text-align]="trans.isRtl() ? 'right' : 'left'">{{trans.t('PRINCIPE_1_TITRE')}}</h3>
       <div class="form-grid">
         <div class="input-group full-width">
-          <label>Titre</label>
+          <label>{{trans.t('TITRE')}}</label>
           <input class="text" type="text" [(ngModel)]="config.principle1Title" placeholder="Ex: Meilleures méthodes de production">
         </div>
         <div class="input-group full-width">
-          <label>Description</label>
+          <label>{{trans.t('DESCRIPTION')}}</label>
           <textarea class="text textarea" rows="4" [(ngModel)]="config.principle1Description" placeholder="Description du procédé de récolte..."></textarea>
         </div>
         <div class="input-group file-group full-width">
-          <label>Image du Principe 1</label>
+          <label>{{trans.t('IMAGE_PRINCIPE_1')}}</label>
           <div class="image-preview">
             <img [src]="transformImage(config.principle1Image)" alt="Principle 1 Preview">
           </div>
           <input type="file" id="p1-img-input" style="display: none;" (change)="onImageChange($event, 'principle1Image')">
-          <label for="p1-img-input" class="upload-btn"><span class="material-symbols-outlined" style="margin-right: 6px; font-size: 1.15rem;">upload</span> Remplacer l'image 1</label>
+          <label for="p1-img-input" class="upload-btn" style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+            <span class="material-symbols-outlined" style="font-size: 1.15rem;">upload</span> {{trans.t('REMPLACER_IMAGE_1')}}
+          </label>
         </div>
       </div>
     </div>
 
     <!-- Principle 2 Section Content -->
     <div class="form-section">
-      <h3>Principe 2 (Matières Premières & Qualité)</h3>
+      <h3 [style.text-align]="trans.isRtl() ? 'right' : 'left'">{{trans.t('PRINCIPE_2_TITRE')}}</h3>
       <div class="form-grid">
         <div class="input-group full-width">
-          <label>Titre</label>
+          <label>{{trans.t('TITRE')}}</label>
           <input class="text" type="text" [(ngModel)]="config.principle2Title" placeholder="Ex: Meilleures matières premières">
         </div>
         <div class="input-group full-width">
-          <label>Description</label>
+          <label>{{trans.t('DESCRIPTION')}}</label>
           <textarea class="text textarea" rows="4" [(ngModel)]="config.principle2Description" placeholder="Description de la sélection..."></textarea>
         </div>
         <div class="input-group file-group full-width">
-          <label>Image du Principe 2</label>
+          <label>{{trans.t('IMAGE_PRINCIPE_2')}}</label>
           <div class="image-preview">
             <img [src]="transformImage(config.principle2Image)" alt="Principle 2 Preview">
           </div>
           <input type="file" id="p2-img-input" style="display: none;" (change)="onImageChange($event, 'principle2Image')">
-          <label for="p2-img-input" class="upload-btn"><span class="material-symbols-outlined" style="margin-right: 6px; font-size: 1.15rem;">upload</span> Remplacer l'image 2</label>
+          <label for="p2-img-input" class="upload-btn" style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+            <span class="material-symbols-outlined" style="font-size: 1.15rem;">upload</span> {{trans.t('REMPLACER_IMAGE_2')}}
+          </label>
         </div>
       </div>
     </div>

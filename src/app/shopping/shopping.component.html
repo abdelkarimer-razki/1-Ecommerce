@@ -1,72 +1,185 @@
 <div id="conPage">
-  <!--<h4 class="titles"><i class="fas fa-tags"></i> Recommandations:</h4>
-  <carousel [cellsToShow]="1" [autoplay]=false [dots]=true [borderRadius]="15" arrowsTheme="dark">
-    <div class="carousel-cell">
-        <img class="si1" src="../../assets/111.jpg">
-        <div class="sis1"></div>
+  <!-- Highlighted Products Spotlight -->
+  <div class="spotlight-carousel" *ngIf="getHighlightedProducts().length > 0">
+    <div class="spotlight-slides">
+      <div
+        class="spotlight-slide"
+        *ngFor="let item of getHighlightedProducts(); let i = index"
+        [class.active]="i === activeSlideIndex"
+        [style.background-image]="'url(' + transformToUrl(item.picture) + ')'"
+      >
+        <!-- Warm gradient overlay (cream left → transparent right) -->
+        <div class="spotlight-overlay"></div>
+
+        <!-- Content (sits on the light side) -->
+        <div class="spotlight-content">
+          <!-- Top: category + badge row -->
+          <div class="spotlight-meta">
+            <span class="spotlight-category" *ngIf="item.categorie">{{item.categorie}}</span>
+            <span class="spotlight-badge promo" *ngIf="item.prixf > 0">
+              <span class="material-symbols-outlined">local_offer</span>{{trans.t('PROMOTION')}}
+            </span>
+            <span class="spotlight-badge featured" *ngIf="!item.prixf || item.prixf === 0">
+              <span class="material-symbols-outlined">stars</span>{{trans.t('MISE_EN_AVANT')}}
+            </span>
+          </div>
+
+          <!-- Large serif title -->
+          <h2 class="spotlight-title">{{trans.t(item.name)}}</h2>
+
+          <!-- Description -->
+          <p class="spotlight-desc">{{trans.t(item.description) || trans.t('PRODUIT_EXCEPTIONNEL_DEFAULT')}}</p>
+
+          <!-- Price -->
+          <div class="spotlight-price-row">
+            <span class="spotlight-price">{{item.prix}} <em>DH</em></span>
+            <span class="spotlight-price-old" *ngIf="item.prixf > 0">
+              {{item.prixf}} DH
+              <span class="spotlight-pct">−{{((+item.prixf - +item.prix) / +item.prixf * 100) | number:'1.0-0'}}%</span>
+            </span>
+          </div>
+
+          <!-- CTA -->
+          <button class="spotlight-cta" (click)="routerBuyProduct(item)">
+            {{trans.t('DECOUVRIR')}}
+            <span class="material-symbols-outlined">arrow_right_alt</span>
+          </button>
+        </div>
+      </div>
     </div>
-    <div class="carousel-cell">
-      <img class="si2" src="../../assets/333.jpg">
-      <div class="sis2">
-        <!--<p style="color:black;font-family: 'Saira Stencil One', cursive;font-size:60px;position: relative;left: 500px;display: inline;">AMLOU</p>
-        <p style="color:#FEAD6B;font-size: 40px;position: relative;font-family: 'Saira Stencil One', cursive;display: inline;">à partir de 80 <span style="color: black;font-family: 'Saira Stencil One', cursive;">DH</span></p>
-        <p style="color:#FEAD6B;font-size: 40px;position: relative;left:160px;font-family: 'Saira Stencil One', cursive;">taille:</p>
-        <p style="color:black;font-size: 40px;position: relative;left: 300px;font-family: 'Saira Stencil One', cursive;">1/2KG-1KG</p>-->
-     <!-- </div>
-    </div>
-    <div class="carousel-cell">
-      <img class="si1" src="../../assets/222.jpg">
-      <div class="sis1"></div>
-    </div>
-    <div class="carousel-cell">
-        <img class="si2" src="../../assets/444.jpg">
-        <div class="sis2">
-          <!--<p style="color:#FFCCD8;font-size: 40px;position: relative;left:380px;font-family: 'Saira Stencil One', cursive;display: inline;">à partir de 25 <span style="color: black;font-family: 'Saira Stencil One', cursive;">DH</span></p><p style="color:black;font-family: 'Saira Stencil One', cursive;font-size: 40px;position: relative;left:700px;">GHASOUL</p>
-          <p style="color:#FFCCD8;font-size: 40px;position: relative;left:500px;font-family: 'Saira Stencil One', cursive;">taille:</p>
-          <p style="color:black;font-size: 40px;position: relative;left:660px;font-family: 'Saira Stencil One', cursive;">1/2KG-1KG</p>-->
-        <!--</div>
-    </div>
-  </carousel>-->
-  <h4 class="titles" style="margin-top:0;"><span class="material-symbols-outlined">category</span> Catégories:</h4>
-  <div class="typesContainaire">
-    <div *ngFor="let cat of categories" class="type" [id]="cat" (click)='getProductsCategorie(cat)'>
-      <img *ngIf="cat === 'MIEL'" src="../../assets/honey3.png" alt="" width="100px">
-      <img *ngIf="cat === 'HUILE'" src="../../assets/oil3.png" alt="" width="100px">
-      <img *ngIf="cat !== 'MIEL' && cat !== 'HUILE'" src="../../assets/logo3.png" alt="" width="100px" style="opacity: 0.85; max-height: 60px; object-fit: contain;">
-      <h5 style="text-transform: capitalize;">{{ cat.toLowerCase() }}</h5>
-    </div>
-    <div class="type" id="Cuisine" (click)='getProductsMangable(true)' >
-      <img src="../../assets/3.png" alt="" width="100px">
-      <h5>Alimentation</h5>
-    </div>
-    <div class="type" id="Last" (click)='getProductsMangable(false)'>
-      <img src="../../assets/4.png" alt="" width="100px">
-      <h5>Cosmétique</h5>
+
+    <!-- Navigation bar -->
+    <div class="spotlight-nav" *ngIf="getHighlightedProducts().length > 1">
+      <button class="spotlight-arrow" (click)="prevSlide(); startCarouselAutoPlay()">
+        <span class="material-symbols-outlined">chevron_left</span>
+      </button>
+      <div class="spotlight-dots">
+        <button
+          class="spotlight-dot"
+          *ngFor="let item of getHighlightedProducts(); let idx = index"
+          [class.active]="idx === activeSlideIndex"
+          (click)="goToSlide(idx)"
+        ></button>
+      </div>
+      <button class="spotlight-arrow" (click)="nextSlide(); startCarouselAutoPlay()">
+        <span class="material-symbols-outlined">chevron_right</span>
+      </button>
     </div>
   </div>
 
-  <h4 class="titles"><span class="material-symbols-outlined">storefront</span> Produits :</h4>
-  <input type="text" [(ngModel)]="pname" (ngModelChange)="change()" id="search" placeholder="Rechercher un produit...">
+
+  <div class="filter-panel shopper-filters" style="margin-top: 15px; margin-bottom: 20px;">
+    <!-- Top Row: Autocomplete Search -->
+    <div class="filter-row-top">
+      <div class="search-input-wrapper">
+        <span class="material-symbols-outlined search-icon">search</span>
+        <input 
+          type="text" 
+          id="textsearch" 
+          [placeholder]="trans.t('RECHERCHER_PLACEHOLDER')" 
+          [(ngModel)]="pname" 
+          (ngModelChange)="onSearchChange()"
+          (keydown)="onSearchKeyDown($event)"
+          (blur)="onSearchBlur()"
+          autocomplete="off"
+        >
+        <!-- Autocomplete suggestions dropdown -->
+        <div class="autocomplete-dropdown" *ngIf="showSuggestions && suggestions.length > 0">
+          <ul>
+            <li 
+              *ngFor="let suggestion of suggestions; let idx = index" 
+              [class.active]="idx === activeSuggestionIndex"
+              (mousedown)="selectSuggestion(suggestion)"
+            >
+              <span class="material-symbols-outlined suggestion-icon">search</span>
+              <span class="suggestion-text">{{suggestion}}</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Row: Category, Type, Promo, Price Range, Sort By, Reset -->
+    <div class="filter-row-bottom">
+      <!-- Category selector -->
+      <div class="filter-group">
+        <label for="shopper-filter-category"><span class="material-symbols-outlined filter-icon">category</span>{{trans.t('CATEGORIES')}}</label>
+        <select id="shopper-filter-category" [(ngModel)]="selectedCategory" (ngModelChange)="applyFilters()">
+          <option value="TOUS">{{trans.t('TOUTES_CATEGORIES')}}</option>
+          <option *ngFor="let cat of categories" [value]="cat">{{cat}}</option>
+        </select>
+      </div>
+
+      <!-- Type Filter -->
+      <div class="filter-group">
+        <label for="shopper-filter-type"><span class="material-symbols-outlined filter-icon">restaurant</span>{{trans.t('TYPE')}}</label>
+        <select id="shopper-filter-type" [(ngModel)]="typeFilter" (ngModelChange)="applyFilters()">
+          <option value="TOUS">{{trans.t('TOUS_TYPES')}}</option>
+          <option value="COMESTIBLE">{{trans.t('COMESTIBLE')}}</option>
+          <option value="NON_COMESTIBLE">{{trans.t('NON_COMESTIBLE')}}</option>
+        </select>
+      </div>
+
+      <!-- Promo Status -->
+      <div class="filter-group">
+        <label for="shopper-filter-promo"><span class="material-symbols-outlined filter-icon">sell</span>{{trans.t('PROMOTION')}}</label>
+        <select id="shopper-filter-promo" [(ngModel)]="promoFilter" (ngModelChange)="applyFilters()">
+          <option value="TOUS">{{trans.t('TOUS_STATUTS')}}</option>
+          <option value="EN_PROMO">{{trans.t('EN_PROMO')}}</option>
+          <option value="HORS_PROMO">{{trans.t('HORS_PROMO')}}</option>
+        </select>
+      </div>
+
+      <!-- Price Range -->
+      <div class="filter-group price-range-group">
+        <label><span class="material-symbols-outlined filter-icon">payments</span>{{trans.t('PRIX')}}</label>
+        <div class="price-inputs">
+          <input type="number" placeholder="Min" [(ngModel)]="minPriceFilter" (ngModelChange)="applyFilters()" class="price-input">
+          <span class="price-range-separator">-</span>
+          <input type="number" placeholder="Max" [(ngModel)]="maxPriceFilter" (ngModelChange)="applyFilters()" class="price-input">
+        </div>
+      </div>
+
+      <!-- Sort By -->
+      <div class="filter-group">
+        <label for="shopper-filter-sort"><span class="material-symbols-outlined filter-icon">sort</span>{{trans.t('TRIER_PAR')}}</label>
+        <select id="shopper-filter-sort" [(ngModel)]="sortByFilter" (ngModelChange)="applyFilters()">
+          <option value="DEFAULT">{{trans.t('TRI_DEFAUT')}}</option>
+          <option value="PRICE_ASC">{{trans.t('PRIX_CROISSANT')}}</option>
+          <option value="PRICE_DESC">{{trans.t('PRIX_DECROISSANT')}}</option>
+          <option value="NAME_ASC">{{trans.t('NOM_AZ')}}</option>
+          <option value="NAME_DESC">{{trans.t('NOM_ZA')}}</option>
+        </select>
+      </div>
+
+      <!-- Reset Filters Button -->
+      <button class="btn-reset-filters" (click)="resetFilters()" [title]="trans.t('REINITIALISER')">
+        <span class="material-symbols-outlined">restart_alt</span>
+        {{trans.t('REINITIALISER')}}
+      </button>
+    </div>
+  </div>
+
   <div *ngIf="!loading" class="produitContainaire">
     <div *ngFor='let item of products' class="Products reveal" (click)="routerBuyProduct(item)">
       <div class="productImageWrapper">
-        <img [src]="transform(item.picture)" alt="{{item.name}}">
+        <img [src]="transform(item.picture)" alt="{{trans.t(item.name)}}">
       </div>
-      <span class="productBadge" *ngIf="item.categorie">{{item.categorie}}</span>
-      <p class="titleProduit">{{item.name}}</p>
+      <span class="productBadge" *ngIf="item.categorie">{{trans.t(item.categorie)}}</span>
+      <p class="titleProduit">{{trans.t(item.name)}}</p>
       <div class="priceWrapper">
         <span class="titlePrix">{{item.prix}} DH</span>
         <span class="titlePrixf" *ngIf="item.prixf!=0">{{item.prixf}} DH</span>
       </div>
       <div class="productAction">
-        <span>Découvrir</span> <span class="material-symbols-outlined">chevron_right</span>
+        <span>{{trans.t('DECOUVRIR')}}</span> <span class="material-symbols-outlined">chevron_right</span>
       </div>
     </div>
   </div>
   <div *ngIf="failed">
     <div class="products1 Products">
       <img src="../../assets/errorS.jpg" alt="">
-      <p class="errorP">Aucun produit portant ce nom n'a été trouvé</p>
+      <p class="errorP">{{trans.t('AUCUN_PRODUIT')}}</p>
     </div>
   </div>
   <img *ngIf="loading" class="loadingIcon" src="../../assets/loading.gif" alt="">

@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { Title, DomSanitizer } from '@angular/platform-browser';
 import { CartService, CartItem } from '../services/cart.service';
 import { DashboardService } from '../services/dashboard.service';
+import { TranslationService } from '../services/translation.service';
 
 @Component({
   selector: 'app-checkout',
@@ -16,6 +17,8 @@ export class CheckoutComponent implements OnInit {
   submitted = false;
   error = '';
 
+  checkoutFormSubmitted = false;
+
   form = {
     fullname: '',
     tel: '',
@@ -28,11 +31,12 @@ export class CheckoutComponent implements OnInit {
     private dash: DashboardService,
     private router: Router,
     private titleService: Title,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    public trans: TranslationService
   ) {}
 
   ngOnInit(): void {
-    this.titleService.setTitle('Finaliser ma commande');
+    this.titleService.setTitle(this.trans.t('FINALISER_COMMANDE'));
     this.items = this.cart.getItems();
     this.total = this.cart.getTotal();
 
@@ -69,8 +73,9 @@ export class CheckoutComponent implements OnInit {
   }
 
   submitOrder() {
+    this.checkoutFormSubmitted = true;
     if (!this.form.fullname || !this.form.tel) {
-      this.error = 'Veuillez remplir votre nom complet et téléphone.';
+      this.error = this.trans.t('CHECKOUT_REQUIRED_ERROR');
       return;
     }
     this.loading = true;
@@ -98,7 +103,7 @@ export class CheckoutComponent implements OnInit {
       },
       (err) => {
         this.loading = false;
-        this.error = "Une erreur s'est produite. Veuillez réessayer.";
+        this.error = this.trans.t('GENERIC_ERROR');
         console.error(err);
       }
     );

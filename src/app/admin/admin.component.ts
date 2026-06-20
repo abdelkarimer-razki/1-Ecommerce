@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { DashboardService } from '../services/dashboard.service';
+import { TranslationService } from '../services/translation.service';
 
 @Component({
   selector: 'app-admin',
@@ -11,11 +12,13 @@ export class AdminComponent implements OnInit {
   isDashboard: boolean = false;
   isCommands: boolean = false;
   isProduits: boolean = false;
-  isUsers: boolean = false;
+  isCategories: boolean = false;
   isSettings: boolean = false;
+  isMessages: boolean = false;
 
   // Global Manual Command Modal (multi-product)
   addModalActive: boolean = false;
+  manualCommandSubmitted: boolean = false;
   productsList: any[] = [];
   manualCartItems: any[] = [];
   manualCustomer = {
@@ -30,18 +33,25 @@ export class AdminComponent implements OnInit {
   manualSizesList: any[] = [];
   manualSelectedSize: any = null;
 
-  constructor(private route: Router, private router: ActivatedRoute, private dash: DashboardService) {
+  constructor(
+    private route: Router,
+    private router: ActivatedRoute,
+    private dash: DashboardService,
+    public trans: TranslationService
+  ) {
     route.events.subscribe((val) => {
       if (this.route.url == "/admin/commands") {
         this.IsCommands()
       } else if (this.route.url == "/admin/dashboard") {
         this.IsDashboard();
-      } else if (this.route.url == "/admin/users") {
-        this.IsUsers();
+      } else if (this.route.url == "/admin/categories") {
+        this.IsCategories();
       } else if (this.route.url == "/admin/products") {
         this.IsProduits();
       } else if (this.route.url == "/admin/settings") {
         this.IsSettings();
+      } else if (this.route.url == "/admin/messages") {
+        this.IsMessages();
       }
     })
   }
@@ -50,11 +60,12 @@ export class AdminComponent implements OnInit {
     this.route.navigate(["/admin/dashboard"]);
   }
 
-  IsDashboard() { this.isDashboard = true; this.isCommands = false; this.isProduits = false; this.isUsers = false; this.isSettings = false; }
-  IsCommands() { this.isDashboard = false; this.isCommands = true; this.isProduits = false; this.isUsers = false; this.isSettings = false; }
-  IsProduits() { this.isDashboard = false; this.isCommands = false; this.isProduits = true; this.isUsers = false; this.isSettings = false; }
-  IsUsers() { this.isDashboard = false; this.isCommands = false; this.isProduits = false; this.isUsers = true; this.isSettings = false; }
-  IsSettings() { this.isDashboard = false; this.isCommands = false; this.isProduits = false; this.isUsers = false; this.isSettings = true; }
+  IsDashboard() { this.isDashboard = true; this.isCommands = false; this.isProduits = false; this.isCategories = false; this.isSettings = false; this.isMessages = false; }
+  IsCommands() { this.isDashboard = false; this.isCommands = true; this.isProduits = false; this.isCategories = false; this.isSettings = false; this.isMessages = false; }
+  IsProduits() { this.isDashboard = false; this.isCommands = false; this.isProduits = true; this.isCategories = false; this.isSettings = false; this.isMessages = false; }
+  IsCategories() { this.isDashboard = false; this.isCommands = false; this.isProduits = false; this.isCategories = true; this.isSettings = false; this.isMessages = false; }
+  IsSettings() { this.isDashboard = false; this.isCommands = false; this.isProduits = false; this.isCategories = false; this.isSettings = true; this.isMessages = false; }
+  IsMessages() { this.isDashboard = false; this.isCommands = false; this.isProduits = false; this.isCategories = false; this.isSettings = false; this.isMessages = true; }
 
   // Open global FAB manual command modal
   openAddModal() {
@@ -64,6 +75,7 @@ export class AdminComponent implements OnInit {
     this.manualSelectedProduct = null;
     this.manualSizesList = [];
     this.manualSelectedSize = null;
+    this.manualCommandSubmitted = false;
 
     this.dash.showproducts().subscribe((data: any) => {
       this.productsList = data;
@@ -126,12 +138,12 @@ export class AdminComponent implements OnInit {
   }
 
   submitManualCommand() {
+    this.manualCommandSubmitted = true;
     if (!this.manualCustomer.fullname || !this.manualCustomer.tel) {
-      alert('Veuillez remplir le nom et le téléphone du client.');
       return;
     }
     if (this.manualCartItems.length === 0) {
-      alert('Veuillez ajouter au moins un produit.');
+      alert(this.trans.t('ADD_PRODUCT_ERROR'));
       return;
     }
     const payload = {
@@ -150,8 +162,15 @@ export class AdminComponent implements OnInit {
       },
       (err) => {
         console.error(err);
-        alert("Erreur lors de l'ajout de la commande.");
+        alert(this.trans.t('ADD_COMMAND_ERROR'));
       }
     );
+  }
+
+  logout() {
+    localStorage.clear();
+    this.route.navigate(["/connexion"]).then(() => {
+      window.location.reload();
+    });
   }
 }

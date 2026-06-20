@@ -3,6 +3,7 @@ import { Observable, Subscriber } from 'rxjs';
 import { DomSanitizer } from '@angular/platform-browser';
 import { DashboardService } from '../services/dashboard.service';
 import { products } from '../backend/products';
+import { TranslationService } from '../services/translation.service';
 
 @Component({
   selector: 'app-products',
@@ -17,6 +18,7 @@ export class ProductsComponent implements OnInit {
   // Modal states
   modalActive: boolean = false;
   modalMode: 'add' | 'edit' = 'add';
+  productFormSubmitted: boolean = false;
   
   product: products = {idproducts:0,name:"",picture:"",description:"",prix:0,categorie:"null",mangable:false,prixf:0,taille:"0",taille2:"0",taille3:"0",prix2:0,prix3:0,sizes:[]};
   editingProduct: products = {idproducts:0,name:"",picture:"",description:"",prix:0,categorie:"null",mangable:false,prixf:0,taille:"0",taille2:"0",taille3:"0",prix2:0,prix3:0,sizes:[]};
@@ -35,21 +37,47 @@ export class ProductsComponent implements OnInit {
   more: Boolean[] = [];
   details: Boolean[] = [];
   pname: any = "";
-
+ 
+  // Categories state
+  registeredCategories: string[] = [];
+  selectedCategoryFilter: string = 'TOUS';
+  allProducts: any[] = [];
+  categoriesModalActive: boolean = false;
+  newCategoryFormName: string = '';
+ 
+  // Advanced search & filters state
+  typeFilter: string = 'TOUS';
+  promoFilter: string = 'TOUS';
+  highlightFilter: string = 'TOUS'; // TOUS, HIGHLIGHTED, NOT_HIGHLIGHTED
+  sortByFilter: string = 'DEFAULT';
+  minPriceFilter: number | null = null;
+  maxPriceFilter: number | null = null;
+ 
+  // Autocomplete state
+  suggestions: string[] = [];
+  showSuggestions: boolean = false;
+  activeSuggestionIndex: number = -1;
+ 
   // Context menu dropdown
   activeDropdownProduct: any = null;
   dropdownPosition = { top: 0, left: 0 };
   showDropdown: boolean = false;
-
-  constructor(private sanitizer: DomSanitizer, private dash: DashboardService) { }
+ 
+  constructor(
+    private sanitizer: DomSanitizer,
+    private dash: DashboardService,
+    public trans: TranslationService
+  ) { }
 
   ngOnInit(): void {
     this.loadProducts();
+    this.loadCategories();
   }
 
   loadProducts() {
     this.dash.showproducts().subscribe(data => {
-      this.produits = data;
+      this.allProducts = (data as any[]) || [];
+      this.applyFilter();
       this.loading = false;
     });
   }
@@ -60,6 +88,7 @@ export class ProductsComponent implements OnInit {
     this.newCategoryName = '';
     this.originalImage = '';
     this.toleranceThreshold = 35;
+    this.productFormSubmitted = false;
     this.product = {
       idproducts: 0,
       name: "",
@@ -85,6 +114,7 @@ export class ProductsComponent implements OnInit {
     this.showNewCategoryInput = false;
     this.newCategoryName = '';
     this.toleranceThreshold = 35;
+    this.productFormSubmitted = false;
     this.editingProduct = JSON.parse(JSON.stringify(prod));
     
     if (!this.editingProduct.sizes || this.editingProduct.sizes.length === 0) {
@@ -142,11 +172,7 @@ export class ProductsComponent implements OnInit {
   }
 
   getCategories(): string[] {
-    if (!this.produits) return ['MIEL', 'HUILE'];
-    const cats = this.produits
-      .map((p: any) => p.categorie)
-      .filter((c: any) => c && c !== 'null' && c !== 'DIVERS');
-    return Array.from(new Set(['MIEL', 'HUILE', ...cats]));
+    return this.registeredCategories.length > 0 ? this.registeredCategories : ['MIEL', 'HUILE'];
   }
 
   onCategoryChange(val: string) {
@@ -237,13 +263,38 @@ export class ProductsComponent implements OnInit {
   }
 
   submitModal() {
+    this.productFormSubmitted = true;
+    const active = this.activeProduct();
+
+    if (!active.name || active.name.trim() === '') {
+      return;
+    }
+
+    if (this.showNewCategoryInput) {
+      if (!this.newCategoryName || this.newCategoryName.trim() === '') {
+        return;
+      }
+    } else {
+      if (!active.categorie || active.categorie === 'null') {
+        return;
+      }
+    }
+
+    if (!active.sizes || active.sizes.length === 0) {
+      return;
+    }
+    for (const size of active.sizes) {
+      if (!size.taille || size.taille.trim() === '' || size.prix === undefined || size.prix === null || size.prix <= 0) {
+        return;
+      }
+    }
+
     var re = /[/]/gi;
     let finalPic = '';
     if (this.myimage) {
       finalPic = this.myimage.replace(re, "kigmfhhh");
     }
 
-    const active = this.activeProduct();
     active.picture = finalPic;
 
     if (this.showNewCategoryInput && this.newCategoryName) {
@@ -264,11 +315,13 @@ export class ProductsComponent implements OnInit {
       this.dash.addproduct(this.product).subscribe(data => {
         this.modalActive = false;
         this.loadProducts();
+        this.loadCategories();
       });
     } else {
       this.dash.updateProduct(this.editingProduct).subscribe(data => {
         this.modalActive = false;
         this.loadProducts();
+        this.loadCategories();
       });
     }
   }
@@ -359,16 +412,162 @@ export class ProductsComponent implements OnInit {
     };
   }
 
-  change() {
-    if (this.pname == "") {
-      this.loadProducts();
-    } else {
-      this.produits = this.produits.filter(
-        (res: any) => {
-          return res.name.toLocaleUpperCase().match(this.pname.toLocaleUpperCase());
-        }
+  loadCategories() {
+    this.dash.getAllCategories().subscribe((cats: any) => {
+      this.registeredCategories = cats || [];
+    });
+  }
+
+  applyFilter() {
+    let temp = [...this.allProducts];
+    if (this.selectedCategoryFilter && this.selectedCategoryFilter !== 'TOUS') {
+      temp = temp.filter(p => p.categorie === this.selectedCategoryFilter);
+    }
+    if (this.pname && this.pname.trim() !== '') {
+      const q = this.pname.trim().toLowerCase();
+      temp = temp.filter(p => 
+        p.name.toLowerCase().includes(q) || 
+        (p.description && p.description.toLowerCase().includes(q))
       );
     }
+    if (this.typeFilter && this.typeFilter !== 'TOUS') {
+      const targetMangable = this.typeFilter === 'COMESTIBLE';
+      temp = temp.filter(p => !!p.mangable === targetMangable);
+    }
+    if (this.promoFilter && this.promoFilter !== 'TOUS') {
+      if (this.promoFilter === 'EN_PROMO') {
+        temp = temp.filter(p => p.prixf > 0);
+      } else if (this.promoFilter === 'HORS_PROMO') {
+        temp = temp.filter(p => !p.prixf || p.prixf === 0);
+      }
+    }
+    if (this.highlightFilter && this.highlightFilter !== 'TOUS') {
+      const targetHighlight = this.highlightFilter === 'HIGHLIGHTED';
+      temp = temp.filter(p => !!p.highlighted === targetHighlight);
+    }
+    if (this.minPriceFilter !== null && this.minPriceFilter !== undefined) {
+      temp = temp.filter(p => this.getMaxPrice(p) >= this.minPriceFilter!);
+    }
+    if (this.maxPriceFilter !== null && this.maxPriceFilter !== undefined) {
+      temp = temp.filter(p => this.getMinPrice(p) <= this.maxPriceFilter!);
+    }
+    if (this.sortByFilter && this.sortByFilter !== 'DEFAULT') {
+      temp.sort((a, b) => {
+        if (this.sortByFilter === 'PRICE_ASC') {
+          return this.getMinPrice(a) - this.getMinPrice(b);
+        } else if (this.sortByFilter === 'PRICE_DESC') {
+          return this.getMinPrice(b) - this.getMinPrice(a);
+        } else if (this.sortByFilter === 'NAME_ASC') {
+          return a.name.localeCompare(b.name);
+        } else if (this.sortByFilter === 'NAME_DESC') {
+          return b.name.localeCompare(a.name);
+        }
+        return 0;
+      });
+    }
+    this.produits = temp;
+  }
+
+  onSearchChange() {
+    const query = this.pname ? this.pname.trim().toLowerCase() : '';
+    if (!query || query.length < 1) {
+      this.suggestions = [];
+      this.showSuggestions = false;
+      this.activeSuggestionIndex = -1;
+      this.applyFilter();
+      return;
+    }
+    const matches = this.allProducts
+      .filter(p => p.name.toLowerCase().includes(query))
+      .map(p => p.name);
+    this.suggestions = Array.from(new Set(matches)).slice(0, 8);
+    this.showSuggestions = this.suggestions.length > 0;
+    this.activeSuggestionIndex = -1;
+    this.applyFilter();
+  }
+
+  onSearchKeyDown(event: KeyboardEvent) {
+    if (!this.showSuggestions || this.suggestions.length === 0) {
+      return;
+    }
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      this.activeSuggestionIndex = (this.activeSuggestionIndex + 1) % this.suggestions.length;
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      this.activeSuggestionIndex = (this.activeSuggestionIndex - 1 + this.suggestions.length) % this.suggestions.length;
+    } else if (event.key === 'Enter') {
+      if (this.activeSuggestionIndex >= 0 && this.activeSuggestionIndex < this.suggestions.length) {
+        event.preventDefault();
+        this.selectSuggestion(this.suggestions[this.activeSuggestionIndex]);
+      } else {
+        this.showSuggestions = false;
+      }
+    } else if (event.key === 'Escape') {
+      this.showSuggestions = false;
+      this.activeSuggestionIndex = -1;
+    }
+  }
+
+  onSearchBlur() {
+    setTimeout(() => {
+      this.showSuggestions = false;
+    }, 200);
+  }
+
+  selectSuggestion(suggestion: string) {
+    this.pname = suggestion;
+    this.showSuggestions = false;
+    this.activeSuggestionIndex = -1;
+    this.applyFilter();
+  }
+
+  resetFilters() {
+    this.selectedCategoryFilter = 'TOUS';
+    this.pname = '';
+    this.typeFilter = 'TOUS';
+    this.promoFilter = 'TOUS';
+    this.highlightFilter = 'TOUS';
+    this.sortByFilter = 'DEFAULT';
+    this.minPriceFilter = null;
+    this.maxPriceFilter = null;
+    this.suggestions = [];
+    this.showSuggestions = false;
+    this.activeSuggestionIndex = -1;
+    this.applyFilter();
+  }
+
+  openCategoriesModal() {
+    this.newCategoryFormName = '';
+    this.categoriesModalActive = true;
+  }
+
+  closeCategoriesModal() {
+    this.categoriesModalActive = false;
+  }
+
+  addCategoryFromForm() {
+    if (!this.newCategoryFormName || this.newCategoryFormName.trim() === '') return;
+    this.dash.addCategory(this.newCategoryFormName).subscribe(() => {
+      this.newCategoryFormName = '';
+      this.loadCategories();
+    });
+  }
+
+  deleteCategoryFromList(catName: string) {
+    if (catName === 'MIEL' || catName === 'HUILE') {
+      alert(this.trans.t('DEFAULT_CAT_DELETE_ERROR'));
+      return;
+    }
+    if (confirm(`${this.trans.t('SUPPRIMER_CATEGORIE_WARN_START')}"${catName}"${this.trans.t('SUPPRIMER_CATEGORIE_WARN_END')}`)) {
+      this.dash.deleteCategory(catName).subscribe(() => {
+        this.loadCategories();
+      });
+    }
+  }
+
+  change() {
+    this.applyFilter();
   }
 
   confirmDelete(prod: any) {
@@ -429,5 +628,15 @@ export class ProductsComponent implements OnInit {
     if (!prod.sizes || prod.sizes.length === 0) return Number(prod.prix) || 0;
     const prices = prod.sizes.map((s: any) => Number(s.prix) || 0).filter((p: number) => !isNaN(p));
     return prices.length > 0 ? Math.max(...prices) : (Number(prod.prix) || 0);
+  }
+
+  toggleHighlight(prod: any) {
+    const nextVal = !prod.highlighted;
+    this.dash.toggleProductHighlight(prod.idproducts, nextVal).subscribe(() => {
+      prod.highlighted = nextVal;
+    }, err => {
+      console.error(err);
+      alert(this.trans.t('HIGHLIGHT_ERROR'));
+    });
   }
 }

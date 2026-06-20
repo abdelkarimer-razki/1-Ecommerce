@@ -20,6 +20,7 @@ export interface products{
   prix2:Number;
   prix3:Number;
   sizes?: ProductSize[];
+  highlighted?: boolean;
 }
 export interface count{
   count:Number;

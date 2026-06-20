@@ -3,6 +3,7 @@ import { HomepageService } from '../services/homepage.service';
 import { NotifierService } from 'angular-notifier';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Subscriber, Observable } from 'rxjs';
+import { TranslationService } from '../services/translation.service';
 
 @Component({
   selector: 'app-settings',
@@ -17,7 +18,8 @@ export class SettingsComponent implements OnInit {
   constructor(
     private homepageService: HomepageService,
     notifierService: NotifierService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    public trans: TranslationService
   ) {
     this.notifier = notifierService;
   }
@@ -34,7 +36,7 @@ export class SettingsComponent implements OnInit {
         this.loading = false;
       },
       (error) => {
-        this.notifier.notify('error', 'Impossible de charger la configuration.');
+        this.notifier.notify('error', this.trans.t('ERR_LOAD_CONFIG'));
         this.loading = false;
       }
     );
@@ -43,10 +45,10 @@ export class SettingsComponent implements OnInit {
   saveConfig() {
     this.homepageService.saveConfig(this.config).subscribe(
       (res) => {
-        this.notifier.notify('success', 'Configuration enregistrée avec succès !');
+        this.notifier.notify('success', this.trans.t('SAVE_SUCCESS'));
       },
       (err) => {
-        this.notifier.notify('error', 'Erreur lors de la sauvegarde.');
+        this.notifier.notify('error', this.trans.t('SAVE_ERROR'));
       }
     );
   }

@@ -1,30 +1,124 @@
 <div class="admin-products-container">
-  <div style="margin-top: 15px;">
-    <h1 class="title"><span class="material-symbols-outlined">inventory_2</span> Produits</h1>
-    <div id="buttonid" (click)="openAddModal()"><span class="material-symbols-outlined">add</span> Ajouter un produit</div>
+  <div style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+    <h1 class="title" style="margin: 0; display: flex; align-items: center; gap: 8px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'"><span class="material-symbols-outlined">inventory_2</span> {{trans.t('PRODUITS')}}</h1>
+    <div style="display: flex; gap: 12px; align-items: center;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+      <div id="buttonid" (click)="openAddModal()" style="margin: 0; display: inline-flex; align-items: center; gap: 8px; background: var(--color-primary); border: none; color: white; padding: 0 16px; border-radius: 6px; font-family: var(--font-sans); font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: var(--transition-smooth); height: 38px; box-sizing: border-box; box-shadow: var(--shadow-sm);" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'"><span class="material-symbols-outlined" style="font-size: 1.15rem;">add</span> {{trans.t('AJOUTER_PRODUIT')}}</div>
+    </div>
   </div>
   
-  <div class="search">
-    <label for="categorie" style="width: 13%;text-align: right;">Catégorie:</label>
-    <select name="" id="categorie">
-      <option value="HUILE">HUILE</option>
-      <option value="MIEL">MIEL</option>
-    </select>
-    <span class="material-symbols-outlined search-icon-symbol">search</span>
-    <input type="text" id="textsearch" placeholder="chercher par nom" [(ngModel)]="pname" (ngModelChange)="change()">
+  <div class="filter-panel">
+    <!-- Top Row: Search and Category -->
+    <div class="filter-row-top" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+      <div class="search-input-wrapper">
+        <span class="material-symbols-outlined search-icon">search</span>
+        <input 
+          type="text" 
+          id="textsearch" 
+          [placeholder]="trans.t('RECHERCHER_PLACEHOLDER')" 
+          [(ngModel)]="pname" 
+          (ngModelChange)="onSearchChange()"
+          (keydown)="onSearchKeyDown($event)"
+          (blur)="onSearchBlur()"
+          autocomplete="off"
+        >
+        <!-- Autocomplete dropdown -->
+        <div class="autocomplete-dropdown" *ngIf="showSuggestions && suggestions.length > 0">
+          <ul>
+            <li 
+              *ngFor="let suggestion of suggestions; let idx = index" 
+              [class.active]="idx === activeSuggestionIndex"
+              (mousedown)="selectSuggestion(suggestion)"
+            >
+              <span class="material-symbols-outlined suggestion-icon">search</span>
+              <span class="suggestion-text">{{suggestion}}</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <!-- Category selector -->
+      <div class="filter-group" style="min-width: 220px;">
+        <label for="filter-category"><span class="material-symbols-outlined filter-icon">category</span>{{trans.t('CATEGORIES')}}</label>
+        <select id="filter-category" [(ngModel)]="selectedCategoryFilter" (ngModelChange)="applyFilter()" style="width: 100%;">
+          <option value="TOUS">{{trans.t('TOUTES_CATEGORIES')}}</option>
+          <option *ngFor="let cat of getCategories()" [value]="cat">{{cat}}</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Bottom Row: Type, Promo, Price Range, Sort By, Reset -->
+    <div class="filter-row-bottom" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+      <!-- Type Filter -->
+      <div class="filter-group">
+        <label for="filter-type"><span class="material-symbols-outlined filter-icon">restaurant</span>{{trans.t('TYPE_HEADER')}}</label>
+        <select id="filter-type" [(ngModel)]="typeFilter" (ngModelChange)="applyFilter()">
+          <option value="TOUS">{{trans.t('TOUS_TYPES')}}</option>
+          <option value="COMESTIBLE">{{trans.t('COMESTIBLE')}}</option>
+          <option value="NON_COMESTIBLE">{{trans.t('NON_COMESTIBLE')}}</option>
+        </select>
+      </div>
+
+      <!-- Promo Filter -->
+      <div class="filter-group">
+        <label for="filter-promo"><span class="material-symbols-outlined filter-icon">sell</span>{{trans.t('PROMOTION')}}</label>
+        <select id="filter-promo" [(ngModel)]="promoFilter" (ngModelChange)="applyFilter()">
+          <option value="TOUS">{{trans.t('TOUS_STATUTS')}}</option>
+          <option value="EN_PROMO">{{trans.t('EN_PROMO')}}</option>
+          <option value="HORS_PROMO">{{trans.t('HORS_PROMO')}}</option>
+        </select>
+      </div>
+
+      <!-- Highlight Filter -->
+      <div class="filter-group">
+        <label for="filter-highlight"><span class="material-symbols-outlined filter-icon">star</span>{{trans.t('HIGHLIGHT_HEADER')}}</label>
+        <select id="filter-highlight" [(ngModel)]="highlightFilter" (ngModelChange)="applyFilter()">
+          <option value="TOUS">{{trans.t('TOUS_PRODUITS')}}</option>
+          <option value="HIGHLIGHTED">{{trans.t('MISE_EN_AVANT')}}</option>
+          <option value="NOT_HIGHLIGHTED">{{trans.t('HORS_PROMO')}} (Normal)</option>
+        </select>
+      </div>
+
+      <!-- Price range filters -->
+      <div class="filter-group price-range-group">
+        <label><span class="material-symbols-outlined filter-icon">payments</span>{{trans.t('PRIX')}}</label>
+        <div class="price-inputs">
+          <input type="number" placeholder="Min" [(ngModel)]="minPriceFilter" (ngModelChange)="applyFilter()" class="price-input">
+          <span class="price-range-separator">-</span>
+          <input type="number" placeholder="Max" [(ngModel)]="maxPriceFilter" (ngModelChange)="applyFilter()" class="price-input">
+        </div>
+      </div>
+
+      <!-- Sorting filter -->
+      <div class="filter-group">
+        <label for="filter-sort"><span class="material-symbols-outlined filter-icon">sort</span>{{trans.t('TRIER_PAR')}}</label>
+        <select id="filter-sort" [(ngModel)]="sortByFilter" (ngModelChange)="applyFilter()">
+          <option value="DEFAULT">{{trans.t('TRI_DEFAUT')}}</option>
+          <option value="PRICE_ASC">{{trans.t('PRIX_CROISSANT')}}</option>
+          <option value="PRICE_DESC">{{trans.t('PRIX_DECROISSANT')}}</option>
+          <option value="NAME_ASC">{{trans.t('NOM_AZ')}}</option>
+          <option value="NAME_DESC">{{trans.t('NOM_ZA')}}</option>
+        </select>
+      </div>
+
+      <!-- Reset button -->
+      <button class="btn-reset-filters" (click)="resetFilters()" [title]="trans.t('REINITIALISER')">
+        <span class="material-symbols-outlined">restart_alt</span>
+        {{trans.t('REINITIALISER')}}
+      </button>
+    </div>
   </div>
 
   <div class="table">
     <img *ngIf="loading" src="../../assets/loading.gif" alt="" width="150" style="margin-top: 14%;margin-left: 44%;">
     <table *ngIf="!loading">
-      <tr id="headerTable">
-        <th>Aperçu</th>
-        <th>Nom du produit</th>
-        <th>Catégorie</th>
-        <th>Description</th>
-        <th>Prix & Variations</th>
-        <th>Type</th>
-        <th style="text-align: right; padding-right: 24px;">Action</th>
+      <tr id="headerTable" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+        <th>{{trans.t('APERCEVOIR')}}</th>
+        <th>{{trans.t('NOM_PRODUIT')}}</th>
+        <th>{{trans.t('CATEGORIES')}}</th>
+        <th>{{trans.t('DESCRIPTION')}}</th>
+        <th>{{trans.t('PRIX_VARIATIONS')}}</th>
+        <th>{{trans.t('TYPE_HEADER')}}</th>
+        <th style="text-align: right; padding-right: 24px;">{{trans.t('ACTIONS_HEADER')}}</th>
       </tr>
 
       <tr class="TableElement" *ngFor="let produit of produits;index as i">
@@ -33,30 +127,43 @@
             <img [src]="transform(produit.picture)" alt="" style="width: 100%; height: 100%; object-fit: cover;">
           </div>
         </td>
-        <td style="font-weight: 700; color: var(--color-text-main);">{{produit.name}}</td>
+        <td style="font-weight: 700; color: var(--color-text-main);">
+          <div style="display: flex; align-items: center; gap: 8px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+            <span 
+              class="material-symbols-outlined star-highlight" 
+              [style.color]="produit.highlighted ? '#eab308' : 'var(--color-text-light)'" 
+              (click)="toggleHighlight(produit)"
+              style="cursor: pointer; font-size: 1.25rem; user-select: none; transition: var(--transition-smooth);"
+              [title]="produit.highlighted ? trans.t('REMOVE_HIGHLIGHT_TITLE') : trans.t('ADD_HIGHLIGHT_TITLE')"
+            >
+              {{ produit.highlighted ? 'star' : 'star_outline' }}
+            </span>
+            <span>{{trans.t(produit.name)}}</span>
+          </div>
+        </td>
         <td>
-          <label class="tickets huile" *ngIf="produit.categorie == 'HUILE'">HUILE</label>
-          <label class="tickets miel" *ngIf="produit.categorie == 'MIEL'">MIEL</label>
-          <label class="tickets rien" *ngIf="produit.categorie != 'HUILE' && produit.categorie != 'MIEL'">{{produit.categorie}}</label>
+          <label class="tickets huile" *ngIf="produit.categorie == 'HUILE'">{{trans.t('HUILE')}}</label>
+          <label class="tickets miel" *ngIf="produit.categorie == 'MIEL'">{{trans.t('MIEL')}}</label>
+          <label class="tickets rien" *ngIf="produit.categorie != 'HUILE' && produit.categorie != 'MIEL'">{{trans.t(produit.categorie)}}</label>
         </td>
         <td>
           <div class="product-desc-preview" style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--color-text-muted); font-size: 0.85rem;">
-            {{produit.description || '-'}}
+            {{trans.t(produit.description) || '-'}}
           </div>
         </td>
         <td>
           <div class="product-price-preview" style="font-weight: 700; font-size: 0.9rem; color: var(--color-primary);">
             <span *ngIf="produit.sizes && produit.sizes.length > 0">
-              {{produit.sizes.length}} var. ({{getMinPrice(produit)}} - {{getMaxPrice(produit)}} DH)
+              {{produit.sizes.length}} var. ({{getMinPrice(produit)}} - {{getMaxPrice(produit)}} {{trans.isRtl() ? 'د.م.' : 'DH'}})
             </span>
             <span *ngIf="!produit.sizes || produit.sizes.length === 0">
-              {{produit.prix}} DH
+              {{produit.prix}} {{trans.isRtl() ? 'د.م.' : 'DH'}}
             </span>
           </div>
         </td>
         <td>
-          <span class="tickets mangable" *ngIf="produit.mangable" style="font-size: 0.75rem; padding: 4px 10px; border-radius: 12px; font-weight: 700; background: rgba(63, 98, 18, 0.1); color: var(--color-secondary);">Comestible</span>
-          <span class="tickets nmangable" *ngIf="!produit.mangable" style="font-size: 0.75rem; padding: 4px 10px; border-radius: 12px; font-weight: 700; background: rgba(220, 38, 38, 0.08); color: #dc2626;">Non-comestible</span>
+          <span class="tickets mangable" *ngIf="produit.mangable" style="font-size: 0.75rem; padding: 4px 10px; border-radius: 12px; font-weight: 700; background: rgba(63, 98, 18, 0.1); color: var(--color-secondary);">{{trans.t('COMESTIBLE')}}</span>
+          <span class="tickets nmangable" *ngIf="!produit.mangable" style="font-size: 0.75rem; padding: 4px 10px; border-radius: 12px; font-weight: 700; background: rgba(220, 38, 38, 0.08); color: #dc2626;">{{trans.t('NON_COMESTIBLE')}}</span>
         </td>
         <td>
           <div style="display: flex; align-items: center; justify-content: flex-end; gap: 12px; position: relative;">
@@ -72,17 +179,20 @@
 <div class="modal-backdrop" *ngIf="modalActive" (click)="closeModal()"></div>
 
 <!-- Modal Dialog Form -->
-<div class="modal-window" *ngIf="modalActive">
-  <div class="modal-header">
-    <h3>{{ modalMode === 'add' ? 'Ajouter un Produit' : 'Modifier le Produit' }}</h3>
+<div class="modal-window" *ngIf="modalActive" [style.direction]="trans.isRtl() ? 'rtl' : 'ltr'">
+  <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+    <h3 style="margin: 0;">{{ modalMode === 'add' ? trans.t('AJOUTER_PRODUIT') : trans.t('MODIFIER_PRODUIT') }}</h3>
     <button class="modal-close-btn" (click)="closeModal()"><span class="material-symbols-outlined">close</span></button>
   </div>
 
-  <div class="modal-body">
+  <div class="modal-body" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
     <div class="modal-form-grid">
       <!-- Upload picture with background remover -->
       <div class="input-group image-upload-wrapper">
-        <label>Image du produit</label>
+        <label style="display: flex; justify-content: space-between;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+          <span>{{trans.t('IMAGE_PRODUIT')}}</span>
+          <span style="font-size: 0.75rem; color: #9ca3af; font-weight: normal;">({{trans.t('OPTIONNEL')}})</span>
+        </label>
         
         <div class="upload-zone-container">
           <!-- Modern File Dropzone (if no image is uploaded) -->
@@ -90,15 +200,15 @@
             <input id="modal-imageb" type="file" style="display: none;" (change)="onChange($event)">
             <label for="modal-imageb" class="dropzone-label">
               <span class="material-symbols-outlined dropzone-icon">cloud_upload</span>
-              <span class="dropzone-title">Sélectionner une image</span>
-              <span class="dropzone-subtitle">Formats acceptés : PNG, JPG, JPEG (Max. 5 Mo)</span>
+              <span class="dropzone-title">{{trans.t('SELECTIONNER_IMAGE')}}</span>
+              <span class="dropzone-subtitle">{{trans.t('IMAGE_FORMATS_LIMIT')}}</span>
             </label>
           </div>
 
           <!-- Modern Preview container (if image is uploaded) -->
           <div class="modal-image-preview checkerboard" *ngIf="myimage">
             <img [src]="transform(myimage)" alt="Preview image">
-            <button type="button" class="btn-clear-image" (click)="clearImage()" title="Supprimer l'image">
+            <button type="button" class="btn-clear-image" (click)="clearImage()" [title]="trans.t('SUPPRIMER_IMAGE')">
               <span class="material-symbols-outlined">close</span>
             </button>
           </div>
@@ -106,28 +216,28 @@
           <!-- Modern Background remover card -->
           <div *ngIf="myimage" class="modern-bg-remover-card">
             <div class="bg-remover-card-header">
-              <div class="header-text-group">
+              <div class="header-text-group" style="display: flex; align-items: center; gap: 8px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
                 <span class="card-icon"><span class="material-symbols-outlined">magic_button</span></span>
-                <div style="display: flex; flex-direction: column;">
-                  <span class="card-title">Détourage Intelligent</span>
-                  <span class="card-subtitle">Retirer le fond de votre image</span>
+                <div style="display: flex; flex-direction: column;" [style.align-items]="trans.isRtl() ? 'flex-end' : 'flex-start'">
+                  <span class="card-title">{{trans.t('DETOURAGE_INTELLIGENT')}}</span>
+                  <span class="card-subtitle">{{trans.t('RETIRER_FOND_SUB')}}</span>
                 </div>
               </div>
             </div>
             
             <div class="bg-remover-card-body">
-              <div class="action-buttons-row">
-                <button type="button" class="btn-action-primary" (click)="removeBg()">
-                  <span class="material-symbols-outlined">photo_filter</span> Retirer le fond
+              <div class="action-buttons-row" style="display: flex; gap: 8px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+                <button type="button" class="btn-action-primary" (click)="removeBg()" style="display: inline-flex; align-items: center; gap: 4px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+                  <span class="material-symbols-outlined" style="font-size: 1.1rem;">photo_filter</span> {{trans.t('RETIRER_FOND')}}
                 </button>
-                <button type="button" class="btn-action-secondary" *ngIf="originalImage" (click)="resetBg()">
-                  <span class="material-symbols-outlined">restart_alt</span> Restaurer
+                <button type="button" class="btn-action-secondary" *ngIf="originalImage" (click)="resetBg()" style="display: inline-flex; align-items: center; gap: 4px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+                  <span class="material-symbols-outlined" style="font-size: 1.1rem;">restart_alt</span> {{trans.t('RESTAURER')}}
                 </button>
               </div>
               
               <div *ngIf="originalImage" class="slider-control-group">
-                <div class="slider-label-row">
-                  <span>Sensibilité du détourage</span>
+                <div class="slider-label-row" style="display: flex; justify-content: space-between;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+                  <span>{{trans.t('SENSIBILITE_DETOURAGE')}}</span>
                   <span class="slider-value-badge">{{ toleranceThreshold }}</span>
                 </div>
                 <input type="range" min="5" max="150" [(ngModel)]="toleranceThreshold" (ngModelChange)="removeBg()" class="modern-slider">
@@ -139,66 +249,91 @@
 
       <!-- Product Name -->
       <div class="input-group">
-        <label>Nom du Produit</label>
-        <input class="text" type="text" [(ngModel)]="activeProduct().name" placeholder="Ex: Miel d'Eucalyptus Premium" required>
+        <label style="display: flex; justify-content: space-between;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+          <span>{{trans.t('NOM_PRODUIT')}} <span style="color: #dc2626;">*</span></span>
+          <span style="font-size: 0.75rem; color: #dc2626; font-weight: normal;">({{trans.t('REQUIS')}})</span>
+        </label>
+        <input class="text" type="text" [(ngModel)]="activeProduct().name" placeholder="Ex: Miel d'Eucalyptus Premium" required [style.text-align]="trans.isRtl() ? 'right' : 'left'" [style.border-color]="productFormSubmitted && (!activeProduct().name || activeProduct().name.trim() === '') ? '#dc2626' : ''">
+        <span *ngIf="productFormSubmitted && (!activeProduct().name || activeProduct().name.trim() === '')" style="color: #dc2626; font-size: 0.75rem; display: block; margin-top: 4px; font-weight: 600;">{{trans.t('CHAMP_REQUIS')}}</span>
       </div>
 
       <!-- Categories & Edible Toggles -->
-      <div class="form-row">
-        <div class="input-group">
-          <label>Catégorie</label>
+      <div class="form-row" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+        <div class="input-group" style="flex: 1;">
+          <label style="display: flex; justify-content: space-between;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+            <span>{{trans.t('CATEGORIES')}} <span style="color: #dc2626;">*</span></span>
+            <span style="font-size: 0.75rem; color: #dc2626; font-weight: normal;">({{trans.t('REQUIS')}})</span>
+          </label>
           <div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
-            <div style="display: flex; gap: 8px; width: 100%;">
-              <select *ngIf="!showNewCategoryInput" class="optionP" [ngModel]="activeProduct().categorie" (ngModelChange)="activeProduct().categorie = $event; onCategoryChange($event)" style="flex-grow: 1;">
-                <option *ngFor="let cat of getCategories()" [value]="cat">{{cat}}</option>
-                <option value="_NEW_">+ Créer une nouvelle catégorie...</option>
+            <div style="display: flex; gap: 8px; width: 100%;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+              <select *ngIf="!showNewCategoryInput" class="optionP" [ngModel]="activeProduct().categorie" (ngModelChange)="activeProduct().categorie = $event; onCategoryChange($event)" style="flex-grow: 1;" [style.border-color]="productFormSubmitted && (!activeProduct().categorie || activeProduct().categorie === 'null') ? '#dc2626' : ''">
+                <option *ngFor="let cat of getCategories()" [value]="cat">{{cat === 'MIEL' || cat === 'HUILE' ? trans.t(cat) : cat}}</option>
+                <option value="_NEW_">{{trans.t('CREER_NOUVELLE_CATEGORIE_OPTION')}}</option>
               </select>
-              <input *ngIf="showNewCategoryInput" class="text" type="text" [(ngModel)]="newCategoryName" placeholder="Saisir la nouvelle catégorie (ex: AMLOU)" required style="flex-grow: 1;">
+              <input *ngIf="showNewCategoryInput" class="text" type="text" [(ngModel)]="newCategoryName" [placeholder]="trans.t('NOM_CATEGORIE_PLACEHOLDER')" required style="flex-grow: 1;" [style.text-align]="trans.isRtl() ? 'right' : 'left'" [style.border-color]="productFormSubmitted && (!newCategoryName || newCategoryName.trim() === '') ? '#dc2626' : ''">
               <button type="button" *ngIf="showNewCategoryInput" (click)="cancelNewCategory()" style="background: none; border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); padding: 0 10px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; height: 38px;">
                 <span class="material-symbols-outlined" style="font-size: 1.2rem; color: var(--color-text-muted);">close</span>
               </button>
             </div>
+            <span *ngIf="productFormSubmitted && (showNewCategoryInput ? (!newCategoryName || newCategoryName.trim() === '') : (!activeProduct().categorie || activeProduct().categorie === 'null'))" style="color: #dc2626; font-size: 0.75rem; display: block; margin-top: 4px; font-weight: 600;">{{trans.t('CHAMP_REQUIS')}}</span>
           </div>
         </div>
-        <div class="input-group">
-          <label>Type comestible</label>
+        <div class="input-group" style="flex: 1;">
+          <label style="display: flex; justify-content: space-between;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+            <span>{{trans.t('TYPE_HEADER')}} <span style="color: #dc2626;">*</span></span>
+            <span style="font-size: 0.75rem; color: #dc2626; font-weight: normal;">({{trans.t('REQUIS')}})</span>
+          </label>
           <select class="optionP" [(ngModel)]="activeProduct().mangable">
-            <option [ngValue]="true">Comestible</option>
-            <option [ngValue]="false">Non-comestible</option>
+            <option [ngValue]="true">{{trans.t('COMESTIBLE')}}</option>
+            <option [ngValue]="false">{{trans.t('NON_COMESTIBLE')}}</option>
           </select>
         </div>
       </div>
 
       <!-- Description -->
       <div class="input-group">
-        <label>Description du Produit</label>
-        <textarea class="text textarea" [(ngModel)]="activeProduct().description" placeholder="Saisir la description..."></textarea>
+        <label style="display: flex; justify-content: space-between;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+          <span>{{trans.t('DESCRIPTION_PRODUIT_LABEL')}}</span>
+          <span style="font-size: 0.75rem; color: #9ca3af; font-weight: normal;">({{trans.t('OPTIONNEL')}})</span>
+        </label>
+        <textarea class="text textarea" [(ngModel)]="activeProduct().description" [placeholder]="trans.t('SAISIR_DESCRIPTION_PLACEHOLDER')" [style.text-align]="trans.isRtl() ? 'right' : 'left'"></textarea>
       </div>
 
       <!-- Strike-through Original Price -->
       <div class="input-group">
-        <label>Prix Barré (Promo) - DH</label>
-        <input class="text" type="number" [(ngModel)]="activeProduct().prixf" placeholder="Ex: 80">
+        <label style="display: flex; justify-content: space-between;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+          <span>{{trans.t('PRIX_BARRE_PROMO')}}</span>
+          <span style="font-size: 0.75rem; color: #9ca3af; font-weight: normal;">({{trans.t('OPTIONNEL')}})</span>
+        </label>
+        <input class="text" type="number" [(ngModel)]="activeProduct().prixf" placeholder="Ex: 80" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
       </div>
 
       <!-- Conditions (Sizes / Prices) -->
       <div class="sizes-container-box">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-          <span class="sizes-box-title" style="margin: 0;">Variations (Taille & Prix)</span>
-          <button type="button" class="btn-add-variation" (click)="addSizeVariation()" style="display: inline-flex; align-items: center; gap: 4px; background: none; border: 1px solid var(--color-primary); color: var(--color-primary); border-radius: var(--border-radius-sm); padding: 4px 10px; font-weight: 700; font-size: 0.8rem; cursor: pointer; transition: var(--transition-smooth);">
-            <span class="material-symbols-outlined" style="font-size: 1rem;">add</span> Variation
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+          <span class="sizes-box-title" style="margin: 0;">{{trans.t('VARIATIONS_TAILLE_PRIX')}} <span style="color: #dc2626;">*</span></span>
+          <button type="button" class="btn-add-variation" (click)="addSizeVariation()" style="display: inline-flex; align-items: center; gap: 4px; background: none; border: 1px solid var(--color-primary); color: var(--color-primary); border-radius: var(--border-radius-sm); padding: 4px 10px; font-weight: 700; font-size: 0.8rem; cursor: pointer; transition: var(--transition-smooth);" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+            <span class="material-symbols-outlined" style="font-size: 1rem;">add</span> {{trans.t('VARIATION')}}
           </button>
         </div>
         
-        <div class="size-group-row" *ngFor="let sizeRow of activeProduct().sizes; let idx = index" style="margin-bottom: 16px;">
-          <div class="input-group size-name">
-            <label>Taille (ex: 250g, 500ml, 1L)</label>
-            <input class="text" type="text" [(ngModel)]="sizeRow.taille" placeholder="ex: 250g" required>
+        <div class="size-group-row" *ngFor="let sizeRow of activeProduct().sizes; let idx = index" style="margin-bottom: 16px; display: flex; gap: 12px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+          <div class="input-group size-name" style="flex: 1;">
+            <label style="display: flex; justify-content: space-between;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+              <span>{{trans.t('TAILLE_EXEMPLE_LABEL')}} <span style="color: #dc2626;">*</span></span>
+              <span style="font-size: 0.75rem; color: #dc2626; font-weight: normal;">({{trans.t('REQUIS')}})</span>
+            </label>
+            <input class="text" type="text" [(ngModel)]="sizeRow.taille" placeholder="ex: 250g" required [style.text-align]="trans.isRtl() ? 'right' : 'left'" [style.border-color]="productFormSubmitted && (!sizeRow.taille || sizeRow.taille.trim() === '') ? '#dc2626' : ''">
+            <span *ngIf="productFormSubmitted && (!sizeRow.taille || sizeRow.taille.trim() === '')" style="color: #dc2626; font-size: 0.75rem; display: block; margin-top: 4px; font-weight: 600;">{{trans.t('CHAMP_REQUIS')}}</span>
           </div>
-          <div class="input-group size-price" style="display: flex; flex-direction: row; align-items: flex-end; gap: 8px;">
+          <div class="input-group size-price" style="flex: 1; display: flex; align-items: flex-end; gap: 8px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
             <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 8px; width: 100%;">
-              <label>Prix (DH)</label>
-              <input class="text" type="number" [(ngModel)]="sizeRow.prix" required>
+              <label style="display: flex; justify-content: space-between;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+                <span>{{trans.t('PRIX')}} <span style="color: #dc2626;">*</span></span>
+                <span style="font-size: 0.75rem; color: #dc2626; font-weight: normal;">({{trans.t('REQUIS')}})</span>
+              </label>
+              <input class="text" type="number" [(ngModel)]="sizeRow.prix" required [style.text-align]="trans.isRtl() ? 'right' : 'left'" [style.border-color]="productFormSubmitted && (sizeRow.prix === undefined || sizeRow.prix === null || sizeRow.prix <= 0) ? '#dc2626' : ''">
+              <span *ngIf="productFormSubmitted && (sizeRow.prix === undefined || sizeRow.prix === null || sizeRow.prix <= 0)" style="color: #dc2626; font-size: 0.75rem; display: block; margin-top: 4px; font-weight: 600;">{{trans.t('CHAMP_REQUIS')}}</span>
             </div>
             <button type="button" *ngIf="(activeProduct().sizes?.length || 0) > 1" (click)="removeSizeVariation(idx)" style="background: none; border: 1px solid var(--color-terracotta); color: var(--color-terracotta); border-radius: var(--border-radius-sm); height: 38px; width: 38px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: var(--transition-smooth); flex-shrink: 0; padding: 0;">
               <span class="material-symbols-outlined">delete</span>
@@ -209,9 +344,9 @@
     </div>
   </div>
 
-  <div class="modal-footer">
-    <button class="btn-cancel" (click)="closeModal()">Annuler</button>
-    <button class="btn-save" (click)="submitModal()">Enregistrer</button>
+  <div class="modal-footer" style="display: flex; gap: 12px; justify-content: flex-end;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+    <button class="btn-cancel" (click)="closeModal()">{{trans.t('ANNULER')}}</button>
+    <button class="btn-save" (click)="submitModal()">{{trans.t('ENREGISTRER')}}</button>
   </div>
 </div>
 
@@ -219,13 +354,13 @@
 <div class="modal-backdrop" *ngIf="viewModalActive" (click)="closeViewModal()"></div>
 
 <!-- Modal Details Window -->
-<div class="modal-window" *ngIf="viewModalActive && viewedProduct">
-  <div class="modal-header">
-    <h3>Détails du Produit</h3>
+<div class="modal-window" *ngIf="viewModalActive && viewedProduct" [style.direction]="trans.isRtl() ? 'rtl' : 'ltr'">
+  <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+    <h3 style="margin: 0;">{{trans.t('DETAILS_PRODUIT')}}</h3>
     <button class="modal-close-btn" (click)="closeViewModal()"><span class="material-symbols-outlined">close</span></button>
   </div>
 
-  <div class="modal-body" style="display: flex; flex-direction: column; gap: 20px;">
+  <div class="modal-body" style="display: flex; flex-direction: column; gap: 20px;" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
     <!-- Centered image preview -->
     <div style="display: flex; justify-content: center; width: 100%;">
       <div style="width: 160px; height: 160px; border-radius: var(--border-radius-md); overflow: hidden; border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; background-color: var(--color-bg-main); padding: 8px;">
@@ -235,14 +370,14 @@
 
     <!-- Product name -->
     <div style="text-align: center;">
-      <h4 style="font-family: var(--font-serif) !important; font-size: 1.5rem; font-weight: 700; color: var(--color-text-main); margin-bottom: 8px;">{{viewedProduct.name}}</h4>
-      <div style="display: flex; justify-content: center; gap: 8px; align-items: center;">
-        <label class="tickets huile" *ngIf="viewedProduct.categorie == 'HUILE'">HUILE</label>
-        <label class="tickets miel" *ngIf="viewedProduct.categorie == 'MIEL'">MIEL</label>
-        <label class="tickets rien" *ngIf="viewedProduct.categorie != 'HUILE' && viewedProduct.categorie != 'MIEL'">{{viewedProduct.categorie}}</label>
+      <h4 style="font-family: var(--font-serif) !important; font-size: 1.5rem; font-weight: 700; color: var(--color-text-main); margin-bottom: 8px;">{{trans.t(viewedProduct.name)}}</h4>
+      <div style="display: flex; justify-content: center; gap: 8px; align-items: center;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+        <label class="tickets huile" *ngIf="viewedProduct.categorie == 'HUILE'">{{trans.t('HUILE')}}</label>
+        <label class="tickets miel" *ngIf="viewedProduct.categorie == 'MIEL'">{{trans.t('MIEL')}}</label>
+        <label class="tickets rien" *ngIf="viewedProduct.categorie != 'HUILE' && viewedProduct.categorie != 'MIEL'">{{trans.t(viewedProduct.categorie)}}</label>
         
-        <label class="tickets mangable" *ngIf="viewedProduct.mangable">Comestible</label>
-        <label class="tickets nmangable" *ngIf="!viewedProduct.mangable">Non-comestible</label>
+        <label class="tickets mangable" *ngIf="viewedProduct.mangable">{{trans.t('COMESTIBLE')}}</label>
+        <label class="tickets nmangable" *ngIf="!viewedProduct.mangable">{{trans.t('NON_COMESTIBLE')}}</label>
       </div>
     </div>
 
@@ -250,38 +385,38 @@
 
     <!-- Description -->
     <div>
-      <span style="font-size: 0.8rem; font-weight: 700; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 6px;">Description</span>
+      <span style="font-size: 0.8rem; font-weight: 700; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 6px;">{{trans.t('DESCRIPTION')}}</span>
       <p style="font-size: 0.9rem; color: var(--color-text-main); line-height: 1.5; margin: 0; background-color: var(--color-bg-main); border-radius: var(--border-radius-md); padding: 12px; border: 1px solid var(--border-color);">
-        {{viewedProduct.description || 'Aucune description fournie.'}}
+        {{trans.t(viewedProduct.description) || trans.t('AUCUNE_DESCRIPTION')}}
       </p>
     </div>
 
     <!-- Variations / Sizes & Prices -->
     <div>
-      <span style="font-size: 0.8rem; font-weight: 700; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 8px;">Variations & Prix</span>
+      <span style="font-size: 0.8rem; font-weight: 700; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 8px;">{{trans.t('VARIATIONS_PRIX')}}</span>
       <div style="border: 1px solid var(--border-color); border-radius: var(--border-radius-md); overflow: hidden;">
-        <table style="width: 100%; border-collapse: collapse; text-align: left; background-color: var(--color-bg-card);">
-          <tr style="background-color: var(--color-bg-main); border-bottom: 1px solid var(--border-color);">
-            <th style="padding: 10px 14px; font-family: var(--font-sans) !important; font-size: 0.8rem; font-weight: 700; color: var(--color-text-muted); text-transform: uppercase;">Taille</th>
-            <th style="padding: 10px 14px; font-family: var(--font-sans) !important; font-size: 0.8rem; font-weight: 700; color: var(--color-text-muted); text-transform: uppercase; text-align: right;">Prix</th>
+        <table style="width: 100%; border-collapse: collapse; background-color: var(--color-bg-card);" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+          <tr style="background-color: var(--color-bg-main); border-bottom: 1px solid var(--border-color);" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+            <th style="padding: 10px 14px; font-family: var(--font-sans) !important; font-size: 0.8rem; font-weight: 700; color: var(--color-text-muted); text-transform: uppercase;">{{trans.t('TAILLE_ONLY')}}</th>
+            <th style="padding: 10px 14px; font-family: var(--font-sans) !important; font-size: 0.8rem; font-weight: 700; color: var(--color-text-muted); text-transform: uppercase;" [style.text-align]="trans.isRtl() ? 'left' : 'right'">{{trans.t('PRIX_HEADER')}}</th>
           </tr>
           <tr *ngFor="let size of viewedProduct.sizes" style="border-bottom: 1px solid var(--border-color);">
-            <td style="padding: 10px 14px; font-size: 0.9rem; font-weight: 600; color: var(--color-text-main);">{{size.taille}}</td>
-            <td style="padding: 10px 14px; font-size: 0.9rem; font-weight: 700; color: var(--color-primary); text-align: right;">{{size.prix}} DH</td>
+            <td style="padding: 10px 14px; font-size: 0.9rem; font-weight: 600; color: var(--color-text-main);">{{trans.t(size.taille)}}</td>
+            <td style="padding: 10px 14px; font-size: 0.9rem; font-weight: 700; color: var(--color-primary);" [style.text-align]="trans.isRtl() ? 'left' : 'right'">{{size.prix}} {{trans.isRtl() ? 'د.م.' : 'DH'}}</td>
           </tr>
         </table>
       </div>
     </div>
 
     <!-- Original Price (discount context) -->
-    <div *ngIf="viewedProduct.prixf > 0" style="display: flex; justify-content: space-between; align-items: center; background-color: var(--color-terracotta-light); border: 1px solid rgba(194, 65, 12, 0.15); border-radius: var(--border-radius-md); padding: 12px;">
-      <span style="font-size: 0.85rem; font-weight: 700; color: var(--color-terracotta);">Prix original (barré) :</span>
-      <span style="font-size: 0.95rem; font-weight: 800; color: var(--color-terracotta); text-decoration: line-through;">{{viewedProduct.prixf}} DH</span>
+    <div *ngIf="viewedProduct.prixf > 0" style="display: flex; justify-content: space-between; align-items: center; background-color: var(--color-terracotta-light); border: 1px solid rgba(194, 65, 12, 0.15); border-radius: var(--border-radius-md); padding: 12px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+      <span style="font-size: 0.85rem; font-weight: 700; color: var(--color-terracotta);">{{trans.t('PRIX_ORIGINAL_BARRE')}}</span>
+      <span style="font-size: 0.95rem; font-weight: 800; color: var(--color-terracotta); text-decoration: line-through;">{{viewedProduct.prixf}} {{trans.isRtl() ? 'د.م.' : 'DH'}}</span>
     </div>
   </div>
 
-  <div class="modal-footer">
-    <button class="btn-cancel" (click)="closeViewModal()" style="margin: 0;">Fermer</button>
+  <div class="modal-footer" style="display: flex; justify-content: flex-end;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+    <button class="btn-cancel" (click)="closeViewModal()" style="margin: 0;">{{trans.t('FERMER')}}</button>
   </div>
 </div>
 
@@ -289,9 +424,9 @@
 <div class="modal-backdrop" *ngIf="deleteModalActive" (click)="closeDeleteModal()"></div>
 
 <!-- Modal Delete Confirmation Window -->
-<div class="modal-window" *ngIf="deleteModalActive && deletingProduct" style="max-width: 450px;">
-  <div class="modal-header">
-    <h3>Confirmation de suppression</h3>
+<div class="modal-window" *ngIf="deleteModalActive && deletingProduct" style="max-width: 450px;" [style.direction]="trans.isRtl() ? 'rtl' : 'ltr'">
+  <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+    <h3 style="margin: 0;">{{trans.t('CONFIRMATION_SUPPRESSION')}}</h3>
     <button class="modal-close-btn" (click)="closeDeleteModal()"><span class="material-symbols-outlined">close</span></button>
   </div>
 
@@ -302,17 +437,17 @@
     </div>
     
     <div>
-      <h4 style="font-family: var(--font-serif) !important; font-size: 1.25rem; font-weight: 700; color: var(--color-text-main); margin-bottom: 8px;">Supprimer le produit ?</h4>
+      <h4 style="font-family: var(--font-serif) !important; font-size: 1.25rem; font-weight: 700; color: var(--color-text-main); margin-bottom: 8px;">{{trans.t('SUPPRIMER_PRODUIT_QUESTION')}}</h4>
       <p style="font-size: 0.95rem; color: var(--color-text-muted); line-height: 1.5; margin: 0;">
-        Êtes-vous sûr de vouloir supprimer définitivement le produit <strong style="color: var(--color-text-main);">"{{deletingProduct.name}}"</strong> ? Cette action est irréversible.
+        {{trans.t('SUPPRIMER_PRODUIT_WARN_START')}}<strong style="color: var(--color-text-main);">"{{trans.t(deletingProduct.name)}}"</strong>{{trans.t('SUPPRIMER_PRODUIT_WARN_END')}}
       </p>
     </div>
   </div>
 
-  <div class="modal-footer" style="background-color: var(--color-bg-main); border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 12px; padding: 16px 24px;">
-    <button class="btn-cancel" (click)="closeDeleteModal()" style="margin: 0;">Annuler</button>
+  <div class="modal-footer" style="background-color: var(--color-bg-main); border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 12px; padding: 16px 24px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+    <button class="btn-cancel" (click)="closeDeleteModal()" style="margin: 0;">{{trans.t('ANNULER')}}</button>
     <button class="btn-save" (click)="executeDelete()" style="background-color: var(--color-terracotta); margin: 0;">
-      Supprimer
+      {{trans.t('SUPPRIMER')}}
     </button>
   </div>
 </div>
@@ -322,10 +457,11 @@
      [style.position]="'absolute'" 
      [style.top.px]="dropdownPosition.top" 
      [style.left.px]="dropdownPosition.left" 
-     style="z-index: 2000; margin: 0;">
-  <ul>
-    <li (click)="openViewModal(activeDropdownProduct); showDropdown = false;"><span class="material-symbols-outlined" style="font-size: 1rem;">visibility</span> Voir</li>
-    <li (click)="openEditModal(activeDropdownProduct); showDropdown = false;"><span class="material-symbols-outlined" style="font-size: 1rem;">edit</span> Modifier</li>
-    <li (click)="confirmDelete(activeDropdownProduct); showDropdown = false;"><span class="material-symbols-outlined" style="font-size: 1rem;">delete</span> Supprimer</li>
+     style="z-index: 2000; margin: 0;"
+     [style.direction]="trans.isRtl() ? 'rtl' : 'ltr'">
+  <ul [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+    <li (click)="openViewModal(activeDropdownProduct); showDropdown = false;" style="display: flex; align-items: center; gap: 8px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'"><span class="material-symbols-outlined" style="font-size: 1rem;">visibility</span> {{trans.t('DETAILS')}}</li>
+    <li (click)="openEditModal(activeDropdownProduct); showDropdown = false;" style="display: flex; align-items: center; gap: 8px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'"><span class="material-symbols-outlined" style="font-size: 1rem;">edit</span> {{trans.t('MODIFIER')}}</li>
+    <li (click)="confirmDelete(activeDropdownProduct); showDropdown = false;" style="display: flex; align-items: center; gap: 8px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'"><span class="material-symbols-outlined" style="font-size: 1rem;">delete</span> {{trans.t('SUPPRIMER')}}</li>
   </ul>
 </div>

@@ -19,11 +19,12 @@ import { TokenInterceptorService } from './services/token-interceptor.service';
 import { NotifierModule, NotifierOptions } from 'angular-notifier';
 import { AdminComponent } from './admin/admin.component';
 import { CommandsComponent } from './commands/commands.component';
-import { UsersComponent } from './users/users.component';
+import { CategoriesComponent } from './categories/categories.component';
 import { EncrDecrService } from './services/encr-decr.service';
 import { ProductsComponent } from './products/products.component';
 import { SettingsComponent } from './settings/settings.component';
 import { CheckoutComponent } from './checkout/checkout.component';
+import { MessagesComponent } from './messages/messages.component';
 const customNotifierOptions: NotifierOptions = {
   position: {
 		horizontal: {
@@ -78,10 +79,11 @@ const customNotifierOptions: NotifierOptions = {
     DashboardComponent,
     AdminComponent,
     CommandsComponent,
-    UsersComponent,
+    CategoriesComponent,
     ProductsComponent,
     SettingsComponent,
-    CheckoutComponent
+    CheckoutComponent,
+    MessagesComponent
   ],
   imports: [
     BrowserModule,

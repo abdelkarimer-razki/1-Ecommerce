@@ -1,16 +1,29 @@
 <div id="topMenu">
     <ul id="logo" style="list-style: none;display: inline-block;">
-        <li routerLink="/"><img src="../../assets/logo31.png" width="50px" alt=""><a> COOPERATIVE BABMANSOUR</a></li>
+        <li [routerLink]="log.isntAdmin() ? '/admin/dashboard' : '/'"><img src="../../assets/logo31.png" width="50px" alt=""><a> {{ trans.t('COOPERATIVE') }}</a></li>
     </ul>
     <div id="sTopMenu">
         <ul>
-            <li class="menuElements" routerLink="/" id="Home" (click)="disableMenu()"><span class="material-symbols-outlined">storefront</span><a> Accueil</a></li>
-            <li class="menuElements" routerLink="/shopping" id="Shopping" (click)="disableMenu()"><span class="material-symbols-outlined">shopping_bag</span><a> Shopping</a></li>
-            <li class="menuElements" routerLink="/admin/dashboard" id="AdminDash" (click)="disableMenu()" *ngIf="log.isntAdmin()"><span class="material-symbols-outlined">analytics</span><a> Dashboard</a></li>
-            <!-- Cart icon (always visible, goes to checkout) -->
-            <li class="menuElements cart-menu-btn" routerLink="/checkout" id="CartBtn" (click)="disableMenu()">
+            <li class="menuElements" routerLink="/" id="Home" (click)="disableMenu()" *ngIf="!log.isntAdmin()"><span class="material-symbols-outlined">storefront</span><a> {{ trans.t('ACCUEIL') }}</a></li>
+            <li class="menuElements" routerLink="/shopping" id="Shopping" (click)="disableMenu()" *ngIf="!log.isntAdmin()"><span class="material-symbols-outlined">shopping_bag</span><a> {{ trans.t('SHOPPING') }}</a></li>
+            <li class="menuElements" routerLink="/admin/dashboard" id="AdminDash" (click)="disableMenu()" *ngIf="log.isntAdmin()"><span class="material-symbols-outlined">analytics</span><a> {{ trans.t('DASHBOARD') }}</a></li>
+            <!-- Cart icon (visible for non-admins) -->
+            <li class="menuElements cart-menu-btn" routerLink="/checkout" id="CartBtn" (click)="disableMenu()" *ngIf="!log.isntAdmin()">
               <span class="material-symbols-outlined">shopping_cart</span>
               <span *ngIf="cartCount > 0" class="not not1">{{cartCount}}</span>
+            </li>
+            <!-- Language Selector -->
+            <li class="menuElements lang-selector-li" style="padding: 4px 8px; border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); background-color: var(--color-bg-card);">
+              <span class="material-symbols-outlined" style="font-size: 1.15rem; color: var(--color-text-muted);">language</span>
+              <select 
+                [ngModel]="trans.getLang()" 
+                (ngModelChange)="trans.setLang($event)" 
+                style="background: transparent; border: none; font-family: var(--font-sans); font-weight: 700; font-size: 0.85rem; color: var(--color-text-muted); outline: none; cursor: pointer; padding-left: 2px;"
+              >
+                <option value="FR">FR</option>
+                <option value="EN">EN</option>
+                <option value="AR">العربية</option>
+              </select>
             </li>
             <li class="menuElements" id="settings" (click)="showMenu()"><span class="material-symbols-outlined">account_circle</span></li>
         </ul>
@@ -21,9 +34,9 @@
     <p *ngIf="log.isToken()" class="username">{{name}}</p>
     <p *ngIf="log.isToken()" class="email">{{email}}</p>
     <div class="divider" *ngIf="log.isToken()"></div>
-    <li (click)="disableMenu()" *ngIf="!log.isToken()" routerLink="/connexion"><span class="material-symbols-outlined">login</span> Connexion</li>
-    <li (click)="disableMenu()" *ngIf="!log.isToken()" routerLink="/inscrire"><span class="material-symbols-outlined">person_add</span> S'inscrire</li>
-    <li (click)="disableMenu()" routerLink="/cart" *ngIf="log.isuser()"><span class="material-symbols-outlined">local_mall</span> Mes commandes</li>
-    <li (click)="log.logout();disableMenu()" *ngIf="log.isToken()" routerLink="/"><span class="material-symbols-outlined">logout</span> Se déconnecter</li>
+    <li (click)="disableMenu()" *ngIf="!log.isToken()" routerLink="/connexion"><span class="material-symbols-outlined">login</span> {{ trans.t('CONNEXION') }}</li>
+    <li (click)="disableMenu()" *ngIf="!log.isToken()" routerLink="/inscrire"><span class="material-symbols-outlined">person_add</span> {{ trans.t('INSCRIPTION') }}</li>
+    <li (click)="disableMenu()" routerLink="/cart" *ngIf="log.isuser()"><span class="material-symbols-outlined">local_mall</span> {{ trans.t('MES_COMMANDES') }}</li>
+    <li (click)="log.logout();disableMenu()" *ngIf="log.isToken()" routerLink="/"><span class="material-symbols-outlined">logout</span> {{ trans.t('DECONNEXION') }}</li>
   </ul>
 </div>

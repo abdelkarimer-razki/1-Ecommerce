@@ -12,11 +12,12 @@ import { AuthGuard } from './auth.guard';
 import { CsGuard } from './cs.guard';
 import { AdminComponent } from './admin/admin.component';
 import { CommandsComponent } from './commands/commands.component';
-import { UsersComponent } from './users/users.component';
 import { ProductsComponent } from './products/products.component';
+import { CategoriesComponent } from './categories/categories.component';
 import { ConnectedGuard } from './connected.guard';
 import { SettingsComponent } from './settings/settings.component';
 import { CheckoutComponent } from './checkout/checkout.component';
+import { MessagesComponent } from './messages/messages.component';
 
 const routes: Routes = [
   {path:'shopping',component:ShoppingComponent},
@@ -30,8 +31,9 @@ const routes: Routes = [
   children:[
     {path:'dashboard',component:DashboardComponent,canActivate:[AuthGuard]},
     {path:'commands',component:CommandsComponent,canActivate:[AuthGuard]},
-    {path:'users',component:UsersComponent,canActivate:[AuthGuard]},
+    {path:'categories',component:CategoriesComponent,canActivate:[AuthGuard]},
     {path:'products',component:ProductsComponent,canActivate:[AuthGuard]},
+    {path:'messages',component:MessagesComponent,canActivate:[AuthGuard]},
     {path:'settings',component:SettingsComponent,canActivate:[AuthGuard]}
   ]},
   {path:'**',component:PagenotfoundComponent}

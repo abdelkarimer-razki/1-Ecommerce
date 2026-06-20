@@ -1,7 +1,7 @@
-<app-top-menu></app-top-menu>
+<app-top-menu *ngIf="!isAdminRoute()"></app-top-menu>
 <router-outlet></router-outlet>
 
-<footer class="coop-footer">
+<footer class="coop-footer" *ngIf="!isAdminRoute()">
   <div class="footer-grid">
     <div class="footer-info">
       <h3 class="footer-logo">Coopérative Bab Mansour</h3>

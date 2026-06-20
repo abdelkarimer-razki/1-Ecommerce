@@ -4,11 +4,11 @@
     <div class="empty-icon">
       <span class="material-symbols-outlined">shopping_cart</span>
     </div>
-    <h1>Votre panier est vide</h1>
-    <p>Ajoutez des produits depuis notre boutique pour passer commande.</p>
+    <h1>{{trans.t('PANIER_VIDE_TITLE')}}</h1>
+    <p>{{trans.t('PANIER_VIDE_SUB')}}</p>
     <button class="btn-primary" routerLink="/shopping">
       <span class="material-symbols-outlined">storefront</span>
-      Voir la boutique
+      {{trans.t('VOIR_BOUTIQUE')}}
     </button>
   </div>
 
@@ -17,11 +17,11 @@
     <div class="success-icon">
       <span class="material-symbols-outlined">check_circle</span>
     </div>
-    <h1>Commande confirmée !</h1>
-    <p>Merci pour votre commande. Nous vous contacterons bientôt pour confirmer la livraison.</p>
+    <h1>{{trans.t('COMMANDE_CONFIRMEE')}}</h1>
+    <p>{{trans.t('COMMANDE_SUCCES_TEXT')}}</p>
     <button class="btn-primary" routerLink="/shopping">
       <span class="material-symbols-outlined">storefront</span>
-      Continuer mes achats
+      {{trans.t('CONTINUER_ACHATS')}}
     </button>
   </div>
 
@@ -31,8 +31,8 @@
     <div class="checkout-summary">
       <div class="section-header">
         <span class="material-symbols-outlined">shopping_cart</span>
-        <h2>Votre panier</h2>
-        <span class="badge">{{items.length}} article(s)</span>
+        <h2>{{trans.t('VOTRE_PANIER')}}</h2>
+        <span class="badge">{{items.length}} {{trans.t('ARTICLES')}}</span>
       </div>
 
       <div class="cart-items">
@@ -40,12 +40,12 @@
           <div class="item-image">
             <img [src]="transform(item.picture)" [alt]="item.name" onerror="this.src='assets/smallbee.png'">
           </div>
-          <div class="item-info">
-            <div class="item-name">{{item.name}}</div>
+          <div class="item-info" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+            <div class="item-name">{{trans.t(item.name)}}</div>
             <div class="item-taille" *ngIf="item.taille && item.taille !== '0'">
-              <span class="material-symbols-outlined" style="font-size:0.9rem">straighten</span> {{item.taille}}
+              <span class="material-symbols-outlined" style="font-size:0.9rem">straighten</span> {{trans.t(item.taille)}}
             </div>
-            <div class="item-price">{{item.prix | number:'1.2-2'}} DH / unité</div>
+            <div class="item-price">{{item.prix | number:'1.2-2'}} DH / {{trans.t('UNIT')}}</div>
           </div>
           <div class="item-controls">
             <div class="qte-stepper">
@@ -58,7 +58,7 @@
               </button>
             </div>
             <div class="item-subtotal">{{(item.prix * item.qte) | number:'1.2-2'}} DH</div>
-            <button type="button" class="remove-btn" (click)="removeItem(item)" title="Supprimer">
+            <button type="button" class="remove-btn" (click)="removeItem(item)" [title]="trans.t('SUPPRIMER')">
               <span class="material-symbols-outlined">delete_outline</span>
             </button>
           </div>
@@ -66,7 +66,7 @@
       </div>
 
       <div class="order-total">
-        <span>Total de la commande</span>
+        <span>{{trans.t('TOTAL_COMMANDE')}}</span>
         <strong>{{total | number:'1.2-2'}} DH</strong>
       </div>
     </div>
@@ -75,35 +75,45 @@
     <div class="checkout-form-panel">
       <div class="section-header">
         <span class="material-symbols-outlined">person</span>
-        <h2>Vos coordonnées</h2>
+        <h2>{{trans.t('VOS_COORDONNEES')}}</h2>
       </div>
 
-      <div class="checkout-form">
+      <div class="checkout-form" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
         <div class="input-group">
-          <label for="fullname">
-            Nom complet <span class="required">*</span>
+          <label for="fullname" style="display: flex; justify-content: space-between;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+            <span>{{trans.t('NOM_COMPLET')}} <span style="color: #dc2626;">*</span></span>
+            <span style="font-size: 0.75rem; color: #dc2626; font-weight: normal;">({{trans.t('REQUIS')}})</span>
           </label>
           <input id="fullname" class="inp" type="text" [(ngModel)]="form.fullname"
-                 placeholder="Ex: Ahmed Benali" required>
+                 placeholder="Ex: Ahmed Benali" required [style.border-color]="checkoutFormSubmitted && !form.fullname ? '#dc2626' : ''">
+          <span *ngIf="checkoutFormSubmitted && !form.fullname" style="color: #dc2626; font-size: 0.75rem; display: block; margin-top: 4px; font-weight: 600;">{{trans.t('CHAMP_REQUIS')}}</span>
         </div>
 
-        <div class="form-row">
+        <div class="form-row" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
           <div class="input-group">
-            <label for="tel">
-              Téléphone <span class="required">*</span>
+            <label for="tel" style="display: flex; justify-content: space-between;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+              <span>{{trans.t('TELEPHONE')}} <span style="color: #dc2626;">*</span></span>
+              <span style="font-size: 0.75rem; color: #dc2626; font-weight: normal;">({{trans.t('REQUIS')}})</span>
             </label>
             <input id="tel" class="inp" type="tel" [(ngModel)]="form.tel"
-                   placeholder="Ex: 0612345678" required>
+                   placeholder="Ex: 0612345678" required [style.border-color]="checkoutFormSubmitted && !form.tel ? '#dc2626' : ''">
+            <span *ngIf="checkoutFormSubmitted && !form.tel" style="color: #dc2626; font-size: 0.75rem; display: block; margin-top: 4px; font-weight: 600;">{{trans.t('CHAMP_REQUIS')}}</span>
           </div>
           <div class="input-group">
-            <label for="email">E-mail <span class="optional">(facultatif)</span></label>
+            <label for="email" style="display: flex; justify-content: space-between;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+              <span>E-mail</span>
+              <span style="font-size: 0.75rem; color: #9ca3af; font-weight: normal;">({{trans.t('OPTIONNEL')}})</span>
+            </label>
             <input id="email" class="inp" type="email" [(ngModel)]="form.email"
                    placeholder="Ex: client@gmail.com">
           </div>
         </div>
 
         <div class="input-group">
-          <label for="adress">Adresse de livraison <span class="optional">(facultatif)</span></label>
+          <label for="adress" style="display: flex; justify-content: space-between;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+            <span>{{trans.t('ADRESSE')}}</span>
+            <span style="font-size: 0.75rem; color: #9ca3af; font-weight: normal;">({{trans.t('OPTIONNEL')}})</span>
+          </label>
           <textarea id="adress" class="inp" rows="3" [(ngModel)]="form.adress"
                     placeholder="Ex: Quartier Al Mansour, Rue 5, Meknès"></textarea>
         </div>
@@ -115,30 +125,30 @@
 
         <div class="checkout-actions">
           <button type="button" class="btn-back" routerLink="/shopping">
-            <span class="material-symbols-outlined">arrow_back</span>
-            Continuer mes achats
+            <span class="material-symbols-outlined" [style.transform]="trans.isRtl() ? 'rotate(180deg)' : 'none'">arrow_back</span>
+            {{trans.t('CONTINUER_ACHATS')}}
           </button>
           <button type="button" class="btn-submit" [disabled]="loading" (click)="submitOrder()">
             <span *ngIf="!loading">
               <span class="material-symbols-outlined">check_circle</span>
-              Confirmer la commande
+              {{trans.t('CONFIRMER_COMMANDE')}}
             </span>
-            <span *ngIf="loading" class="loading-dots">Traitement...</span>
+            <span *ngIf="loading" class="loading-dots">{{trans.t('TRAITEMENT')}}</span>
           </button>
         </div>
 
         <div class="trust-badges">
           <div class="badge-item">
             <span class="material-symbols-outlined">lock</span>
-            <span>Sécurisé</span>
+            <span>{{trans.t('SECURISE')}}</span>
           </div>
           <div class="badge-item">
             <span class="material-symbols-outlined">local_shipping</span>
-            <span>Livraison rapide</span>
+            <span>{{trans.t('LIVRAISON_RAPIDE')}}</span>
           </div>
           <div class="badge-item">
             <span class="material-symbols-outlined">verified</span>
-            <span>Produits 100% naturels</span>
+            <span>{{trans.t('PRODUITS_NATURELS')}}</span>
           </div>
         </div>
       </div>

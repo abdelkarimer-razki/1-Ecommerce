@@ -1,48 +1,62 @@
-<div id="pagecont">
-  <img *ngIf="loading" src="../../assets/loading.gif" alt="">
+<div id="pagecont" style="flex-direction: column; gap: 40px; justify-content: flex-start; align-items: center; min-height: calc(100vh - 80px); padding: 40px 20px;">
+  <img *ngIf="loading" src="../../assets/loading.gif" class="loadingIcon" alt="">
   
   <div *ngFor="let item of product" id="produit" [style.display]="loading ? 'none' : 'flex'">
     <div class="picture">
       <img [src]="transform(item.picture)" alt="">
     </div>
     
-    <div class="info">
-      <p class="proname">{{item.name}}</p>
-      <p id="description">{{item.description}}</p>
+    <div class="info" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+      <p class="proname">{{trans.t(item.name)}}</p>
+      <p id="description">{{trans.t(item.description)}}</p>
       
       <div class="inputGroup" *ngIf="item.sizes && item.sizes.length > 0">
-        <label>Taille :</label>
+        <label>{{trans.t('TAILLE')}}</label>
         <div class="sizesContainer">
           <div *ngFor="let sizeOpt of item.sizes" class="taille" (click)="selectSize(sizeOpt)" [class.kl]="selectedSize === sizeOpt">
-            {{sizeOpt.taille}}
+            {{trans.t(sizeOpt.taille)}}
           </div>
         </div>
       </div>
       
       <div class="quantityWrapper">
-        <label>Quantité :</label>
+        <label>{{trans.t('QUANTITE')}}</label>
         <input type="number" name="" [(ngModel)]="qte" id="Quantite" min="1" required>
       </div>
 
       <div class="price">
         <p *ngIf="selectedSize">{{selectedSize.prix}} DH</p>
-        <span>Livraison gratuite</span>
+        <span>{{trans.t('LIVRAISON_GRATUITE')}}</span>
       </div>
 
       <div class="actionButtons" *ngIf="!admin">
         <!-- Buy Now (add to cart + go to checkout) -->
         <button class="acheter" (click)="goToCheckout(item)">
           <span class="material-symbols-outlined">flash_on</span>
-          Commander maintenant
+          {{trans.t('ACHETER_MAINTENANT')}}
         </button>
 
         <!-- Add to cart -->
-        <button *ngIf="!addedToCart" class="cart" (click)="addToCart(item)" title="Ajouter au panier">
+        <button *ngIf="!addedToCart" class="cart" (click)="addToCart(item)" [title]="trans.t('AJOUTER_PANIER')">
           <span class="material-symbols-outlined">add_shopping_cart</span>
         </button>
-        <button *ngIf="addedToCart" class="cart" routerLink="/checkout" title="Voir le panier">
+        <button *ngIf="addedToCart" class="cart" routerLink="/checkout" [title]="trans.t('VOIR_PANIER')">
           <span class="material-symbols-outlined" style="color: var(--color-secondary);">check_circle</span>
         </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Similar Products Section -->
+  <div class="similar-products-section" *ngIf="!loading && similarProducts.length > 0">
+    <h3 class="similar-title" [style.text-align]="trans.isRtl() ? 'right' : 'left'">{{trans.t('PRODUITS_SIMILAIRES')}}</h3>
+    <div class="similar-grid">
+      <div *ngFor="let prod of similarProducts" class="similar-card" (click)="viewProduct(prod)">
+        <div class="similar-img-wrapper">
+          <img [src]="transform(prod.picture)" alt="{{trans.t(prod.name)}}">
+        </div>
+        <p class="similar-name">{{trans.t(prod.name)}}</p>
+        <p class="similar-price">{{prod.prix}} DH</p>
       </div>
     </div>
   </div>

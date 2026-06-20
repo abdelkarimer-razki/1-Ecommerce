@@ -23,8 +23,9 @@ export class DashboardService {
   users(){
     return this.http.get<Number>(this.url1+'users');
   }
-  revenuMois(mois:Number):Observable<Number>{
-    return this.http.get<Number>(this.url1+'revenu/'+mois);
+  revenuMois(mois:Number, year?:number):Observable<Number>{
+    const url = year ? `${this.url1}revenu/${mois}?year=${year}` : `${this.url1}revenu/${mois}`;
+    return this.http.get<Number>(url);
   }
   allCommandsE(){
     return this.http.get(this.url1+'commandnonEffectuer');
@@ -63,12 +64,24 @@ export class DashboardService {
   updateProduct(product:products){
     return this.http.post<products>(this.url1+"p12/",product);
   }
+  toggleProductHighlight(idproducts: number, highlighted: boolean): Observable<any> {
+    return this.http.post(this.url1 + "toggle-highlight", { idproducts, highlighted });
+  }
   //ajouter produit
   addproduct(product:products){
     return this.http.post<products>(this.url1+"addpro/",product);
   }
   showproducts(){
     return this.http.get(this.url1+"productshow");
+  }
+  getAllCategories(): Observable<string[]> {
+    return this.http.get<string[]>(this.url1 + "categories/all");
+  }
+  addCategory(name: string): Observable<any> {
+    return this.http.post(this.url1 + "categories/add", { name });
+  }
+  deleteCategory(name: string): Observable<any> {
+    return this.http.delete(this.url1 + "categories/" + name);
   }
 
   //delete commande item
@@ -107,5 +120,16 @@ export class DashboardService {
   }
   cartotachatAll(iduser:any){
     return this.http.get(this.url1+"cartotachatall/"+iduser);
+  }
+
+  // Messages/Reclamations
+  getMessages(): Observable<any[]> {
+    return this.http.get<any[]>(this.url1 + "api/messages");
+  }
+  submitMessage(msg: { name: string; tel: string; message: string }): Observable<any> {
+    return this.http.post(this.url1 + "api/messages", msg);
+  }
+  deleteMessage(id: number): Observable<any> {
+    return this.http.delete(this.url1 + "api/messages/" + id);
   }
 }

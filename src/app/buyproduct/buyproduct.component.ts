@@ -7,6 +7,8 @@ import { BuyproductService } from '../services/buyproduct.service';
 import { Title } from '@angular/platform-browser';
 import { LoginService } from '../services/login.service';
 import { CartService } from '../services/cart.service';
+import { ShoppingserviceService } from '../services/shoppingservice.service';
+import { TranslationService } from '../services/translation.service';
 
 @Component({
   selector: 'app-buyproduct',
@@ -14,7 +16,7 @@ import { CartService } from '../services/cart.service';
   styleUrls: ['./buyproduct.component.css']
 })
 export class BuyproductComponent implements OnInit {
-   id: String = this.route.snapshot.params['idproducts'];
+   id: String = '';
    loading: boolean = true;
    qte: any = 1;
    addedToCart: boolean = false;
@@ -22,18 +24,38 @@ export class BuyproductComponent implements OnInit {
    selectedSize: any = null;
 
    product: products[] = [];
+   similarProducts: products[] = [];
 
   constructor(
     private route: ActivatedRoute,
     private login: LoginService,
     private router: Router,
     private buyService: BuyproductService,
+    private shopService: ShoppingserviceService,
     private sanitizer: DomSanitizer,
     private titleService: Title,
-    private cartService: CartService
+    private cartService: CartService,
+    public trans: TranslationService
   ) {}
 
   ngOnInit(): void {
+    this.route.paramMap.subscribe(params => {
+      this.id = params.get('idproducts') || '';
+      this.loading = true;
+      this.product = [];
+      this.similarProducts = [];
+      this.qte = 1;
+      this.addedToCart = false;
+      this.selectedSize = null;
+      this.loadProductDetails();
+    });
+
+    if (this.login.isntAdmin()) {
+      this.admin = true;
+    }
+  }
+
+  loadProductDetails() {
     this.buyService.getProducts(this.id).subscribe(data => {
       this.product = data;
       this.loading = false;
@@ -57,16 +79,26 @@ export class BuyproductComponent implements OnInit {
           this.selectedSize = { taille: '', prix: Number(this.product[0].prix) || 0 };
         }
         this.titleService.setTitle(this.product[0].name);
+
+        // Check if already in cart
+        const cartItems = this.cartService.getItems();
+        this.addedToCart = cartItems.some(i => i.idproducts === Number(this.id));
+
+        // Load similar products
+        this.loadSimilarProducts(this.product[0]);
       }
     });
+  }
 
-    if (this.login.isntAdmin()) {
-      this.admin = true;
-    }
-
-    // Check if already in cart
-    const cartItems = this.cartService.getItems();
-    this.addedToCart = cartItems.some(i => i.idproducts === Number(this.id));
+  loadSimilarProducts(currentProduct: products) {
+    this.shopService.getAllProducts().subscribe(allProds => {
+      if (allProds) {
+        this.similarProducts = allProds.filter(p => 
+          p.categorie === currentProduct.categorie && 
+          Number(p.idproducts) !== Number(currentProduct.idproducts)
+        ).slice(0, 4); // Suggest up to 4 similar products
+      }
+    });
   }
 
   transform(pic: string) {
@@ -104,5 +136,9 @@ export class BuyproductComponent implements OnInit {
   goToCheckout(item: any) {
     this.addToCart(item);
     this.router.navigate(['/checkout']);
+  }
+
+  viewProduct(prod: products) {
+    this.router.navigate(['/produit', prod.idproducts]);
   }
 }

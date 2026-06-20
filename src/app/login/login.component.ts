@@ -6,6 +6,7 @@ import { LoginService } from '../services/login.service';
 import { AuthGuard } from '../auth.guard';
 import { EncrDecrService } from '../services/encr-decr.service';
 import { users } from '../backend/users';
+import { TranslationService } from '../services/translation.service';
 
 @Component({
   selector: 'app-login',
@@ -18,11 +19,18 @@ export class LoginComponent implements OnInit {
   password:any="";
   user:users={iduser:0,fname:"",lname:"",admin:false,tel:"",email:"",password:"",adress:""};
   loading:Boolean=false;
-  constructor(private EncrDecr: EncrDecrService,private titleService:Title,private login:LoginService,private router:Router,private auth:AuthGuard) {
-   }
+  loginFormSubmitted: boolean = false;
+  constructor(
+    private EncrDecr: EncrDecrService,
+    private titleService:Title,
+    private login:LoginService,
+    private router:Router,
+    private auth:AuthGuard,
+    public trans: TranslationService
+  ) { }
 
   ngOnInit(): void {
-    this.titleService.setTitle("Connexion");
+    this.titleService.setTitle(this.trans.t('CONNEXION'));
     if(this.user.email==''||this.password=='')
     {
       this.emailinv=true;
@@ -33,6 +41,10 @@ export class LoginComponent implements OnInit {
     }},500);
   }
   connect(){
+    this.loginFormSubmitted = true;
+    if (!this.user.email || !this.password) {
+      return;
+    }
     console.log(this.EncrDecr.set('p&aNDm6&whRD#HdL',this.password));
     if(this.emailinv==false)
     {

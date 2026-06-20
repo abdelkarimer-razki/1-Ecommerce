@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { count, products } from '../backend/products';
-import { HomepageService } from '../services/homepage.service';
 import { Title, DomSanitizer } from '@angular/platform-browser';
-import { HttpErrorResponse } from '@angular/common/http';
+import { HomepageService } from '../services/homepage.service';
+import { TranslationService } from '../services/translation.service';
+import { DashboardService } from '../services/dashboard.service';
 
 @Component({
   selector: 'app-acceuil-cont',
@@ -15,7 +15,52 @@ export class AcceuilContComponent implements OnInit {
    countH:Number=0;
    config: any = {};
 
-  constructor(private HomepageService:HomepageService,private titleService:Title, private sanitizer: DomSanitizer) { }
+   // Contact Us Form State
+   contactForm = {
+     name: '',
+     tel: '',
+     message: ''
+   };
+   contactFormSubmitted = false;
+   contactFormErrors = {
+     name: false,
+     tel: false,
+     message: false
+   };
+   contactFormSuccess = false;
+
+  constructor(
+    private HomepageService:HomepageService,
+    private titleService:Title,
+    private sanitizer: DomSanitizer,
+    public trans: TranslationService,
+    private dash: DashboardService
+  ) { }
+
+  onSubmitContact() {
+    this.contactFormSubmitted = true;
+    this.contactFormErrors = {
+      name: !this.contactForm.name || this.contactForm.name.trim() === '',
+      tel: !this.contactForm.tel || this.contactForm.tel.trim() === '',
+      message: !this.contactForm.message || this.contactForm.message.trim() === ''
+    };
+
+    const hasErrors = Object.values(this.contactFormErrors).some(err => err);
+    if (hasErrors) {
+      return;
+    }
+
+    this.dash.submitMessage(this.contactForm).subscribe(res => {
+      this.contactFormSuccess = true;
+      this.contactForm = { name: '', tel: '', message: '' };
+      this.contactFormSubmitted = false;
+      setTimeout(() => {
+        this.contactFormSuccess = false;
+      }, 5000);
+    }, err => {
+      console.error("Error submitting reclamation:", err);
+    });
+  }
 
   ngOnInit(): void {
     this.getCountOil();

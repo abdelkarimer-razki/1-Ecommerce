@@ -1,31 +1,31 @@
 <div style="width: 100%; min-height: 100vh; padding-bottom: 50px;">
-  <div class="choice">
+  <div class="choice" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
     <label class="effectuer" (click)="change(1)" [ngClass]="{colorback: !isEffectuer}">
-      <span class="material-symbols-outlined">shopping_bag</span> &nbsp; Achats
+      <span class="material-symbols-outlined">shopping_bag</span> &nbsp; {{trans.t('ACHATS')}}
     </label>
     <label class="Noneffectuer" (click)="change(2)" [ngClass]="{colorback: isEffectuer}">
-      <span class="material-symbols-outlined">shopping_cart</span> &nbsp; Panier 
+      <span class="material-symbols-outlined">shopping_cart</span> &nbsp; {{trans.t('PANIER')}} 
       <span *ngIf="cartcount!=0" [ngClass]="{not1: !isEffectuer}" class="not">{{cartcount}}</span>
     </label>
   </div>
 
-  <div class="cartLayout">
+  <div class="cartLayout" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
     <div class="table" [ngClass]="{tableachat: !isEffectuer}">
-      <div *ngFor="let cart of carts;index as i" class="cards d-flex flex-wrap gap-4 align-items-center justify-content-between">
-        <div class="d-flex align-items-center gap-3 flex-wrap">
+      <div *ngFor="let cart of carts;index as i" class="cards d-flex flex-wrap gap-4 align-items-center justify-content-between" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+        <div class="d-flex align-items-center gap-3 flex-wrap" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
           <img [src]="transform(cart.picture)" alt="" class="imm" width="120px" height="120px" style="object-fit: cover;">
-          <div>
-            <p class="proname">{{cart.name}}</p>
-            <div class="d-flex align-items-center gap-3 mt-1">
-              <label class="m-0 font-weight-bold">Taille : 
-                <span *ngIf="!isEffectuer">{{cart.taille1}}</span>
+          <div [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+            <p class="proname">{{trans.t(cart.name)}}</p>
+            <div class="d-flex align-items-center gap-3 mt-1" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+              <label class="m-0 font-weight-bold">{{trans.t('TAILLE_LABEL')}} 
+                <span *ngIf="!isEffectuer">{{trans.t(cart.taille1)}}</span>
                 <select *ngIf="isEffectuer" class="text py-1 px-2 ml-1" [(ngModel)]="cart.taille1" (change)="change1(cart.idcommande,cart.taille1,cart.qte,cart.taille,cart.taille2,cart.taille3,cart.prix1,cart.prix2,cart.prix3)">
-                  <option value="{{cart.taille}}" *ngIf="cart.taille!='0'">{{cart.taille}}</option>
-                  <option value="{{cart.taille2}}" *ngIf="cart.taille2!='0'">{{cart.taille2}}</option>
-                  <option value="{{cart.taille3}}" *ngIf="cart.taille3!='0'">{{cart.taille3}}</option>
+                  <option value="{{cart.taille}}" *ngIf="cart.taille!='0'">{{trans.t(cart.taille)}}</option>
+                  <option value="{{cart.taille2}}" *ngIf="cart.taille2!='0'">{{trans.t(cart.taille2)}}</option>
+                  <option value="{{cart.taille3}}" *ngIf="cart.taille3!='0'">{{trans.t(cart.taille3)}}</option>
                 </select>
               </label>
-              <label class="m-0 font-weight-bold ml-3">Qté : 
+              <label class="m-0 font-weight-bold ml-3">{{trans.t('QTE_LABEL')}} 
                 <span *ngIf="!isEffectuer">{{cart.qte}}</span>
                 <input *ngIf="isEffectuer" class="proqte text py-1 px-2 ml-1" type="number" [(ngModel)]="cart.qte" min="1" (change)="change1(cart.idcommande,cart.taille1,cart.qte,cart.taille,cart.taille2,cart.taille3,cart.prix1,cart.prix2,cart.prix3)">
               </label>
@@ -33,39 +33,41 @@
           </div>
         </div>
         
-        <div class="text-right d-flex flex-column align-items-end gap-2">
+        <div class="text-right d-flex flex-column align-items-end gap-2" [style.align-items]="trans.isRtl() ? 'flex-start' : 'flex-end'">
           <p class="proprix m-0">{{cart.prix}} DH</p>
-          <div class="d-flex gap-3">
-            <a (click)="deletecommande(cart.idcommande,false)" class="text-muted text-decoration-underline" style="cursor:pointer; font-size: 0.9rem;">Supprimer</a>
-            <a (click)="achetercart(cart.idcommande)" *ngIf="isEffectuer" class="text-primary text-decoration-underline" style="cursor:pointer; font-size: 0.9rem; font-weight: 700;">Acheter</a>
+          <div class="d-flex gap-3" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+            <a (click)="deletecommande(cart.idcommande,false)" class="text-muted text-decoration-underline" style="cursor:pointer; font-size: 0.9rem;">{{trans.t('SUPPRIMER')}}</a>
+            <a (click)="achetercart(cart.idcommande)" *ngIf="isEffectuer" class="text-primary text-decoration-underline" style="cursor:pointer; font-size: 0.9rem; font-weight: 700;">{{trans.t('ACHETER')}}</a>
           </div>
         </div>
       </div>
       
       <div *ngIf="nocart" class="text-center py-5">
         <h3 class="mb-4">
-          <span *ngIf="!isEffectuer">Vous n'avez encore rien acheté !</span>
-          <span *ngIf="isEffectuer">Votre panier ne contient aucun objet !</span>
+          <span *ngIf="!isEffectuer">{{trans.t('RIEN_ACHETE')}}</span>
+          <span *ngIf="isEffectuer">{{trans.t('PANIER_VIDE_TEXT')}}</span>
         </h3>
-        <button class="acheter mx-auto" style="width: auto; padding: 0 30px;" routerLink="/shopping">Commencer vos achats</button>
+        <button class="acheter mx-auto" style="width: auto; padding: 0 30px;" routerLink="/shopping">{{trans.t('COMMENCER_ACHATS')}}</button>
       </div>
     </div>
 
-    <div class="billets" *ngIf="isEffectuer">
-      <h3 class="border-bottom pb-3 mb-3"><span class="material-symbols-outlined">receipt_long</span> Facture</h3>
+    <div class="billets" *ngIf="isEffectuer" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+      <h3 class="border-bottom pb-3 mb-3" [style.display]="'flex'" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'" [style.align-items]="'center'" [style.gap]="'8px'">
+        <span class="material-symbols-outlined">receipt_long</span> {{trans.t('FACTURE')}}
+      </h3>
       <div class="d-flex flex-column gap-3">
-        <p *ngFor="let cart1 of carts" class="d-flex justify-content-between m-0 font-weight-bold">
-          <span>{{cart1.qte}} x {{cart1.name}}</span>
+        <p *ngFor="let cart1 of carts" class="d-flex justify-content-between m-0 font-weight-bold" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+          <span>{{cart1.qte}} x {{trans.t(cart1.name)}}</span>
           <span>{{cart1.prix}} DH</span>
         </p>
       </div>
       <hr class="my-3">
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4 class="m-0">Total :</h4>
+      <div class="d-flex justify-content-between align-items-center mb-3" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+        <h4 class="m-0">{{trans.t('TOTAL')}} :</h4>
         <h4 class="m-0 text-primary font-weight-bold">{{total}} DH</h4>
       </div>
       <button class="acheter" (click)="achetertous()">
-        <span *ngIf="!achate">Finaliser l'achat</span>
+        <span *ngIf="!achate">{{trans.t('FINALISER_ACHAT')}}</span>
         <img *ngIf="achate" src="../../assets/loading.gif" width="30px" alt="">
       </button>
     </div>

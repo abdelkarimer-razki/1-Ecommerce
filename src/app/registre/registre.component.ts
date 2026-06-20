@@ -4,6 +4,7 @@ import { users } from '../backend/users';
 import { Router } from '@angular/router';
 import { RegistreService } from '../services/registre.service';
 import { EncrDecrService } from '../services/encr-decr.service';
+import { TranslationService } from '../services/translation.service';
 
 @Component({
   selector: 'app-registre',
@@ -18,10 +19,17 @@ export class RegistreComponent implements OnInit {
   testemail:Boolean=false;
   vein:Boolean=false;
   unmatch:boolean=false;
-  constructor(private router:Router,private EncrDecr: EncrDecrService,private titleService:Title,private reg:RegistreService) { }
+  registreFormSubmitted: boolean = false;
+  constructor(
+    private router:Router,
+    private EncrDecr: EncrDecrService,
+    private titleService:Title,
+    private reg:RegistreService,
+    public trans: TranslationService
+  ) { }
 
   ngOnInit(): void {
-    this.titleService.setTitle("S'inscrire");
+    this.titleService.setTitle(this.trans.t('INSCRIPTION'));
     this.test();
     setInterval(()=>
     {
@@ -40,18 +48,21 @@ export class RegistreComponent implements OnInit {
   }
   registre()
   {
-    if(!this.vein&&!this.testtel1&&!this.testemail)
+    this.registreFormSubmitted = true;
+    this.test();
+    if(this.vein || this.testtel1 || this.testemail)
     {
-      this.user.password=this.EncrDecr.set('p&aNDm6&whRD#HdL',this.password);
-      this.reg.registre(this.user).subscribe(data=>
-        {
-          this.unmatch=true;
-          setTimeout(()=>
-          {
-            this.router.navigate(['/connexion']);
-          },1000)
-        });
+      return;
     }
+    this.user.password=this.EncrDecr.set('p&aNDm6&whRD#HdL',this.password);
+    this.reg.registre(this.user).subscribe(data=>
+      {
+        this.unmatch=true;
+        setTimeout(()=>
+        {
+          this.router.navigate(['/connexion']);
+        },1000)
+      });
   }
   testtel()
   {

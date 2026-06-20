@@ -1,4 +1,5 @@
 import { Component, OnInit  } from '@angular/core';
+import { forkJoin } from 'rxjs';
 import {
   Chart,
   ArcElement,
@@ -27,6 +28,7 @@ import { DashboardService } from '../services/dashboard.service';
 import { Router } from '@angular/router'
 import { Title } from '@angular/platform-browser';
 import { NotifierService } from 'angular-notifier';
+import { TranslationService } from '../services/translation.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -42,7 +44,7 @@ export class DashboardComponent implements OnInit {
   commandNb:Number=0;
   revenuNb:Number=0;
   visitsNb:Number=0;
-  usersNb:Number=0;
+  categoriesNb:Number=0;
   janvier:any=0
   fevrier:any=0;
   mars:any=0
@@ -53,8 +55,13 @@ export class DashboardComponent implements OnInit {
   aout:any=0;
   septembre:any=0
   octobre:any=0;
-  novombre:any=0
+  novombre:any=0;
   decembre:any=0;
+
+  // Year navigation and chart state
+  selectedYear: number = new Date().getFullYear();
+  public myChart: any = null;
+  loadingChart: boolean = false;
 
   public canvas : any;
   public ctx:any;
@@ -62,12 +69,11 @@ export class DashboardComponent implements OnInit {
   public chartEmail:any;
   public chartHours:any;
 
-  constructor( private dash:DashboardService,private _router: Router,private titleService:Title,notifierService: NotifierService) {
+  constructor( private dash:DashboardService,private _router: Router,private titleService:Title,notifierService: NotifierService, public trans: TranslationService) {
     this.notifier = notifierService;
    }
 
   ngOnInit(): void {
-    this.dataChart();
     Chart.register(
       ArcElement,
       LineElement,
@@ -95,7 +101,7 @@ export class DashboardComponent implements OnInit {
     setInterval(() => {
       this.topDashboard();
     }, 10000);
-    this.titleService.setTitle("Dashboard");
+    this.titleService.setTitle(this.trans.t('DASHBOARD'));
     /*this.notifier.show({
       type:'success',
       message: 'You are awesome! I mean it!',
@@ -104,13 +110,14 @@ export class DashboardComponent implements OnInit {
 
     this.canvas = document.getElementById("myChart");
     this.ctx = this.canvas.getContext("2d");
-    setTimeout(() => {
-      this.dataChart()
-      this.fillchart()
-    },1000);
+    this.dataChart(this.selectedYear);
   }
   fillchart()
   {
+    if (this.myChart) {
+      this.myChart.destroy();
+    }
+
     // Create modern linear gradient matching the organic honey/oil brand colors
     const gradient = this.ctx.createLinearGradient(0, 0, 0, 300);
     gradient.addColorStop(0, 'rgba(180, 83, 9, 0.85)'); // Honey Gold/Amber (var(--color-primary))
@@ -120,12 +127,25 @@ export class DashboardComponent implements OnInit {
     borderGradient.addColorStop(0, 'rgba(180, 83, 9, 1)');
     borderGradient.addColorStop(1, 'rgba(194, 65, 12, 0.5)');
 
-    var myChart = new Chart(this.ctx, {
+    this.myChart = new Chart(this.ctx, {
       type: 'bar',
       data: {
-          labels: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'],
+          labels: [
+            this.trans.t('JANVIER'),
+            this.trans.t('FEVRIER'),
+            this.trans.t('MARS'),
+            this.trans.t('AVRIL'),
+            this.trans.t('MAI'),
+            this.trans.t('JUIN'),
+            this.trans.t('JUILLET'),
+            this.trans.t('AOUT'),
+            this.trans.t('SEPTEMBRE'),
+            this.trans.t('OCTOBRE'),
+            this.trans.t('NOVEMBRE'),
+            this.trans.t('DECEMBRE')
+          ],
           datasets: [{
-              label: 'Revenu mensuel',
+              label: this.trans.t('REVENU_MENSUEL'),
               data: [this.janvier, this.fevrier, this.mars, this.april, this.may, this.juin,this.juilet,this.aout,this.septembre,this.octobre,this.novombre,this.decembre],
               backgroundColor: gradient,
               borderColor: borderGradient,
@@ -139,6 +159,14 @@ export class DashboardComponent implements OnInit {
           }]
       },
       options: {
+          onClick: (event, elements) => {
+              if (elements && elements.length > 0) {
+                  const index = elements[0].index;
+                  const month = index + 1;
+                  const targetDate = `${this.selectedYear}-${String(month).padStart(2, '0')}`;
+                  this._router.navigate(['admin/commands'], { queryParams: { date: targetDate } });
+              }
+          },
           responsive: true,
           maintainAspectRatio: false,
           plugins: {
@@ -160,7 +188,7 @@ export class DashboardComponent implements OnInit {
                   cornerRadius: 8,
                   displayColors: false,
                   callbacks: {
-                      label: function(context) {
+                      label: (context) => {
                           let label = context.dataset.label || '';
                           if (label) {
                               label += ' : ';
@@ -199,31 +227,63 @@ export class DashboardComponent implements OnInit {
                           size: 11
                       },
                       color: '#78716c',
-                      callback: function(value) {
-                          return value + ' DH';
+                      callback: (value) => {
+                          return value + ' ' + (this.trans.isRtl() ? 'د.م.' : 'DH');
                       }
                   }
               }
           }
       }
-  });
+    });
   }
-  dataChart(){
-    this.dash.revenuMois(1).subscribe(data=>this.janvier=data)
-    this.dash.revenuMois(2).subscribe(data=>this.fevrier=data)
-    this.dash.revenuMois(3).subscribe(data=>this.mars=data)
-    this.dash.revenuMois(4).subscribe(data=>this.april=data)
-    this.dash.revenuMois(5).subscribe(data=>this.may=data)
-    this.dash.revenuMois(6).subscribe(data=>this.juin=data)
-    this.dash.revenuMois(7).subscribe(data=>this.juilet=data)
-    this.dash.revenuMois(8).subscribe(data=>this.aout=data)
-    this.dash.revenuMois(9).subscribe(data=>this.septembre=data)
-    this.dash.revenuMois(10).subscribe(data=>this.octobre=data)
-    this.dash.revenuMois(11).subscribe(data=>this.novombre=data)
-    this.dash.revenuMois(12).subscribe(data=>this.decembre=data)
+  dataChart(year: number) {
+    this.loadingChart = true;
+    forkJoin([
+      this.dash.revenuMois(1, year),
+      this.dash.revenuMois(2, year),
+      this.dash.revenuMois(3, year),
+      this.dash.revenuMois(4, year),
+      this.dash.revenuMois(5, year),
+      this.dash.revenuMois(6, year),
+      this.dash.revenuMois(7, year),
+      this.dash.revenuMois(8, year),
+      this.dash.revenuMois(9, year),
+      this.dash.revenuMois(10, year),
+      this.dash.revenuMois(11, year),
+      this.dash.revenuMois(12, year)
+    ]).subscribe(results => {
+      this.janvier = results[0] || 0;
+      this.fevrier = results[1] || 0;
+      this.mars = results[2] || 0;
+      this.april = results[3] || 0;
+      this.may = results[4] || 0;
+      this.juin = results[5] || 0;
+      this.juilet = results[6] || 0;
+      this.aout = results[7] || 0;
+      this.septembre = results[8] || 0;
+      this.octobre = results[9] || 0;
+      this.novombre = results[10] || 0;
+      this.decembre = results[11] || 0;
+      
+      this.loadingChart = false;
+      this.fillchart();
+    }, err => {
+      console.error(err);
+      this.loadingChart = false;
+    });
+  }
+
+  prevYear() {
+    this.selectedYear--;
+    this.dataChart(this.selectedYear);
+  }
+
+  nextYear() {
+    this.selectedYear++;
+    this.dataChart(this.selectedYear);
   }
   topDashboard(){
-    this.users();
+    this.categories();
     this.revenu();
     this.visits();
     this.commnads();
@@ -259,9 +319,9 @@ export class DashboardComponent implements OnInit {
       localStorage.clear();
     }})
   }
-  users(){
-    this.dash.users().subscribe(data=>{
-    this.usersNb=data},
+  categories(){
+    this.dash.getAllCategories().subscribe(data=>{
+    this.categoriesNb=data.length},
     err=>{
       if(err){
       localStorage.clear();
@@ -271,8 +331,8 @@ export class DashboardComponent implements OnInit {
   showCommnads(){
     this._router.navigate(["admin/commands"])
   }
-  showUsers(){
-    this._router.navigate(["admin/users"])
+  showCategories(){
+    this._router.navigate(["admin/categories"])
   }
 
 }

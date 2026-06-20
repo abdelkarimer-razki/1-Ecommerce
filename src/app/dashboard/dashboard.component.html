@@ -1,50 +1,65 @@
 <notifier-container></notifier-container>
-<div class="dashboard-wrapper">
-    <h4><span class="material-symbols-outlined">analytics</span> Statistiques général</h4>
+<div class="dashboard-wrapper" [style.direction]="trans.isRtl() ? 'rtl' : 'ltr'">
+    <h4><span class="material-symbols-outlined" style="margin-inline-end: 8px; vertical-align: middle;">analytics</span> {{trans.t('STATISTIQUES_GENERAL')}}</h4>
     <div class="typesContainaire">
       <div class="type" id="revenu">
-        <div class="topData">
+        <div class="topData" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
           <span class="material-symbols-outlined">payments</span>
-          <div class="infos">
-            <label class="titre">Revenu</label>
-            <label class="number">{{revenuNb}} <label style="font-size: 15px;"> DH</label></label>
+          <div class="infos" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+            <label class="titre">{{trans.t('REVENU')}}</label>
+            <label class="number">{{revenuNb}} <label style="font-size: 15px;"> {{trans.isRtl() ? 'د.م.' : 'DH'}}</label></label>
           </div>
         </div>
-        <p class="note"><span class="material-symbols-outlined" style="font-size: 16px; margin-right: 4px;">calendar_today</span> Mois en cours</p>
+        <p class="note" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'"><span class="material-symbols-outlined" style="font-size: 16px; margin-inline-end: 4px;">calendar_today</span> {{trans.t('MOIS_EN_COURS')}}</p>
       </div>
       <div class="type routeDash" id="commands" (click)="showCommnads()">
-        <div class="topData">
+        <div class="topData" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
           <span class="material-symbols-outlined">receipt_long</span>
-          <div class="infos">
-            <label class="titre">Commandes</label>
+          <div class="infos" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+            <label class="titre">{{trans.t('COMMANDES')}}</label>
             <label class="number">{{commandNb}}</label>
           </div>
         </div>
-        <p class="note"><span class="material-symbols-outlined" style="font-size: 16px; margin-right: 4px;">calendar_today</span> Mois en cours</p>
+        <p class="note" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'"><span class="material-symbols-outlined" style="font-size: 16px; margin-inline-end: 4px;">calendar_today</span> {{trans.t('MOIS_EN_COURS')}}</p>
       </div>
       <div class="type" id="Miel">
-        <div class="topData">
+        <div class="topData" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
           <span class="material-symbols-outlined" style="color: var(--color-primary);">trending_up</span>
-          <div class="infos">
-            <label class="titre">Visiteurs</label><br>
+          <div class="infos" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+            <label class="titre">{{trans.t('VISITEURS')}}</label><br>
             <label class="number">{{visitsNb}}</label>
           </div>
         </div>
-        <p class="note"><span class="material-symbols-outlined" style="font-size: 16px; margin-right: 4px;">schedule</span> Aujourd'hui</p>
+        <p class="note" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'"><span class="material-symbols-outlined" style="font-size: 16px; margin-inline-end: 4px;">schedule</span> {{trans.t('AUJOURDHUI')}}</p>
       </div>
-      <div class="type routeDash" id="Users" (click)="showUsers()">
-        <div class="topData">
-          <span class="material-symbols-outlined" style="color: var(--color-secondary);">group</span>
-          <div class="infos">
-            <label class="titre">Utilisateurs</label>
-            <label class="number">{{usersNb}}</label>
+      <div class="type routeDash" id="Categories" (click)="showCategories()">
+        <div class="topData" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+          <span class="material-symbols-outlined" style="color: var(--color-secondary);">category</span>
+          <div class="infos" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+            <label class="titre">{{trans.t('CATEGORIES')}}</label>
+            <label class="number">{{categoriesNb}}</label>
           </div>
         </div>
-        <p class="note"><span class="material-symbols-outlined" style="font-size: 16px; margin-right: 4px;">history</span> Dès le début</p>
+        <p class="note" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'"><span class="material-symbols-outlined" style="font-size: 16px; margin-inline-end: 4px;">history</span> {{trans.t('DES_LE_DEBUT')}}</p>
       </div>
     </div>
-    <div id="divChart" style="display: block;width:97%;background-color: white;border-radius: 8pt;box-shadow: 20px 20px 20px -20px rgba(0, 0, 0, 0.2);margin: 0 auto;">
-      <h4><span class="material-symbols-outlined">monitoring</span> Revenu annuel</h4>
-      <canvas id="myChart" width="400" height="100"></canvas>
+    <div id="divChart" style="display: block;width:97%;background-color: white;border-radius: 8pt;box-shadow: 20px 20px 20px -20px rgba(0, 0, 0, 0.2);margin: 0 auto; padding: 24px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+        <h4 style="margin: 0; display: flex; align-items: center; gap: 8px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+          <span class="material-symbols-outlined">monitoring</span> {{trans.t('REVENU_ANNUEL')}}
+        </h4>
+        <div class="year-navigator" style="display: flex; align-items: center; gap: 12px; background: var(--color-bg-main); border: 1px solid var(--border-color); border-radius: 6px; padding: 4px 12px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+          <button type="button" (click)="prevYear()" style="background: none; border: none; cursor: pointer; display: flex; align-items: center; color: var(--color-text-muted); transition: var(--transition-smooth);" [title]="trans.t('ANNEE_PRECEDENTE')">
+            <span class="material-symbols-outlined" style="font-size: 1.2rem;">chevron_left</span>
+          </button>
+          <span style="font-family: var(--font-sans); font-weight: 700; font-size: 0.95rem; color: var(--color-text-main); min-width: 44px; text-align: center;">{{selectedYear}}</span>
+          <button type="button" (click)="nextYear()" style="background: none; border: none; cursor: pointer; display: flex; align-items: center; color: var(--color-text-muted); transition: var(--transition-smooth);" [title]="trans.t('ANNEE_SUIVANTE')">
+            <span class="material-symbols-outlined" style="font-size: 1.2rem;">chevron_right</span>
+          </button>
+        </div>
+      </div>
+      <div style="position: relative; height: 320px; width: 100%;">
+        <canvas id="myChart"></canvas>
+      </div>
     </div>
   </div>

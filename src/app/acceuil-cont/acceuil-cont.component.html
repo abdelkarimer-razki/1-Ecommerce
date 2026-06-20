@@ -1,18 +1,18 @@
 <div id="pageContanaire">
-    <div class="page1" id="page1">
+    <div class="page1" id="page1" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
         <div id="pic">
             <img [src]="transformImage(config.heroImage)" alt="Coopérative Bab Mansour">
         </div>
         <div id="welcome">
-            <div id="title">
+            <div id="title" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
                 <p>{{ config.heroTitle }}</p>
                 <p>{{ config.heroSubtitle }}</p>
                 <p class="heroDescription">
                     {{ config.heroDescription }}
                 </p>
-                <div id="bt" routerLink="/shopping">
+                <div id="bt" routerLink="/shopping" [style.float]="trans.isRtl() ? 'right' : 'left'">
                     <a id="btText">
-                        Découvrir la boutique <span class="material-symbols-outlined">arrow_right_alt</span>
+                        {{trans.t('DECOUVRIR_BOUTIQUE')}} <span class="material-symbols-outlined" [style.transform]="trans.isRtl() ? 'rotate(180deg)' : 'none'">arrow_right_alt</span>
                     </a>
                 </div>
             </div>
@@ -27,9 +27,9 @@
     </div>
     <div class="page2" id="page2">
         <div id="titlePage2">
-            <h1>Nos principes</h1>
+            <h1>{{trans.t('NOS_PRINCIPES')}}</h1>
         </div>
-        <div class="principlesGrid">
+        <div class="principlesGrid" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
             <div id="leftCon" class="Con reveal">
                 <img [src]="transformImage(config.principle1Image)" alt="Méthodes de production traditionnelles">
                 <h3>{{ config.principle1Title }}</h3>
@@ -49,24 +49,24 @@
             <a href="#page3"></a>
         </ul>
     </div>
-    <div class="page3" id="page3">
+    <div class="page3" id="page3" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
         <div id="rightCon2" class="reveal">
-            <div class="statsWrapper">
+            <div class="statsWrapper" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
                 <div class="oHCon">
-                    <h3>Sortes de miels</h3>
+                    <h3>{{trans.t('SORTES_MIELS')}}</h3>
                     <img src="../../assets/honey3.png" alt="">
                     <p *ngIf="loading"><img class="loading" src="../../assets/loading.gif" alt=""></p>
                     <p class="counter" *ngIf="!loading">{{countH}}</p>
                 </div>
                 <div class="oHCon">
-                    <h3>Sortes d'huiles</h3>
+                    <h3>{{trans.t('SORTES_HUILES')}}</h3>
                     <img src="../../assets/oil3.png" alt="">
                     <p *ngIf="loading"><img class="loading" src="../../assets/loading.gif" alt=""></p>
                     <p class="counter" *ngIf="!loading">{{countO}}</p>
                 </div>
             </div>
             <div class="ConBottom">
-                <label>Suivez-nous sur nos plateformes :</label>
+                <label>{{trans.t('SUIVEZ_NOUS')}}</label>
                 <div class="iconsCon">
                     <a href="https://www.facebook.com/cooperative.officiel/"><i class="fab fa-facebook-square"></i></a>
                     <a href="https://instagram.com/cooperativebabmansour?igshid=eh2xberwe4bn"><i class="fab fa-instagram"></i></a>
@@ -75,19 +75,42 @@
             </div>
         </div>
         <div id="leftCon2" class="reveal">
-                <!--<input type="text" style="display: block;">
-                <input type="email" style="display: block;">
-                <textarea name="" id="" cols="30" rows="10" style="display:block;"></textarea>-->
-                <form id="emailUs">
-                    <h2>Contactez-nous</h2>
-                    <label>E-mail :</label>
-                    <input id="email" type="email" placeholder="votre@email.com" required>
-                    <label>Nom et prénom :</label>
-                    <input type="text" placeholder="Votre nom" required>
-                    <label>Message :</label>
-                    <textarea cols="30" rows="7" placeholder="Votre message..."></textarea>
-                    <button type="submit">
-                        Envoyer <span class="material-symbols-outlined">send</span>
+                <form id="emailUs" (submit)="onSubmitContact(); $event.preventDefault();" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+                    <h2>{{trans.t('CONTACTEZ_NOUS')}}</h2>
+                    
+                    <div *ngIf="contactFormSuccess" style="background-color: rgba(63, 98, 18, 0.1); color: var(--color-secondary); padding: 12px; border-radius: 6px; margin-bottom: 16px; font-weight: 700; font-size: 0.9rem;">
+                        {{trans.t('RECLAMATION_ENVOYEE')}}
+                    </div>
+                    <div *ngIf="contactFormSubmitted && (contactFormErrors.name || contactFormErrors.tel || contactFormErrors.message)" style="background-color: rgba(220, 38, 38, 0.08); color: #dc2626; padding: 12px; border-radius: 6px; margin-bottom: 16px; font-weight: 700; font-size: 0.9rem;">
+                        {{trans.t('RECLAMATION_ERROR')}}
+                    </div>
+
+                    <!-- Name (Nom et prénom) - Required -->
+                    <label style="display: flex; justify-content: space-between;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+                      <span>{{trans.t('NOM_PRENOM')}} <span style="color: #dc2626;">*</span></span>
+                      <span style="font-size: 0.75rem; color: #dc2626; font-weight: normal;">({{trans.t('REQUIS')}})</span>
+                    </label>
+                    <input type="text" [(ngModel)]="contactForm.name" name="name" placeholder="Votre nom" style="margin-bottom: 4px;" [style.border-color]="contactFormSubmitted && contactFormErrors.name ? '#dc2626' : ''" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+                    <span *ngIf="contactFormSubmitted && contactFormErrors.name" style="color: #dc2626; font-size: 0.75rem; display: block; margin-bottom: 12px; font-weight: 600;">{{trans.t('CHAMP_REQUIS')}}</span>
+                    
+                    <!-- Phone Number (Téléphone) - Required -->
+                    <label style="display: flex; justify-content: space-between; margin-top: 8px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+                      <span>{{trans.t('TELEPHONE')}} <span style="color: #dc2626;">*</span></span>
+                      <span style="font-size: 0.75rem; color: #dc2626; font-weight: normal;">({{trans.t('REQUIS')}})</span>
+                    </label>
+                    <input type="tel" [(ngModel)]="contactForm.tel" name="tel" placeholder="06XXXXXXXX" style="margin-bottom: 4px;" [style.border-color]="contactFormSubmitted && contactFormErrors.tel ? '#dc2626' : ''" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+                    <span *ngIf="contactFormSubmitted && contactFormErrors.tel" style="color: #dc2626; font-size: 0.75rem; display: block; margin-bottom: 12px; font-weight: 600;">{{trans.t('CHAMP_REQUIS')}}</span>
+                    
+                    <!-- Message (Message) - Required -->
+                    <label style="display: flex; justify-content: space-between; margin-top: 8px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+                      <span>{{trans.t('MESSAGE')}} <span style="color: #dc2626;">*</span></span>
+                      <span style="font-size: 0.75rem; color: #dc2626; font-weight: normal;">({{trans.t('REQUIS')}})</span>
+                    </label>
+                    <textarea cols="30" rows="7" [(ngModel)]="contactForm.message" name="message" placeholder="Votre message..." style="margin-bottom: 4px;" [style.border-color]="contactFormSubmitted && contactFormErrors.message ? '#dc2626' : ''" [style.text-align]="trans.isRtl() ? 'right' : 'left'"></textarea>
+                    <span *ngIf="contactFormSubmitted && contactFormErrors.message" style="color: #dc2626; font-size: 0.75rem; display: block; margin-bottom: 12px; font-weight: 600;">{{trans.t('CHAMP_REQUIS')}}</span>
+                    
+                    <button type="submit" [style.float]="trans.isRtl() ? 'right' : 'none'">
+                        {{trans.t('ENVOYER')}} <span class="material-symbols-outlined">send</span>
                     </button>
                 </form>
         </div>
