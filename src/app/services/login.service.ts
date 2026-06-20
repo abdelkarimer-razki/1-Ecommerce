@@ -1,3 +1,4 @@
+import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
@@ -11,7 +12,7 @@ import { users } from '../backend/users';
 export class LoginService {
   name:any;
   email:any;
-  url="http://localhost:5000/login/"
+  url=environment.apiUrl+"login/"
   constructor(private http:HttpClient,private route:Router) {
   }
   connect(user:users){

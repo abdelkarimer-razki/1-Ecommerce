@@ -1,3 +1,4 @@
+import { environment } from '../../environments/environment';
 import { Injectable } from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {count, products} from '../backend/products'
@@ -8,7 +9,7 @@ import { Observable } from 'rxjs';
 })
 export class HomepageService {
   url="http://localhost:5000/seachC/";
-  url1="http://localhost:5000/";
+  url1 = environment.apiUrl;
   constructor(private http:HttpClient) { }
   getCountM(categorie:string):Observable<products[]>{
     return this.http.get<products[]>(this.url+categorie);

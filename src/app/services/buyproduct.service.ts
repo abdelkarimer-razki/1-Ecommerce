@@ -1,3 +1,4 @@
+import { environment } from '../../environments/environment';
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpClientModule} from '@angular/common/http';
 import {count, products} from '../backend/products'
@@ -7,7 +8,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class BuyproductService {
-  url="http://localhost:5000/";
+  url = environment.apiUrl;
 
   constructor(private http:HttpClient) { }
   getProducts(id:String):Observable<products[]>{

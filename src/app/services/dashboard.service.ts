@@ -1,3 +1,4 @@
+import { environment } from '../../environments/environment';
 import { Injectable } from '@angular/core';
 import {commands} from '../backend/commands'
 import {HttpClient} from '@angular/common/http';
@@ -8,7 +9,7 @@ import { products } from '../backend/products';
   providedIn: 'root'
 })
 export class DashboardService {
-  url1="http://localhost:5000/";
+  url1 = environment.apiUrl;
   constructor(private http:HttpClient) { }
 
   RouterHere():Observable<commands[]>{

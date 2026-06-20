@@ -1,3 +1,4 @@
+import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
@@ -7,7 +8,7 @@ import { users } from '../backend/users';
   providedIn: 'root'
 })
 export class RegistreService {
-  url="http://localhost:5000/"
+  url=environment.apiUrl
   constructor(private http:HttpClient,private route:Router) { }
   registre(user:users)
   {
