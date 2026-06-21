@@ -10,26 +10,31 @@
 
   <!-- Settings Form Shimmer Skeleton -->
   <div *ngIf="loading" class="settings-form">
-    <!-- Hero Section Skeleton -->
     <div class="form-section skeleton-container">
-      <div class="skeleton-item" style="width: 250px; height: 1.5rem; margin-bottom: 24px; border-radius: var(--border-radius-sm);"></div>
-      <div class="form-grid">
-        <div class="input-group">
-          <div class="skeleton-item" style="width: 120px; height: 0.9rem; margin-bottom: 8px; border-radius: var(--border-radius-sm);"></div>
-          <div class="skeleton-item" style="width: 100%; height: 44px; border-radius: var(--border-radius-md);"></div>
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 24px;">
+        <div class="skeleton-item" style="width: 32px; height: 32px; border-radius: 50%;"></div>
+        <div class="skeleton-item" style="width: 250px; height: 1.5rem; border-radius: var(--border-radius-sm);"></div>
+      </div>
+      <div class="form-grid-side-by-side">
+        <div class="form-inputs-col">
+          <div class="input-group">
+            <div class="skeleton-item" style="width: 120px; height: 0.9rem; margin-bottom: 8px; border-radius: var(--border-radius-sm);"></div>
+            <div class="skeleton-item" style="width: 100%; height: 44px; border-radius: var(--border-radius-md);"></div>
+          </div>
+          <div class="input-group" style="margin-top: 16px;">
+            <div class="skeleton-item" style="width: 150px; height: 0.9rem; margin-bottom: 8px; border-radius: var(--border-radius-sm);"></div>
+            <div class="skeleton-item" style="width: 100%; height: 44px; border-radius: var(--border-radius-md);"></div>
+          </div>
+          <div class="input-group" style="margin-top: 16px;">
+            <div class="skeleton-item" style="width: 180px; height: 0.9rem; margin-bottom: 8px; border-radius: var(--border-radius-sm);"></div>
+            <div class="skeleton-item" style="width: 100%; height: 120px; border-radius: var(--border-radius-md);"></div>
+          </div>
         </div>
-        <div class="input-group">
-          <div class="skeleton-item" style="width: 150px; height: 0.9rem; margin-bottom: 8px; border-radius: var(--border-radius-sm);"></div>
-          <div class="skeleton-item" style="width: 100%; height: 44px; border-radius: var(--border-radius-md);"></div>
-        </div>
-        <div class="input-group">
-          <div class="skeleton-item" style="width: 180px; height: 0.9rem; margin-bottom: 8px; border-radius: var(--border-radius-sm);"></div>
-          <div class="skeleton-item" style="width: 100%; height: 100px; border-radius: var(--border-radius-md);"></div>
-        </div>
-        <div class="input-group">
-          <div class="skeleton-item" style="width: 140px; height: 0.9rem; margin-bottom: 8px; border-radius: var(--border-radius-sm);"></div>
-          <div class="skeleton-item" style="width: 280px; height: 180px; border-radius: var(--border-radius-md); margin: 10px 0;"></div>
-          <div class="skeleton-item" style="width: 180px; height: 38px; border-radius: var(--border-radius-sm); margin-top: 5px;"></div>
+        <div class="form-media-col">
+          <div class="input-group">
+            <div class="skeleton-item" style="width: 140px; height: 0.9rem; margin-bottom: 8px; border-radius: var(--border-radius-sm);"></div>
+            <div class="skeleton-item" style="width: 100%; max-width: 380px; height: 260px; border-radius: var(--border-radius-lg);"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -38,79 +43,127 @@
   <div *ngIf="!loading" class="settings-form" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
     <!-- Hero Section Content -->
     <div class="form-section">
-      <h3 [style.text-align]="trans.isRtl() ? 'right' : 'left'">{{trans.t('SECTION_ACCUEIL_HERO')}}</h3>
-      <div class="form-grid">
-        <div class="input-group full-width">
-          <label>{{trans.t('TITRE_PRINCIPAL')}}</label>
-          <input class="text" type="text" [(ngModel)]="config.heroTitle" placeholder="Ex: Miels Rares & Huiles d'Exception">
-        </div>
-        <div class="input-group full-width">
-          <label>{{trans.t('SOUS_TITRE_COOP')}}</label>
-          <input class="text" type="text" [(ngModel)]="config.heroSubtitle" placeholder="Ex: Coopérative Bab Mansour">
-        </div>
-        <div class="input-group full-width">
-          <label>{{trans.t('DESCRIPTION_MARKETING')}}</label>
-          <textarea class="text textarea" rows="4" [(ngModel)]="config.heroDescription" placeholder="Description de l'histoire et des produits..."></textarea>
-        </div>
-        <div class="input-group file-group full-width">
-          <label>{{trans.t('IMAGE_BG_HERO')}}</label>
-          <div class="image-preview">
-            <img [src]="transformImage(config.heroImage)" alt="Hero Preview">
+      <div class="form-section-header" style="display: flex; align-items: center; gap: 8px; margin-bottom: 24px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+        <span class="material-symbols-outlined section-icon">storefront</span>
+        <h3 style="margin: 0;">{{trans.t('SECTION_ACCUEIL_HERO')}}</h3>
+      </div>
+      
+      <div class="form-grid-side-by-side">
+        <!-- Left Side: Text Inputs -->
+        <div class="form-inputs-col">
+          <div class="input-group">
+            <label>{{trans.t('TITRE_PRINCIPAL')}}</label>
+            <input class="text" type="text" [(ngModel)]="config.heroTitle" placeholder="Ex: Miels Rares & Huiles d'Exception">
           </div>
-          <input type="file" id="hero-img-input" style="display: none;" (change)="onImageChange($event, 'heroImage')">
-          <label for="hero-img-input" class="upload-btn" style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
-            <span class="material-symbols-outlined" style="font-size: 1.15rem;">upload</span> {{trans.t('REMPLACER_IMAGE_HERO')}}
-          </label>
+          <div class="input-group">
+            <label>{{trans.t('SOUS_TITRE_COOP')}}</label>
+            <input class="text" type="text" [(ngModel)]="config.heroSubtitle" placeholder="Ex: Coopérative Bab Mansour">
+          </div>
+          <div class="input-group">
+            <label>{{trans.t('DESCRIPTION_MARKETING')}}</label>
+            <textarea class="text textarea" rows="5" [(ngModel)]="config.heroDescription" placeholder="Description de l'histoire et des produits..."></textarea>
+          </div>
+        </div>
+        
+        <!-- Right Side: Image Upload Card -->
+        <div class="form-media-col">
+          <div class="input-group">
+            <label>{{trans.t('IMAGE_BG_HERO')}}</label>
+            <div class="premium-image-card">
+              <div class="image-preview-wrapper checkerboard">
+                <img [src]="transformImage(config.heroImage)" alt="Hero Preview">
+              </div>
+              <div class="upload-action-bar">
+                <input type="file" id="hero-img-input" style="display: none;" (change)="onImageChange($event, 'heroImage')">
+                <label for="hero-img-input" class="premium-upload-btn" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+                  <span class="material-symbols-outlined">upload</span>
+                  <span>{{trans.t('REMPLACER_IMAGE_HERO')}}</span>
+                </label>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Principle 1 Section Content -->
     <div class="form-section">
-      <h3 [style.text-align]="trans.isRtl() ? 'right' : 'left'">{{trans.t('PRINCIPE_1_TITRE')}}</h3>
-      <div class="form-grid">
-        <div class="input-group full-width">
-          <label>{{trans.t('TITRE')}}</label>
-          <input class="text" type="text" [(ngModel)]="config.principle1Title" placeholder="Ex: Meilleures méthodes de production">
-        </div>
-        <div class="input-group full-width">
-          <label>{{trans.t('DESCRIPTION')}}</label>
-          <textarea class="text textarea" rows="4" [(ngModel)]="config.principle1Description" placeholder="Description du procédé de récolte..."></textarea>
-        </div>
-        <div class="input-group file-group full-width">
-          <label>{{trans.t('IMAGE_PRINCIPE_1')}}</label>
-          <div class="image-preview">
-            <img [src]="transformImage(config.principle1Image)" alt="Principle 1 Preview">
+      <div class="form-section-header" style="display: flex; align-items: center; gap: 8px; margin-bottom: 24px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+        <span class="material-symbols-outlined section-icon">local_florist</span>
+        <h3 style="margin: 0;">{{trans.t('PRINCIPE_1_TITRE')}}</h3>
+      </div>
+      
+      <div class="form-grid-side-by-side">
+        <!-- Left Side: Text Inputs -->
+        <div class="form-inputs-col">
+          <div class="input-group">
+            <label>{{trans.t('TITRE')}}</label>
+            <input class="text" type="text" [(ngModel)]="config.principle1Title" placeholder="Ex: Meilleures méthodes de production">
           </div>
-          <input type="file" id="p1-img-input" style="display: none;" (change)="onImageChange($event, 'principle1Image')">
-          <label for="p1-img-input" class="upload-btn" style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
-            <span class="material-symbols-outlined" style="font-size: 1.15rem;">upload</span> {{trans.t('REMPLACER_IMAGE_1')}}
-          </label>
+          <div class="input-group">
+            <label>{{trans.t('DESCRIPTION')}}</label>
+            <textarea class="text textarea" rows="5" [(ngModel)]="config.principle1Description" placeholder="Description du procédé de récolte..."></textarea>
+          </div>
+        </div>
+        
+        <!-- Right Side: Image Upload Card -->
+        <div class="form-media-col">
+          <div class="input-group">
+            <label>{{trans.t('IMAGE_PRINCIPE_1')}}</label>
+            <div class="premium-image-card">
+              <div class="image-preview-wrapper checkerboard">
+                <img [src]="transformImage(config.principle1Image)" alt="Principle 1 Preview">
+              </div>
+              <div class="upload-action-bar">
+                <input type="file" id="p1-img-input" style="display: none;" (change)="onImageChange($event, 'principle1Image')">
+                <label for="p1-img-input" class="premium-upload-btn" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+                  <span class="material-symbols-outlined">upload</span>
+                  <span>{{trans.t('REMPLACER_IMAGE_1')}}</span>
+                </label>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Principle 2 Section Content -->
     <div class="form-section">
-      <h3 [style.text-align]="trans.isRtl() ? 'right' : 'left'">{{trans.t('PRINCIPE_2_TITRE')}}</h3>
-      <div class="form-grid">
-        <div class="input-group full-width">
-          <label>{{trans.t('TITRE')}}</label>
-          <input class="text" type="text" [(ngModel)]="config.principle2Title" placeholder="Ex: Meilleures matières premières">
-        </div>
-        <div class="input-group full-width">
-          <label>{{trans.t('DESCRIPTION')}}</label>
-          <textarea class="text textarea" rows="4" [(ngModel)]="config.principle2Description" placeholder="Description de la sélection..."></textarea>
-        </div>
-        <div class="input-group file-group full-width">
-          <label>{{trans.t('IMAGE_PRINCIPE_2')}}</label>
-          <div class="image-preview">
-            <img [src]="transformImage(config.principle2Image)" alt="Principle 2 Preview">
+      <div class="form-section-header" style="display: flex; align-items: center; gap: 8px; margin-bottom: 24px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+        <span class="material-symbols-outlined section-icon">eco</span>
+        <h3 style="margin: 0;">{{trans.t('PRINCIPE_2_TITRE')}}</h3>
+      </div>
+      
+      <div class="form-grid-side-by-side">
+        <!-- Left Side: Text Inputs -->
+        <div class="form-inputs-col">
+          <div class="input-group">
+            <label>{{trans.t('TITRE')}}</label>
+            <input class="text" type="text" [(ngModel)]="config.principle2Title" placeholder="Ex: Meilleures matières premières">
           </div>
-          <input type="file" id="p2-img-input" style="display: none;" (change)="onImageChange($event, 'principle2Image')">
-          <label for="p2-img-input" class="upload-btn" style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
-            <span class="material-symbols-outlined" style="font-size: 1.15rem;">upload</span> {{trans.t('REMPLACER_IMAGE_2')}}
-          </label>
+          <div class="input-group">
+            <label>{{trans.t('DESCRIPTION')}}</label>
+            <textarea class="text textarea" rows="5" [(ngModel)]="config.principle2Description" placeholder="Description de la sélection..."></textarea>
+          </div>
+        </div>
+        
+        <!-- Right Side: Image Upload Card -->
+        <div class="form-media-col">
+          <div class="input-group">
+            <label>{{trans.t('IMAGE_PRINCIPE_2')}}</label>
+            <div class="premium-image-card">
+              <div class="image-preview-wrapper checkerboard">
+                <img [src]="transformImage(config.principle2Image)" alt="Principle 2 Preview">
+              </div>
+              <div class="upload-action-bar">
+                <input type="file" id="p2-img-input" style="display: none;" (change)="onImageChange($event, 'principle2Image')">
+                <label for="p2-img-input" class="premium-upload-btn" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+                  <span class="material-symbols-outlined">upload</span>
+                  <span>{{trans.t('REMPLACER_IMAGE_2')}}</span>
+                </label>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
