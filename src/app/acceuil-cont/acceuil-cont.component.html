@@ -61,7 +61,7 @@
                     <div class="counter-skeleton-wrapper" *ngIf="loading">
                         <span class="skeleton-item counter-skeleton"></span>
                     </div>
-                    <p class="counter" *ngIf="!loading">{{countH}}+</p>
+                    <p class="stat-number" *ngIf="!loading">{{countH}}+</p>
                     <p class="stat-desc">{{trans.t('SORTES_MIELS_DESC')}}</p>
                 </div>
                 <div class="oHCon stat-oil">
@@ -73,7 +73,7 @@
                     <div class="counter-skeleton-wrapper" *ngIf="loading">
                         <span class="skeleton-item counter-skeleton"></span>
                     </div>
-                    <p class="counter" *ngIf="!loading">{{countO}}+</p>
+                    <p class="stat-number" *ngIf="!loading">{{countO}}+</p>
                     <p class="stat-desc">{{trans.t('SORTES_HUILES_DESC')}}</p>
                 </div>
             </div>

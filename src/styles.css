@@ -68,8 +68,11 @@ h1, h2, h3, h4, h5, h6,
 }
 
 /* Icons Reset */
-.fas, .far, .fab {
+.fas, .far {
   font-family: "Font Awesome 5 Free" !important;
+}
+.fab {
+  font-family: "Font Awesome 5 Brands" !important;
 }
 
 /* Navigation Menu overrides */

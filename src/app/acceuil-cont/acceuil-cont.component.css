@@ -268,7 +268,7 @@
 }
 
 #rightCon2 {
-  flex: 1.2;
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 30px;
@@ -366,7 +366,8 @@
   box-shadow: 0 0 10px rgba(63, 98, 18, 0.08);
 }
 
-.counter {
+.counter,
+.stat-number {
   font-family: var(--font-serif) !important;
   font-size: 2.3rem !important;
   font-weight: 700;
@@ -377,11 +378,13 @@
   line-height: 1.1;
 }
 
-.stat-honey .counter {
+.stat-honey .counter,
+.stat-honey .stat-number {
   color: var(--color-primary);
 }
 
-.stat-oil .counter {
+.stat-oil .counter,
+.stat-oil .stat-number {
   color: var(--color-secondary);
 }
 
@@ -500,7 +503,7 @@
 
 /* Contact Us Form */
 #leftCon2 {
-  flex: 0.8;
+  flex: 1;
 }
 
 #emailUs {
