@@ -41,7 +41,7 @@
         <label for="filter-category"><span class="material-symbols-outlined filter-icon">category</span>{{trans.t('CATEGORIES')}}</label>
         <select id="filter-category" [(ngModel)]="selectedCategoryFilter" (ngModelChange)="applyFilter()" style="width: 100%;">
           <option value="TOUS">{{trans.t('TOUTES_CATEGORIES')}}</option>
-          <option *ngFor="let cat of getCategories()" [value]="cat">{{cat}}</option>
+          <option *ngFor="let cat of getCategories()" [value]="cat">{{trans.t(cat)}}</option>
         </select>
       </div>
     </div>
@@ -303,7 +303,7 @@
           <div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
             <div style="display: flex; gap: 8px; width: 100%;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
               <select *ngIf="!showNewCategoryInput" class="optionP" [ngModel]="activeProduct().categorie" (ngModelChange)="activeProduct().categorie = $event; onCategoryChange($event)" style="flex-grow: 1;" [style.border-color]="productFormSubmitted && (!activeProduct().categorie || activeProduct().categorie === 'null') ? '#dc2626' : ''">
-                <option *ngFor="let cat of getCategories()" [value]="cat">{{cat === 'MIEL' || cat === 'HUILE' ? trans.t(cat) : cat}}</option>
+                <option *ngFor="let cat of getCategories()" [value]="cat">{{trans.t(cat)}}</option>
                 <option value="_NEW_">{{trans.t('CREER_NOUVELLE_CATEGORIE_OPTION')}}</option>
               </select>
               <input *ngIf="showNewCategoryInput" class="text" type="text" [(ngModel)]="newCategoryName" [placeholder]="trans.t('NOM_CATEGORIE_PLACEHOLDER')" required style="flex-grow: 1;" [style.text-align]="trans.isRtl() ? 'right' : 'left'" [style.border-color]="productFormSubmitted && (!newCategoryName || newCategoryName.trim() === '') ? '#dc2626' : ''">

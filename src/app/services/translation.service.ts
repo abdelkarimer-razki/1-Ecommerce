@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, ApplicationRef } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
@@ -311,7 +311,7 @@ export class TranslationService {
     },
     "MIEL DE THYM PUR": {
       FR: "Miel de Thym Pur",
-      EN: "Pure Thyme Honey",
+      EN: "Pure Thym Honey",
       AR: "عسل الزعتر الصافي"
     },
     "HUILE D'ARGAN ALIMENTAIRE": {
@@ -375,10 +375,21 @@ export class TranslationService {
     'ALIGN_AR': { FR: 'left', EN: 'left', AR: 'right' }
   };
 
-  constructor() {
+  private dynamicDictionary: { [key: string]: { FR: string; EN: string; AR: string } } = {};
+  private loadingKeys = new Set<string>();
+
+  constructor(private appRef: ApplicationRef) {
     const saved = localStorage.getItem('active_lang');
     if (saved === 'EN' || saved === 'AR' || saved === 'FR') {
       this.activeLang.next(saved);
+    }
+    const dynamicSaved = localStorage.getItem('dynamic_dictionary');
+    if (dynamicSaved) {
+      try {
+        this.dynamicDictionary = JSON.parse(dynamicSaved);
+      } catch (e) {
+        this.dynamicDictionary = {};
+      }
     }
   }
 
@@ -396,6 +407,8 @@ export class TranslationService {
   t(key: string): string {
     if (!key) return '';
     const lang = this.getLang();
+    
+    // 1. Check static dictionary
     if (this.dictionary[key] && this.dictionary[key][lang]) {
       return this.dictionary[key][lang];
     }
@@ -403,7 +416,67 @@ export class TranslationService {
     if (this.dictionary[upperKey] && this.dictionary[upperKey][lang]) {
       return this.dictionary[upperKey][lang];
     }
+
+    // 2. Check dynamic cache dictionary
+    if (this.dynamicDictionary[key] && this.dynamicDictionary[key][lang]) {
+      return this.dynamicDictionary[key][lang];
+    }
+    if (this.dynamicDictionary[upperKey] && this.dynamicDictionary[upperKey][lang]) {
+      return this.dynamicDictionary[upperKey][lang];
+    }
+
+    // 3. Trigger dynamic translation in background (if lang is not French, key is text, and not loaded yet)
+    if (lang !== 'FR' && isNaN(Number(key)) && key.length > 1) {
+      if (!this.loadingKeys.has(key)) {
+        this.loadingKeys.add(key);
+        this.fetchDynamicTranslation(key);
+      }
+    }
+
     return key;
+  }
+
+  private fetchDynamicTranslation(key: string) {
+    const translateText = (text: string, targetLang: string): Promise<string> => {
+      const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=fr&tl=${targetLang.toLowerCase()}&dt=t&q=${encodeURIComponent(text)}`;
+      return fetch(url)
+        .then(res => res.json())
+        .then(json => {
+          try {
+            if (json && json[0]) {
+              return json[0].map((item: any) => item[0]).join('') || text;
+            }
+            return text;
+          } catch (e) {
+            return text;
+          }
+        })
+        .catch(() => text);
+    };
+
+    Promise.all([
+      translateText(key, 'EN'),
+      translateText(key, 'AR')
+    ]).then(([enTranslation, arTranslation]) => {
+      this.dynamicDictionary[key] = {
+        FR: key,
+        EN: enTranslation,
+        AR: arTranslation
+      };
+      
+      const upperKey = key.trim().toUpperCase();
+      this.dynamicDictionary[upperKey] = {
+        FR: key,
+        EN: enTranslation,
+        AR: arTranslation
+      };
+
+      localStorage.setItem('dynamic_dictionary', JSON.stringify(this.dynamicDictionary));
+      
+      // Push event update to reload view bindings
+      this.activeLang.next(this.getLang());
+      this.appRef.tick();
+    });
   }
 
   isRtl(): boolean {

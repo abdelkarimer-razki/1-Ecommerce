@@ -15,7 +15,7 @@
         <div class="spotlight-content">
           <!-- Top: category + badge row -->
           <div class="spotlight-meta">
-            <span class="spotlight-category" *ngIf="item.categorie">{{item.categorie}}</span>
+            <span class="spotlight-category" *ngIf="item.categorie">{{trans.t(item.categorie)}}</span>
             <span class="spotlight-badge promo" *ngIf="item.prixf > 0">
               <span class="material-symbols-outlined">local_offer</span>{{trans.t('PROMOTION')}}
             </span>
@@ -106,7 +106,7 @@
         <label for="shopper-filter-category"><span class="material-symbols-outlined filter-icon">category</span>{{trans.t('CATEGORIES')}}</label>
         <select id="shopper-filter-category" [(ngModel)]="selectedCategory" (ngModelChange)="applyFilters()">
           <option value="TOUS">{{trans.t('TOUTES_CATEGORIES')}}</option>
-          <option *ngFor="let cat of categories" [value]="cat">{{cat}}</option>
+          <option *ngFor="let cat of categories" [value]="cat">{{trans.t(cat)}}</option>
         </select>
       </div>
 
