@@ -26,7 +26,7 @@ const routes: Routes = [
   {path:'checkout',component:CheckoutComponent},
   {path:'produit/:idproducts',component:BuyproductComponent},
   {path:'connexion',component:LoginComponent,canActivate:[CsGuard]},
-  {path:'inscrire',component:RegistreComponent,canActivate:[CsGuard]},
+  {path:'inscrire',redirectTo:''},
   {path:'admin',component:AdminComponent,canActivate:[AuthGuard],
   children:[
     {path:'dashboard',component:DashboardComponent,canActivate:[AuthGuard]},

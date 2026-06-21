@@ -25,7 +25,7 @@
                 <option value="AR">العربية</option>
               </select>
             </li>
-            <li class="menuElements" id="settings" (click)="showMenu()"><span class="material-symbols-outlined">account_circle</span></li>
+            <li class="menuElements" id="settings" (click)="showMenu()" *ngIf="log.isToken()"><span class="material-symbols-outlined">account_circle</span></li>
         </ul>
     </div>
 </div>
