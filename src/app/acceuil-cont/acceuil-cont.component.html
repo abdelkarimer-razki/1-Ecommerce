@@ -52,29 +52,49 @@
     <div class="page3" id="page3" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
         <div id="rightCon2" class="reveal">
             <div class="statsWrapper" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
-                <div class="oHCon">
+                <div class="oHCon stat-honey">
+                    <div class="oHCon-accent"></div>
                     <h3>{{trans.t('SORTES_MIELS')}}</h3>
-                    <img src="../../assets/honey3.png" alt="">
+                    <div class="stat-icon-wrapper">
+                        <img src="../../assets/honey3.png" alt="Miel">
+                    </div>
                     <div class="counter-skeleton-wrapper" *ngIf="loading">
                         <span class="skeleton-item counter-skeleton"></span>
                     </div>
-                    <p class="counter" *ngIf="!loading">{{countH}}</p>
+                    <p class="counter" *ngIf="!loading">{{countH}}+</p>
+                    <p class="stat-desc">{{trans.t('SORTES_MIELS_DESC')}}</p>
                 </div>
-                <div class="oHCon">
+                <div class="oHCon stat-oil">
+                    <div class="oHCon-accent"></div>
                     <h3>{{trans.t('SORTES_HUILES')}}</h3>
-                    <img src="../../assets/oil3.png" alt="">
+                    <div class="stat-icon-wrapper">
+                        <img src="../../assets/oil3.png" alt="Huile">
+                    </div>
                     <div class="counter-skeleton-wrapper" *ngIf="loading">
                         <span class="skeleton-item counter-skeleton"></span>
                     </div>
-                    <p class="counter" *ngIf="!loading">{{countO}}</p>
+                    <p class="counter" *ngIf="!loading">{{countO}}+</p>
+                    <p class="stat-desc">{{trans.t('SORTES_HUILES_DESC')}}</p>
                 </div>
             </div>
             <div class="ConBottom">
-                <label>{{trans.t('SUIVEZ_NOUS')}}</label>
-                <div class="iconsCon">
-                    <a href="https://www.facebook.com/cooperative.officiel/"><i class="fab fa-facebook-square"></i></a>
-                    <a href="https://instagram.com/cooperativebabmansour?igshid=eh2xberwe4bn"><i class="fab fa-instagram"></i></a>
-                    <a href="" style="color: #34B865;"><i class="fab fa-whatsapp"></i></a>
+                <div class="social-header" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+                    <span class="material-symbols-outlined social-main-icon">share</span>
+                    <div class="social-header-text" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+                        <label>{{trans.t('SUIVEZ_NOUS')}}</label>
+                        <p class="social-subtitle">{{trans.t('SUIVEZ_NOUS_DESC')}}</p>
+                    </div>
+                </div>
+                <div class="iconsCon" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+                    <a href="https://www.facebook.com/cooperative.officiel/" class="social-btn facebook" target="_blank" rel="noopener noreferrer" title="Facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="https://instagram.com/cooperativebabmansour?igshid=eh2xberwe4bn" class="social-btn instagram" target="_blank" rel="noopener noreferrer" title="Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="https://wa.me/212600000000" class="social-btn whatsapp" target="_blank" rel="noopener noreferrer" title="WhatsApp">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
                 </div>
             </div>
         </div>
