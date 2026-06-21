@@ -336,7 +336,10 @@ app.post('/p12',verifyToken,async(req,res)=>{
   }
 
   if (cat && cat.trim() !== '') {
-    await p1.query("INSERT INTO categories (name) VALUES ($1) ON CONFLICT DO NOTHING", [cat.trim().toUpperCase()]);
+    const cleanCat = cat.trim().toUpperCase();
+    const catEn = await translateText(cleanCat, 'en');
+    const catAr = await translateText(cleanCat, 'ar');
+    await p1.query("INSERT INTO categories (name, name_en, name_ar) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING", [cleanCat, catEn, catAr]);
   }
 
   let name_en = req.body.name_en;
@@ -397,7 +400,10 @@ app.post('/addpro',verifyToken,async(req,res)=>
   }
 
   if (cat && cat.trim() !== '') {
-    await p1.query("INSERT INTO categories (name) VALUES ($1) ON CONFLICT DO NOTHING", [cat.trim().toUpperCase()]);
+    const cleanCat = cat.trim().toUpperCase();
+    const catEn = await translateText(cleanCat, 'en');
+    const catAr = await translateText(cleanCat, 'ar');
+    await p1.query("INSERT INTO categories (name, name_en, name_ar) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING", [cleanCat, catEn, catAr]);
   }
 
   let name_en = req.body.name_en;
@@ -736,7 +742,9 @@ app.post('/categories/add', async(req, res) => {
   }
   const cleanName = name.trim().toUpperCase();
   try {
-    await p1.query("INSERT INTO categories (name) VALUES ($1) ON CONFLICT DO NOTHING", [cleanName]);
+    const catEn = await translateText(cleanName, 'en');
+    const catAr = await translateText(cleanName, 'ar');
+    await p1.query("INSERT INTO categories (name, name_en, name_ar) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING", [cleanName, catEn, catAr]);
     res.status(201).json({ success: true, name: cleanName });
   } catch (err) {
     console.error(err);

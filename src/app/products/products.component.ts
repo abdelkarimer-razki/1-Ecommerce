@@ -19,6 +19,7 @@ export class ProductsComponent implements OnInit {
   modalActive: boolean = false;
   modalMode: 'add' | 'edit' = 'add';
   productFormSubmitted: boolean = false;
+  activeTab: string = 'basic';
   
   product: products = {idproducts:0,name:"",picture:"",description:"",prix:0,categorie:"null",mangable:false,prixf:0,taille:"0",taille2:"0",taille3:"0",prix2:0,prix3:0,sizes:[]};
   editingProduct: products = {idproducts:0,name:"",picture:"",description:"",prix:0,categorie:"null",mangable:false,prixf:0,taille:"0",taille2:"0",taille3:"0",prix2:0,prix3:0,sizes:[]};
@@ -84,6 +85,7 @@ export class ProductsComponent implements OnInit {
 
   openAddModal() {
     this.modalMode = 'add';
+    this.activeTab = 'basic';
     this.showNewCategoryInput = false;
     this.newCategoryName = '';
     this.originalImage = '';
@@ -127,6 +129,7 @@ export class ProductsComponent implements OnInit {
 
   openEditModal(prod: any) {
     this.modalMode = 'edit';
+    this.activeTab = 'basic';
     this.showNewCategoryInput = false;
     this.newCategoryName = '';
     this.toleranceThreshold = 35;

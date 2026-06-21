@@ -215,131 +215,194 @@
 <div class="modal-backdrop" *ngIf="modalActive" (click)="closeModal()"></div>
 
 <!-- Modal Dialog Form -->
-<div class="modal-window" *ngIf="modalActive" [style.direction]="trans.isRtl() ? 'rtl' : 'ltr'">
+<div class="modal-window product-form-modal" *ngIf="modalActive" [style.direction]="trans.isRtl() ? 'rtl' : 'ltr'">
   <div class="modal-header" style="display: flex; justify-content: space-between; align-items: center;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
     <h3 style="margin: 0;">{{ modalMode === 'add' ? trans.t('AJOUTER_PRODUIT') : trans.t('MODIFIER_PRODUIT') }}</h3>
     <button class="modal-close-btn" (click)="closeModal()"><span class="material-symbols-outlined">close</span></button>
   </div>
 
   <div class="modal-body" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
-    <div class="modal-form-grid">
-      <!-- Upload picture with background remover -->
-      <div class="input-group image-upload-wrapper">
-        <label style="display: flex; justify-content: space-between;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
-          <span>{{trans.t('IMAGE_PRODUIT')}}</span>
-          <span style="font-size: 0.75rem; color: #9ca3af; font-weight: normal;">({{trans.t('OPTIONNEL')}})</span>
-        </label>
-        
-        <div class="upload-zone-container">
-          <!-- Modern File Dropzone (if no image is uploaded) -->
-          <div class="modern-upload-dropzone" *ngIf="!myimage">
-            <input id="modal-imageb" type="file" style="display: none;" (change)="onChange($event)">
-            <label for="modal-imageb" class="dropzone-label">
-              <span class="material-symbols-outlined dropzone-icon">cloud_upload</span>
-              <span class="dropzone-title">{{trans.t('SELECTIONNER_IMAGE')}}</span>
-              <span class="dropzone-subtitle">{{trans.t('IMAGE_FORMATS_LIMIT')}}</span>
-            </label>
-          </div>
+    <!-- Modern Tab bar selection -->
+    <div class="modal-tabs" style="display: flex; border-bottom: 1px solid var(--border-color); margin-bottom: 20px; gap: 8px; justify-content: flex-start; padding-bottom: 2px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+      <button type="button" class="tab-btn" [class.active]="activeTab === 'basic'" (click)="activeTab = 'basic'">
+        <span class="material-symbols-outlined" style="font-size: 1.15rem;">info</span> {{trans.t('DETAILS')}}
+      </button>
+      <button type="button" class="tab-btn" [class.active]="activeTab === 'translations'" (click)="activeTab = 'translations'">
+        <span class="material-symbols-outlined" style="font-size: 1.15rem;">g_translate</span> Traductions
+      </button>
+      <button type="button" class="tab-btn" [class.active]="activeTab === 'variations'" (click)="activeTab = 'variations'">
+        <span class="material-symbols-outlined" style="font-size: 1.15rem;">sell</span> Variations & Tarifs
+      </button>
+    </div>
 
-          <!-- Modern Preview container (if image is uploaded) -->
-          <div class="modal-image-preview checkerboard" *ngIf="myimage">
-            <img [src]="transform(myimage)" alt="Preview image">
-            <button type="button" class="btn-clear-image" (click)="clearImage()" [title]="trans.t('SUPPRIMER_IMAGE')">
-              <span class="material-symbols-outlined">close</span>
-            </button>
-          </div>
-          
-          <!-- Modern Background remover card -->
-          <div *ngIf="myimage" class="modern-bg-remover-card">
-            <div class="bg-remover-card-header">
-              <div class="header-text-group" style="display: flex; align-items: center; gap: 8px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
-                <span class="card-icon"><span class="material-symbols-outlined">magic_button</span></span>
-                <div style="display: flex; flex-direction: column;" [style.align-items]="trans.isRtl() ? 'flex-end' : 'flex-start'">
-                  <span class="card-title">{{trans.t('DETOURAGE_INTELLIGENT')}}</span>
-                  <span class="card-subtitle">{{trans.t('RETIRER_FOND_SUB')}}</span>
-                </div>
-              </div>
-            </div>
-            
-            <div class="bg-remover-card-body">
-              <div class="action-buttons-row" style="display: flex; gap: 8px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
-                <button type="button" class="btn-action-primary" (click)="removeBg()" style="display: inline-flex; align-items: center; gap: 4px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
-                  <span class="material-symbols-outlined" style="font-size: 1.1rem;">photo_filter</span> {{trans.t('RETIRER_FOND')}}
-                </button>
-                <button type="button" class="btn-action-secondary" *ngIf="originalImage" (click)="resetBg()" style="display: inline-flex; align-items: center; gap: 4px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
-                  <span class="material-symbols-outlined" style="font-size: 1.1rem;">restart_alt</span> {{trans.t('RESTAURER')}}
-                </button>
-              </div>
-              
-              <div *ngIf="originalImage" class="slider-control-group">
-                <div class="slider-label-row" style="display: flex; justify-content: space-between;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
-                  <span>{{trans.t('SENSIBILITE_DETOURAGE')}}</span>
-                  <span class="slider-value-badge">{{ toleranceThreshold }}</span>
-                </div>
-                <input type="range" min="5" max="150" [(ngModel)]="toleranceThreshold" (ngModelChange)="removeBg()" class="modern-slider">
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Product Name -->
-      <div class="input-group">
-        <div style="display: flex; justify-content: space-between; align-items: center;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
-          <label style="margin: 0;">{{trans.t('NOM_PRODUIT')}} (FR) <span style="color: #dc2626;">*</span></label>
-          <button type="button" class="btn-action-secondary" (click)="autoTranslateProduct()" style="font-size: 0.8rem; height: 28px; padding: 0 10px; display: inline-flex; align-items: center; gap: 4px; font-weight: 700; border-radius: 4px; border: 1px solid var(--color-primary); color: var(--color-primary); background: none; cursor: pointer;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
-            <span class="material-symbols-outlined" style="font-size: 1rem;">g_translate</span> Auto-Translate
-          </button>
-        </div>
-        <input class="text" type="text" [(ngModel)]="activeProduct().name" placeholder="Ex: Miel d'Eucalyptus Premium" required [style.text-align]="trans.isRtl() ? 'right' : 'left'" [style.border-color]="productFormSubmitted && (!activeProduct().name || activeProduct().name.trim() === '') ? '#dc2626' : ''">
-        <span *ngIf="productFormSubmitted && (!activeProduct().name || activeProduct().name.trim() === '')" style="color: #dc2626; font-size: 0.75rem; display: block; margin-top: 4px; font-weight: 600;">{{trans.t('CHAMP_REQUIS')}}</span>
-      </div>
-
-      <!-- Name Translation inputs -->
-      <div class="form-row" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row' " style="gap: 12px; margin-bottom: 16px;">
-        <div class="input-group" style="flex: 1; margin: 0;">
-          <label>Name (English)</label>
-          <input class="text" type="text" [(ngModel)]="activeProduct().name_en" placeholder="Auto-translated or manual input" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
-        </div>
-        <div class="input-group" style="flex: 1; margin: 0;">
-          <label>الاسم (العربية)</label>
-          <input class="text" type="text" [(ngModel)]="activeProduct().name_ar" placeholder="ترجمة تلقائية أو يدوية" style="text-align: right; direction: rtl;">
-        </div>
-      </div>
-
-      <!-- Categories & Edible Toggles -->
-      <div class="form-row" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
-        <div class="input-group" style="flex: 1;">
+    <!-- TAB 1: BASIC DETAILS -->
+    <div class="modal-tab-content basic-tab-grid" *ngIf="activeTab === 'basic'">
+      <!-- Left Column: Image Upload & Detourage -->
+      <div class="basic-tab-left">
+        <div class="input-group image-upload-wrapper">
           <label style="display: flex; justify-content: space-between;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
-            <span>{{trans.t('CATEGORIES')}} <span style="color: #dc2626;">*</span></span>
-            <span style="font-size: 0.75rem; color: #dc2626; font-weight: normal;">({{trans.t('REQUIS')}})</span>
+            <span>{{trans.t('IMAGE_PRODUIT')}}</span>
+            <span style="font-size: 0.75rem; color: #9ca3af; font-weight: normal;">({{trans.t('OPTIONNEL')}})</span>
           </label>
-          <div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
-            <div style="display: flex; gap: 8px; width: 100%;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
-              <select *ngIf="!showNewCategoryInput" class="optionP" [ngModel]="activeProduct().categorie" (ngModelChange)="activeProduct().categorie = $event; onCategoryChange($event)" style="flex-grow: 1;" [style.border-color]="productFormSubmitted && (!activeProduct().categorie || activeProduct().categorie === 'null') ? '#dc2626' : ''">
-                <option *ngFor="let cat of getCategories()" [value]="cat">{{trans.t(cat)}}</option>
-                <option value="_NEW_">{{trans.t('CREER_NOUVELLE_CATEGORIE_OPTION')}}</option>
-              </select>
-              <input *ngIf="showNewCategoryInput" class="text" type="text" [(ngModel)]="newCategoryName" [placeholder]="trans.t('NOM_CATEGORIE_PLACEHOLDER')" required style="flex-grow: 1;" [style.text-align]="trans.isRtl() ? 'right' : 'left'" [style.border-color]="productFormSubmitted && (!newCategoryName || newCategoryName.trim() === '') ? '#dc2626' : ''">
-              <button type="button" *ngIf="showNewCategoryInput" (click)="cancelNewCategory()" style="background: none; border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); padding: 0 10px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; height: 38px;">
-                <span class="material-symbols-outlined" style="font-size: 1.2rem; color: var(--color-text-muted);">close</span>
+          
+          <div class="upload-zone-container">
+            <!-- Modern File Dropzone (if no image is uploaded) -->
+            <div class="modern-upload-dropzone" *ngIf="!myimage">
+              <input id="modal-imageb" type="file" style="display: none;" (change)="onChange($event)">
+              <label for="modal-imageb" class="dropzone-label">
+                <span class="material-symbols-outlined dropzone-icon">cloud_upload</span>
+                <span class="dropzone-title">{{trans.t('SELECTIONNER_IMAGE')}}</span>
+                <span class="dropzone-subtitle">{{trans.t('IMAGE_FORMATS_LIMIT')}}</span>
+              </label>
+            </div>
+
+            <!-- Modern Preview container (if image is uploaded) -->
+            <div class="modal-image-preview checkerboard" *ngIf="myimage">
+              <img [src]="transform(myimage)" alt="Preview image">
+              <button type="button" class="btn-clear-image" (click)="clearImage()" [title]="trans.t('SUPPRIMER_IMAGE')">
+                <span class="material-symbols-outlined">close</span>
               </button>
             </div>
-            <span *ngIf="productFormSubmitted && (showNewCategoryInput ? (!newCategoryName || newCategoryName.trim() === '') : (!activeProduct().categorie || activeProduct().categorie === 'null'))" style="color: #dc2626; font-size: 0.75rem; display: block; margin-top: 4px; font-weight: 600;">{{trans.t('CHAMP_REQUIS')}}</span>
+            
+            <!-- Modern Background remover card -->
+            <div *ngIf="myimage" class="modern-bg-remover-card">
+              <div class="bg-remover-card-header">
+                <div class="header-text-group" style="display: flex; align-items: center; gap: 8px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+                  <span class="card-icon"><span class="material-symbols-outlined">magic_button</span></span>
+                  <div style="display: flex; flex-direction: column;" [style.align-items]="trans.isRtl() ? 'flex-end' : 'flex-start'">
+                    <span class="card-title">{{trans.t('DETOURAGE_INTELLIGENT')}}</span>
+                    <span class="card-subtitle">{{trans.t('RETIRER_FOND_SUB')}}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="bg-remover-card-body">
+                <div class="action-buttons-row" style="display: flex; gap: 8px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+                  <button type="button" class="btn-action-primary" (click)="removeBg()" style="display: inline-flex; align-items: center; gap: 4px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+                    <span class="material-symbols-outlined" style="font-size: 1.1rem;">photo_filter</span> {{trans.t('RETIRER_FOND')}}
+                  </button>
+                  <button type="button" class="btn-action-secondary" *ngIf="originalImage" (click)="resetBg()" style="display: inline-flex; align-items: center; gap: 4px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+                    <span class="material-symbols-outlined" style="font-size: 1.1rem;">restart_alt</span> {{trans.t('RESTAURER')}}
+                  </button>
+                </div>
+                
+                <div *ngIf="originalImage" class="slider-control-group">
+                  <div class="slider-label-row" style="display: flex; justify-content: space-between;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+                    <span>{{trans.t('SENSIBILITE_DETOURAGE')}}</span>
+                    <span class="slider-value-badge">{{ toleranceThreshold }}</span>
+                  </div>
+                  <input type="range" min="5" max="150" [(ngModel)]="toleranceThreshold" (ngModelChange)="removeBg()" class="modern-slider">
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-        <div class="input-group" style="flex: 1;">
-          <label style="display: flex; justify-content: space-between;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
-            <span>{{trans.t('TYPE_HEADER')}} <span style="color: #dc2626;">*</span></span>
-            <span style="font-size: 0.75rem; color: #dc2626; font-weight: normal;">({{trans.t('REQUIS')}})</span>
-          </label>
-          <select class="optionP" [(ngModel)]="activeProduct().mangable">
-            <option [ngValue]="true">{{trans.t('COMESTIBLE')}}</option>
-            <option [ngValue]="false">{{trans.t('NON_COMESTIBLE')}}</option>
-          </select>
         </div>
       </div>
 
+      <!-- Right Column: Form Inputs -->
+      <div class="basic-tab-right">
+        <!-- Product Name -->
+        <div class="input-group">
+          <label style="display: flex; justify-content: space-between;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+            <span>{{trans.t('NOM_PRODUIT')}} (FR) <span style="color: #dc2626;">*</span></span>
+            <span style="font-size: 0.75rem; color: #dc2626; font-weight: normal;">({{trans.t('REQUIS')}})</span>
+          </label>
+          <input class="text" type="text" [(ngModel)]="activeProduct().name" placeholder="Ex: Miel d'Eucalyptus Premium" required [style.text-align]="trans.isRtl() ? 'right' : 'left'" [style.border-color]="productFormSubmitted && (!activeProduct().name || activeProduct().name.trim() === '') ? '#dc2626' : ''">
+          <span *ngIf="productFormSubmitted && (!activeProduct().name || activeProduct().name.trim() === '')" style="color: #dc2626; font-size: 0.75rem; display: block; margin-top: 4px; font-weight: 600;">{{trans.t('CHAMP_REQUIS')}}</span>
+        </div>
+
+        <!-- Categories & Edible Toggles -->
+        <div class="form-row" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+          <div class="input-group" style="flex: 1;">
+            <label style="display: flex; justify-content: space-between;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+              <span>{{trans.t('CATEGORIES')}} <span style="color: #dc2626;">*</span></span>
+              <span style="font-size: 0.75rem; color: #dc2626; font-weight: normal;">({{trans.t('REQUIS')}})</span>
+            </label>
+            <div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
+              <div style="display: flex; gap: 8px; width: 100%;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+                <select *ngIf="!showNewCategoryInput" class="optionP" [ngModel]="activeProduct().categorie" (ngModelChange)="activeProduct().categorie = $event; onCategoryChange($event)" style="flex-grow: 1;" [style.border-color]="productFormSubmitted && (!activeProduct().categorie || activeProduct().categorie === 'null') ? '#dc2626' : ''">
+                  <option *ngFor="let cat of getCategories()" [value]="cat">{{trans.t(cat)}}</option>
+                  <option value="_NEW_">{{trans.t('CREER_NOUVELLE_CATEGORIE_OPTION')}}</option>
+                </select>
+                <input *ngIf="showNewCategoryInput" class="text" type="text" [(ngModel)]="newCategoryName" [placeholder]="trans.t('NOM_CATEGORIE_PLACEHOLDER')" required style="flex-grow: 1;" [style.text-align]="trans.isRtl() ? 'right' : 'left'" [style.border-color]="productFormSubmitted && (!newCategoryName || newCategoryName.trim() === '') ? '#dc2626' : ''">
+                <button type="button" *ngIf="showNewCategoryInput" (click)="cancelNewCategory()" style="background: none; border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); padding: 0 10px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; height: 38px;">
+                  <span class="material-symbols-outlined" style="font-size: 1.2rem; color: var(--color-text-muted);">close</span>
+                </button>
+              </div>
+              <span *ngIf="productFormSubmitted && (showNewCategoryInput ? (!newCategoryName || newCategoryName.trim() === '') : (!activeProduct().categorie || activeProduct().categorie === 'null'))" style="color: #dc2626; font-size: 0.75rem; display: block; margin-top: 4px; font-weight: 600;">{{trans.t('CHAMP_REQUIS')}}</span>
+            </div>
+          </div>
+          <div class="input-group" style="flex: 1;">
+            <label style="display: flex; justify-content: space-between;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+              <span>{{trans.t('TYPE_HEADER')}} <span style="color: #dc2626;">*</span></span>
+              <span style="font-size: 0.75rem; color: #dc2626; font-weight: normal;">({{trans.t('REQUIS')}})</span>
+            </label>
+            <select class="optionP" [(ngModel)]="activeProduct().mangable">
+              <option [ngValue]="true">{{trans.t('COMESTIBLE')}}</option>
+              <option [ngValue]="false">{{trans.t('NON_COMESTIBLE')}}</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Strike-through Original Price -->
+        <div class="input-group">
+          <label style="display: flex; justify-content: space-between;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+            <span>{{trans.t('PRIX_BARRE_PROMO')}}</span>
+            <span style="font-size: 0.75rem; color: #9ca3af; font-weight: normal;">({{trans.t('OPTIONNEL')}})</span>
+          </label>
+          <input class="text" type="number" [(ngModel)]="activeProduct().prixf" placeholder="Ex: 80" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: TRANSLATIONS -->
+    <div class="modal-tab-content" *ngIf="activeTab === 'translations'">
+      <!-- Auto Translate header card -->
+      <div class="translation-auto-banner" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+        <div style="display: flex; align-items: center; gap: 12px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+          <span class="material-symbols-outlined banner-icon">translate</span>
+          <div style="text-align: left;" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+            <span class="banner-title">Traduction en un clic</span>
+            <span class="banner-subtitle">Traduisez instantanément le nom et la description en anglais et en arabe.</span>
+          </div>
+        </div>
+        <button type="button" class="btn-action-primary auto-trans-btn" (click)="autoTranslateProduct()" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+          <span class="material-symbols-outlined">g_translate</span> Traduire
+        </button>
+      </div>
+
+      <!-- Translation inputs split columns -->
+      <div class="translation-grid">
+        <!-- English Section -->
+        <div class="translation-section">
+          <h4 class="section-title"><span class="material-symbols-outlined" style="font-size: 1.15rem; color: var(--color-primary);">language</span> English Translation</h4>
+          <div class="input-group">
+            <label>Name (English)</label>
+            <input class="text" type="text" [(ngModel)]="activeProduct().name_en" placeholder="Auto-translated or manual input" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+          </div>
+          <div class="input-group">
+            <label>Description (English)</label>
+            <textarea class="text textarea" [(ngModel)]="activeProduct().description_en" placeholder="Auto-translated or manual input" [style.text-align]="trans.isRtl() ? 'right' : 'left'"></textarea>
+          </div>
+        </div>
+
+        <!-- Arabic Section -->
+        <div class="translation-section">
+          <h4 class="section-title" style="justify-content: flex-end; width: 100%; direction: rtl;"><span class="material-symbols-outlined" style="font-size: 1.15rem; color: var(--color-primary);">language</span> الترجمة العربية</h4>
+          <div class="input-group">
+            <label style="text-align: right; display: block;">الاسم (العربية)</label>
+            <input class="text" type="text" [(ngModel)]="activeProduct().name_ar" placeholder="ترجمة تلقائية أو يدوية" style="text-align: right; direction: rtl;">
+          </div>
+          <div class="input-group">
+            <label style="text-align: right; display: block;">الوصف (العربية)</label>
+            <textarea class="text textarea" [(ngModel)]="activeProduct().description_ar" placeholder="ترجمة تلقائية أو يدوية" style="text-align: right; direction: rtl;"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: VARIATIONS & DETAILS -->
+    <div class="modal-tab-content" style="display: flex; flex-direction: column; gap: 20px;" *ngIf="activeTab === 'variations'">
       <!-- Description -->
       <div class="input-group">
         <label style="display: flex; justify-content: space-between;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
@@ -349,57 +412,43 @@
         <textarea class="text textarea" [(ngModel)]="activeProduct().description" [placeholder]="trans.t('SAISIR_DESCRIPTION_PLACEHOLDER')" [style.text-align]="trans.isRtl() ? 'right' : 'left'"></textarea>
       </div>
 
-      <!-- Description Translation inputs -->
-      <div class="form-row" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row' " style="gap: 12px; margin-bottom: 16px;">
-        <div class="input-group" style="flex: 1; margin: 0;">
-          <label>Description (English)</label>
-          <textarea class="text textarea" [(ngModel)]="activeProduct().description_en" placeholder="Auto-translated or manual input" [style.text-align]="trans.isRtl() ? 'right' : 'left'"></textarea>
-        </div>
-        <div class="input-group" style="flex: 1; margin: 0;">
-          <label>الوصف (العربية)</label>
-          <textarea class="text textarea" [(ngModel)]="activeProduct().description_ar" placeholder="ترجمة تلقائية أو يدوية" style="text-align: right; direction: rtl;"></textarea>
-        </div>
-      </div>
-
-      <!-- Strike-through Original Price -->
-      <div class="input-group">
-        <label style="display: flex; justify-content: space-between;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
-          <span>{{trans.t('PRIX_BARRE_PROMO')}}</span>
-          <span style="font-size: 0.75rem; color: #9ca3af; font-weight: normal;">({{trans.t('OPTIONNEL')}})</span>
-        </label>
-        <input class="text" type="number" [(ngModel)]="activeProduct().prixf" placeholder="Ex: 80" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
-      </div>
-
       <!-- Conditions (Sizes / Prices) -->
-      <div class="sizes-container-box">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
-          <span class="sizes-box-title" style="margin: 0;">{{trans.t('VARIATIONS_TAILLE_PRIX')}} <span style="color: #dc2626;">*</span></span>
-          <button type="button" class="btn-add-variation" (click)="addSizeVariation()" style="display: inline-flex; align-items: center; gap: 4px; background: none; border: 1px solid var(--color-primary); color: var(--color-primary); border-radius: var(--border-radius-sm); padding: 4px 10px; font-weight: 700; font-size: 0.8rem; cursor: pointer; transition: var(--transition-smooth);" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
-            <span class="material-symbols-outlined" style="font-size: 1rem;">add</span> {{trans.t('VARIATION')}}
+      <div class="variations-wrapper">
+        <div class="variations-header">
+          <span class="variations-title">{{trans.t('VARIATIONS_TAILLE_PRIX')}} <span style="color: #dc2626;">*</span></span>
+          <button type="button" class="btn-add-variation" (click)="addSizeVariation()">
+            <span class="material-symbols-outlined">add</span> {{trans.t('VARIATION')}}
           </button>
         </div>
-        
-        <div class="size-group-row" *ngFor="let sizeRow of activeProduct().sizes; let idx = index" style="margin-bottom: 16px; display: flex; gap: 12px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
-          <div class="input-group size-name" style="flex: 1;">
-            <label style="display: flex; justify-content: space-between;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
-              <span>{{trans.t('TAILLE_EXEMPLE_LABEL')}} <span style="color: #dc2626;">*</span></span>
-              <span style="font-size: 0.75rem; color: #dc2626; font-weight: normal;">({{trans.t('REQUIS')}})</span>
-            </label>
-            <input class="text" type="text" [(ngModel)]="sizeRow.taille" placeholder="ex: 250g" required [style.text-align]="trans.isRtl() ? 'right' : 'left'" [style.border-color]="productFormSubmitted && (!sizeRow.taille || sizeRow.taille.trim() === '') ? '#dc2626' : ''">
-            <span *ngIf="productFormSubmitted && (!sizeRow.taille || sizeRow.taille.trim() === '')" style="color: #dc2626; font-size: 0.75rem; display: block; margin-top: 4px; font-weight: 600;">{{trans.t('CHAMP_REQUIS')}}</span>
+
+        <div class="variations-list">
+          <!-- Table/Grid Header -->
+          <div class="variations-grid-header" *ngIf="(activeProduct().sizes?.length || 0) > 0" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+            <div class="col-size">{{trans.t('TAILLE_EXEMPLE_LABEL')}}</div>
+            <div class="col-price">{{trans.t('PRIX')}} (DH)</div>
+            <div class="col-action"></div>
           </div>
-          <div class="input-group size-price" style="flex: 1; display: flex; align-items: flex-end; gap: 8px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
-            <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 8px; width: 100%;">
-              <label style="display: flex; justify-content: space-between;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
-                <span>{{trans.t('PRIX')}} <span style="color: #dc2626;">*</span></span>
-                <span style="font-size: 0.75rem; color: #dc2626; font-weight: normal;">({{trans.t('REQUIS')}})</span>
-              </label>
-              <input class="text" type="number" [(ngModel)]="sizeRow.prix" required [style.text-align]="trans.isRtl() ? 'right' : 'left'" [style.border-color]="productFormSubmitted && (sizeRow.prix === undefined || sizeRow.prix === null || sizeRow.prix <= 0) ? '#dc2626' : ''">
-              <span *ngIf="productFormSubmitted && (sizeRow.prix === undefined || sizeRow.prix === null || sizeRow.prix <= 0)" style="color: #dc2626; font-size: 0.75rem; display: block; margin-top: 4px; font-weight: 600;">{{trans.t('CHAMP_REQUIS')}}</span>
+
+          <!-- Variation Rows -->
+          <div class="variation-item-row" *ngFor="let sizeRow of activeProduct().sizes; let idx = index" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+            <!-- Size Input -->
+            <div class="col-size">
+              <input class="text" type="text" [(ngModel)]="sizeRow.taille" placeholder="ex: 250g, 1L" required [style.text-align]="trans.isRtl() ? 'right' : 'left'" [style.border-color]="productFormSubmitted && (!sizeRow.taille || sizeRow.taille.trim() === '') ? '#dc2626' : ''">
+              <span *ngIf="productFormSubmitted && (!sizeRow.taille || sizeRow.taille.trim() === '')" class="validation-error">{{trans.t('CHAMP_REQUIS')}}</span>
             </div>
-            <button type="button" *ngIf="(activeProduct().sizes?.length || 0) > 1" (click)="removeSizeVariation(idx)" style="background: none; border: 1px solid var(--color-terracotta); color: var(--color-terracotta); border-radius: var(--border-radius-sm); height: 38px; width: 38px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: var(--transition-smooth); flex-shrink: 0; padding: 0;">
-              <span class="material-symbols-outlined">delete</span>
-            </button>
+
+            <!-- Price Input -->
+            <div class="col-price">
+              <input class="text" type="number" [(ngModel)]="sizeRow.prix" placeholder="ex: 60" required [style.text-align]="trans.isRtl() ? 'right' : 'left'" [style.border-color]="productFormSubmitted && (sizeRow.prix === undefined || sizeRow.prix === null || sizeRow.prix <= 0) ? '#dc2626' : ''">
+              <span *ngIf="productFormSubmitted && (sizeRow.prix === undefined || sizeRow.prix === null || sizeRow.prix <= 0)" class="validation-error">{{trans.t('CHAMP_REQUIS')}}</span>
+            </div>
+
+            <!-- Delete Button -->
+            <div class="col-action">
+              <button type="button" *ngIf="(activeProduct().sizes?.length || 0) > 1" (click)="removeSizeVariation(idx)" class="btn-delete-variation" [title]="trans.t('SUPPRIMER')">
+                <span class="material-symbols-outlined">delete</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
