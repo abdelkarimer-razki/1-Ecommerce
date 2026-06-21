@@ -10,8 +10,10 @@ import { TranslationService } from '../services/translation.service';
 })
 export class CommandsComponent implements OnInit {
   // Tables
+  // Tables
   pendingOrders: any[] = [];
   completedOrders: any[] = [];
+  loading: boolean = true;
   
   // UI state
   voidPending: boolean = false;
@@ -77,30 +79,64 @@ export class CommandsComponent implements OnInit {
   }
 
   loadTables() {
+    this.loading = true;
     this.morePending = [];
     this.moreCompleted = [];
     this.showDropdown = false;
     this.activeDropdownOrder = null;
+    
+    let pendingLoaded = false;
+    let completedLoaded = false;
+    
+    const checkFinish = () => {
+      if (pendingLoaded && completedLoaded) {
+        this.loading = false;
+      }
+    };
+
     // Load pending (non-effectuées)
-    this.dash.allCommandsE().subscribe((data: any) => {
-      this.pendingOrders = data || [];
-      this.voidPending = this.pendingOrders.length === 0;
-    });
+    this.dash.allCommandsE().subscribe(
+      (data: any) => {
+        this.pendingOrders = data || [];
+        this.voidPending = this.pendingOrders.length === 0;
+        pendingLoaded = true;
+        checkFinish();
+      },
+      () => {
+        pendingLoaded = true;
+        checkFinish();
+      }
+    );
     // Load completed for current month
-    this.searchCompleted(this.date);
+    this.searchCompleted(this.date, () => {
+      completedLoaded = true;
+      checkFinish();
+    });
   }
 
-  searchCompleted(date: any) {
+  searchCompleted(date: any, callback?: () => void) {
     if (!date) {
-      this.dash.allCommandsN().subscribe((data: any) => {
-        this.completedOrders = data || [];
-        this.voidCompleted = this.completedOrders.length === 0;
-      });
+      this.dash.allCommandsN().subscribe(
+        (data: any) => {
+          this.completedOrders = data || [];
+          this.voidCompleted = this.completedOrders.length === 0;
+          if (callback) callback();
+        },
+        () => {
+          if (callback) callback();
+        }
+      );
     } else {
-      this.dash.commandEffectueSearch(date).subscribe((data: any) => {
-        this.completedOrders = data || [];
-        this.voidCompleted = this.completedOrders.length === 0;
-      });
+      this.dash.commandEffectueSearch(date).subscribe(
+        (data: any) => {
+          this.completedOrders = data || [];
+          this.voidCompleted = this.completedOrders.length === 0;
+          if (callback) callback();
+        },
+        () => {
+          if (callback) callback();
+        }
+      );
     }
   }
 
@@ -110,7 +146,12 @@ export class CommandsComponent implements OnInit {
     this.moreCompleted = [];
     this.showDropdown = false;
     this.activeDropdownOrder = null;
-    if (!isPending) this.searchCompleted(this.date);
+    if (!isPending) {
+      this.loading = true;
+      this.searchCompleted(this.date, () => {
+        this.loading = false;
+      });
+    }
   }
 
   // Month navigation
