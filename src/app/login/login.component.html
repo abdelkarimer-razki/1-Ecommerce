@@ -6,9 +6,9 @@
         <div class="visual-overlay"></div>
         <div class="visual-content">
           <div class="logo-wrapper">
-            <img src="assets/logo31.png" alt="Coop Logo">
+            <img [src]="config.coopLogo ? transformImage(config.coopLogo) : 'assets/logo31.png'" alt="Coop Logo">
           </div>
-          <h2 class="brand-title">Bab Mansour</h2>
+          <h2 class="brand-title">{{ config.coopName || 'Bab Mansour' }}</h2>
           <p class="brand-subtitle">{{trans.t('COOPERATIVE')}}</p>
           <div class="visual-divider"></div>
           <p class="brand-tagline">Espace d'administration sécurisé pour la gestion de la coopérative, des ventes et du catalogue de produits.</p>

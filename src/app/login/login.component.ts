@@ -7,6 +7,8 @@ import { AuthGuard } from '../auth.guard';
 import { EncrDecrService } from '../services/encr-decr.service';
 import { users } from '../backend/users';
 import { TranslationService } from '../services/translation.service';
+import { HomepageService } from '../services/homepage.service';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-login',
@@ -20,17 +22,32 @@ export class LoginComponent implements OnInit {
   user:users={iduser:0,fname:"",lname:"",admin:false,tel:"",email:"",password:"",adress:""};
   loading:Boolean=false;
   loginFormSubmitted: boolean = false;
+  config: any = {};
+
   constructor(
     private EncrDecr: EncrDecrService,
     private titleService:Title,
     private login:LoginService,
     private router:Router,
     private auth:AuthGuard,
-    public trans: TranslationService
+    public trans: TranslationService,
+    private homepageService: HomepageService,
+    private sanitizer: DomSanitizer
   ) { }
 
   ngOnInit(): void {
     this.titleService.setTitle(this.trans.t('CONNEXION'));
+    
+    // Load config for dynamic logo and coopName
+    this.homepageService.getConfig().subscribe(
+      (data) => {
+        this.config = data || {};
+      },
+      (error) => {
+        console.error('Error loading config in LoginComponent:', error);
+      }
+    );
+
     if(this.user.email==''||this.password=='')
     {
       this.emailinv=true;
@@ -40,6 +57,7 @@ export class LoginComponent implements OnInit {
       this.emailinv=true;
     }},500);
   }
+
   connect(){
     this.loginFormSubmitted = true;
     if (!this.user.email || !this.password) {
@@ -67,24 +85,6 @@ export class LoginComponent implements OnInit {
           });
         }
         this.loading=false;
-        /*if(data[0].admin==true){
-          this.router.navigate(['/dashboard']);
-        }else{
-          this.router.navigate(['/shopping']);
-        }*/
-        /*if(data.length==0){
-          this.incorect=true;
-        }else{
-          if(data[0].admin==true){
-            this.router.navigate(['/dashboard']);
-            /*localStorage.setItem('token', data.token);*/
-            /*this.incorect=false;*/
-          /*}else{
-            this.incorect=false;
-            this.router.navigate(['/shopping']);
-          }
-
-        }*/
       },
       err=>{
         if( err instanceof HttpErrorResponse ) {
@@ -97,6 +97,7 @@ export class LoginComponent implements OnInit {
       );
     }
   }
+
   test()
   {
     this.incorect=false;
@@ -107,5 +108,13 @@ export class LoginComponent implements OnInit {
     {
       this.emailinv=true;
     }
+  }
+
+  transformImage(pic: string) {
+    if (!pic) return '';
+    if (pic.startsWith('data:')) {
+      return this.sanitizer.bypassSecurityTrustUrl(pic);
+    }
+    return pic;
   }
 }

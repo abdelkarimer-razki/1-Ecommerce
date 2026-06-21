@@ -4,6 +4,7 @@ import { LoginService } from '../services/login.service';
 import { HomepageService } from '../services/homepage.service';
 import { CartService } from '../services/cart.service';
 import { TranslationService } from '../services/translation.service';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-top-menu',
@@ -15,13 +16,15 @@ export class TopMenuComponent implements OnInit {
   name: any;
   email: any;
   cartCount: number = 0;
+  config: any = {};
 
   constructor(
     public log: LoginService,
     private route: Router,
     private homepage: HomepageService,
     private cartService: CartService,
-    public trans: TranslationService
+    public trans: TranslationService,
+    private sanitizer: DomSanitizer
   ) {
     route.events.subscribe((val) => {
       this.disableMenu();
@@ -31,7 +34,17 @@ export class TopMenuComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Subscribe to cart changes (works for guests too)
+    // Load config for dynamic brand details (Coop Name & Logo)
+    this.homepage.getConfig().subscribe(
+      (data) => {
+        this.config = data || {};
+      },
+      (error) => {
+        console.error('Error loading config in TopMenu:', error);
+      }
+    );
+
+    // Subscribe to cart changes
     this.cartService.cart$.subscribe(items => {
       this.cartCount = items.reduce((s, i) => s + i.qte, 0);
     });
@@ -43,5 +56,13 @@ export class TopMenuComponent implements OnInit {
 
   disableMenu() {
     this.menuMore = false;
+  }
+
+  transformImage(pic: string) {
+    if (!pic) return '';
+    if (pic.startsWith('data:')) {
+      return this.sanitizer.bypassSecurityTrustUrl(pic);
+    }
+    return pic;
   }
 }

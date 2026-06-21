@@ -10,10 +10,11 @@
 
   <!-- Settings Form Shimmer Skeleton -->
   <div *ngIf="loading" class="settings-form">
+    <!-- Brand Info Skeleton -->
     <div class="form-section skeleton-container">
       <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 24px;">
         <div class="skeleton-item" style="width: 32px; height: 32px; border-radius: 50%;"></div>
-        <div class="skeleton-item" style="width: 250px; height: 1.5rem; border-radius: var(--border-radius-sm);"></div>
+        <div class="skeleton-item" style="width: 180px; height: 1.5rem; border-radius: var(--border-radius-sm);"></div>
       </div>
       <div class="form-grid-side-by-side">
         <div class="form-inputs-col">
@@ -21,19 +22,11 @@
             <div class="skeleton-item" style="width: 120px; height: 0.9rem; margin-bottom: 8px; border-radius: var(--border-radius-sm);"></div>
             <div class="skeleton-item" style="width: 100%; height: 44px; border-radius: var(--border-radius-md);"></div>
           </div>
-          <div class="input-group" style="margin-top: 16px;">
-            <div class="skeleton-item" style="width: 150px; height: 0.9rem; margin-bottom: 8px; border-radius: var(--border-radius-sm);"></div>
-            <div class="skeleton-item" style="width: 100%; height: 44px; border-radius: var(--border-radius-md);"></div>
-          </div>
-          <div class="input-group" style="margin-top: 16px;">
-            <div class="skeleton-item" style="width: 180px; height: 0.9rem; margin-bottom: 8px; border-radius: var(--border-radius-sm);"></div>
-            <div class="skeleton-item" style="width: 100%; height: 120px; border-radius: var(--border-radius-md);"></div>
-          </div>
         </div>
         <div class="form-media-col">
           <div class="input-group">
             <div class="skeleton-item" style="width: 140px; height: 0.9rem; margin-bottom: 8px; border-radius: var(--border-radius-sm);"></div>
-            <div class="skeleton-item" style="width: 100%; max-width: 380px; height: 260px; border-radius: var(--border-radius-lg);"></div>
+            <div class="skeleton-item" style="width: 100%; max-width: 380px; height: 180px; border-radius: var(--border-radius-lg);"></div>
           </div>
         </div>
       </div>
@@ -41,6 +34,43 @@
   </div>
 
   <div *ngIf="!loading" class="settings-form" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+    <!-- Brand Info Section -->
+    <div class="form-section">
+      <div class="form-section-header" style="display: flex; align-items: center; gap: 8px; margin-bottom: 24px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+        <span class="material-symbols-outlined section-icon">info</span>
+        <h3 style="margin: 0;">{{trans.t('INFOS_GENERALES_COOP') || 'Informations Générales'}}</h3>
+      </div>
+      
+      <div class="form-grid-side-by-side">
+        <!-- Left Side: Text Inputs -->
+        <div class="form-inputs-col">
+          <div class="input-group">
+            <label>{{trans.t('NOM_COOPERATIVE') || 'Nom de la Coopérative'}}</label>
+            <input class="text" type="text" [(ngModel)]="config.coopName" placeholder="Ex: Bab Mansour">
+          </div>
+        </div>
+        
+        <!-- Right Side: Image Upload Card -->
+        <div class="form-media-col">
+          <div class="input-group">
+            <label>{{trans.t('LOGO_COOPERATIVE') || 'Logo de la Coopérative'}}</label>
+            <div class="premium-image-card">
+              <div class="image-preview-wrapper checkerboard" style="height: 150px;">
+                <img [src]="transformImage(config.coopLogo)" alt="Coop Logo Preview">
+              </div>
+              <div class="upload-action-bar">
+                <input type="file" id="coop-logo-input" style="display: none;" (change)="onImageChange($event, 'coopLogo')">
+                <label for="coop-logo-input" class="premium-upload-btn" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+                  <span class="material-symbols-outlined">upload</span>
+                  <span>{{trans.t('REMPLACER_LOGO') || 'Remplacer le Logo'}}</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Hero Section Content -->
     <div class="form-section">
       <div class="form-section-header" style="display: flex; align-items: center; gap: 8px; margin-bottom: 24px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">

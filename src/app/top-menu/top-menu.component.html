@@ -1,6 +1,9 @@
 <div id="topMenu">
     <ul id="logo" style="list-style: none;display: inline-block;">
-        <li [routerLink]="log.isntAdmin() ? '/admin/dashboard' : '/'"><img src="../../assets/logo31.png" width="50px" alt=""><a> {{ trans.t('COOPERATIVE') }}</a></li>
+        <li [routerLink]="log.isntAdmin() ? '/admin/dashboard' : '/'">
+            <img [src]="config.coopLogo ? transformImage(config.coopLogo) : '../../assets/logo31.png'" width="50px" alt="Logo" style="object-fit: contain;">
+            <a> {{ config.coopName || trans.t('COOPERATIVE') }}</a>
+        </li>
     </ul>
     <div id="sTopMenu">
         <ul>
