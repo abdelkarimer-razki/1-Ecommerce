@@ -352,6 +352,15 @@
           </label>
           <input class="text" type="number" [(ngModel)]="activeProduct().prixf" placeholder="Ex: 80" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
         </div>
+
+        <!-- Description (FR) -->
+        <div class="input-group">
+          <label style="display: flex; justify-content: space-between;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+            <span>{{trans.t('DESCRIPTION_PRODUIT_LABEL')}} (FR)</span>
+            <span style="font-size: 0.75rem; color: #9ca3af; font-weight: normal;">({{trans.t('OPTIONNEL')}})</span>
+          </label>
+          <textarea class="text textarea" [(ngModel)]="activeProduct().description" [placeholder]="trans.t('SAISIR_DESCRIPTION_PLACEHOLDER')" [style.text-align]="trans.isRtl() ? 'right' : 'left'"></textarea>
+        </div>
       </div>
     </div>
 
@@ -403,15 +412,6 @@
 
     <!-- TAB 3: VARIATIONS & DETAILS -->
     <div class="modal-tab-content" style="display: flex; flex-direction: column; gap: 20px;" *ngIf="activeTab === 'variations'">
-      <!-- Description -->
-      <div class="input-group">
-        <label style="display: flex; justify-content: space-between;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
-          <span>{{trans.t('DESCRIPTION_PRODUIT_LABEL')}} (FR)</span>
-          <span style="font-size: 0.75rem; color: #9ca3af; font-weight: normal;">({{trans.t('OPTIONNEL')}})</span>
-        </label>
-        <textarea class="text textarea" [(ngModel)]="activeProduct().description" [placeholder]="trans.t('SAISIR_DESCRIPTION_PLACEHOLDER')" [style.text-align]="trans.isRtl() ? 'right' : 'left'"></textarea>
-      </div>
-
       <!-- Conditions (Sizes / Prices) -->
       <div class="variations-wrapper">
         <div class="variations-header">
