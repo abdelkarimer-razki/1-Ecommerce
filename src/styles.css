@@ -252,3 +252,108 @@ h1, h2, h3, h4, h5, h6,
 .titleProduit, #logo > li > a {
   font-family: var(--font-serif) !important;
 }
+
+/* Unified Premium Organic Skeleton Shimmer loading system */
+@keyframes skeletonShimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.skeleton-container {
+  display: block;
+  width: 100%;
+}
+
+.skeleton-item {
+  position: relative;
+  overflow: hidden;
+  background: #f1ece4;
+  background-image: linear-gradient(
+    90deg,
+    #f1ece4 0%,
+    #faf7f2 37%,
+    #f1ece4 63%
+  );
+  background-size: 400% 100%;
+  animation: skeletonShimmer 1.5s ease-in-out infinite;
+  border-radius: var(--border-radius-sm);
+  display: inline-block;
+}
+
+/* Spinner for action-based loading inside buttons */
+.spinner-inline {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spinInline 0.8s linear infinite;
+  vertical-align: middle;
+}
+
+@keyframes spinInline {
+  to { transform: rotate(360deg); }
+}
+
+/* Counter loading skeletons */
+.counter-skeleton-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.counter-skeleton {
+  width: 65px;
+  height: 2.5rem;
+  border-radius: var(--border-radius-md);
+}
+
+/* Shopping grid skeleton styles */
+.skeleton-card {
+  pointer-events: none;
+}
+.product-badge-skeleton {
+  width: 70px;
+  height: 1.3rem;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  margin-top: 5px;
+}
+.title-skeleton {
+  width: 80%;
+  height: 1.15rem;
+  border-radius: var(--border-radius-sm);
+  margin-bottom: 10px;
+  margin-top: 5px;
+}
+.price-wrapper-skeleton {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  width: 100%;
+}
+.price-skeleton {
+  width: 60px;
+  height: 1.3rem;
+  border-radius: var(--border-radius-sm);
+}
+.pricef-skeleton {
+  width: 45px;
+  height: 1rem;
+  border-radius: var(--border-radius-sm);
+}
+.action-skeleton {
+  width: 90px;
+  height: 0.9rem;
+  margin-top: 14px;
+  border-radius: var(--border-radius-sm);
+}
+

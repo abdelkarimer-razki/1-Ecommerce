@@ -29,8 +29,30 @@
   <div class="table-card" style="background-color: var(--color-bg-card); border: 1px solid var(--border-color); border-radius: var(--border-radius-lg); padding: 24px; box-shadow: var(--shadow-sm);" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
     <h3 style="font-family: var(--font-serif) !important; font-size: 1.15rem; font-weight: 700; color: var(--color-text-main); margin-top: 0; margin-bottom: 20px;">{{trans.t('CATEGORIES_EXISTANTES')}}</h3>
     
-    <div style="text-align: center; padding: 40px;" *ngIf="loading">
-      <img src="../../assets/loading.gif" alt="Loading..." width="80">
+    <!-- Skeleton table loader -->
+    <div class="orders-table-wrap" *ngIf="loading">
+      <table class="orders-table" style="width: 100%; border-collapse: collapse;" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+        <thead>
+          <tr style="background-color: var(--color-bg-main); border-bottom: 1px solid var(--border-color);">
+            <th style="padding: 14px 18px; width: 40%;"><div class="skeleton-item" style="height: 1.2rem; width: 100px;"></div></th>
+            <th style="padding: 14px 18px; width: 30%; text-align: center;"><div class="skeleton-item" style="height: 1.2rem; width: 80px; margin: 0 auto;"></div></th>
+            <th style="padding: 14px 18px; width: 30%; text-align: right;" [style.text-align]="trans.isRtl() ? 'left' : 'right'"><div class="skeleton-item" style="height: 1.2rem; width: 80px; margin-left: auto;"></div></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let dummy of [1, 2, 3]" style="border-bottom: 1px solid var(--border-color);">
+            <td style="padding: 14px 18px;">
+              <div class="skeleton-item" style="height: 1.6rem; width: 120px; border-radius: 12px;"></div>
+            </td>
+            <td style="padding: 14px 18px; text-align: center;">
+              <div class="skeleton-item" style="height: 1.2rem; width: 35px; margin: 0 auto;"></div>
+            </td>
+            <td style="padding: 14px 18px; text-align: right;" [style.text-align]="trans.isRtl() ? 'left' : 'right'">
+              <div class="skeleton-item" style="height: 1.8rem; width: 90px; margin-left: auto; border-radius: 6px;"></div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
     <div class="orders-table-wrap" *ngIf="!loading">

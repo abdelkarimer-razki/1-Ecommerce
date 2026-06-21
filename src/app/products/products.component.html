@@ -109,7 +109,43 @@
   </div>
 
   <div class="table">
-    <img *ngIf="loading" src="../../assets/loading.gif" alt="" width="150" style="margin-top: 14%;margin-left: 44%;">
+    <!-- Skeleton table loader -->
+    <table *ngIf="loading">
+      <tr id="headerTable" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+        <th><div class="skeleton-item" style="height: 1.2rem; width: 60px;"></div></th>
+        <th><div class="skeleton-item" style="height: 1.2rem; width: 100px;"></div></th>
+        <th><div class="skeleton-item" style="height: 1.2rem; width: 80px;"></div></th>
+        <th><div class="skeleton-item" style="height: 1.2rem; width: 120px;"></div></th>
+        <th><div class="skeleton-item" style="height: 1.2rem; width: 100px;"></div></th>
+        <th><div class="skeleton-item" style="height: 1.2rem; width: 80px;"></div></th>
+        <th style="text-align: right; padding-right: 24px;"><div class="skeleton-item" style="height: 1.2rem; width: 60px; margin-left: auto;"></div></th>
+      </tr>
+
+      <tr class="TableElement" *ngFor="let dummy of [1, 2, 3, 4, 5]">
+        <td>
+          <div class="skeleton-item" style="width: 44px; height: 44px; border-radius: 50%;"></div>
+        </td>
+        <td>
+          <div class="skeleton-item" style="width: 130px; height: 1.2rem; border-radius: var(--border-radius-sm);"></div>
+        </td>
+        <td>
+          <div class="skeleton-item" style="width: 70px; height: 1.5rem; border-radius: 12px;"></div>
+        </td>
+        <td>
+          <div class="skeleton-item" style="width: 150px; height: 1.2rem; border-radius: var(--border-radius-sm);"></div>
+        </td>
+        <td>
+          <div class="skeleton-item" style="width: 90px; height: 1.2rem; border-radius: var(--border-radius-sm);"></div>
+        </td>
+        <td>
+          <div class="skeleton-item" style="width: 80px; height: 1.5rem; border-radius: 12px;"></div>
+        </td>
+        <td>
+          <div class="skeleton-item" style="width: 24px; height: 24px; border-radius: 50%; margin-left: auto; margin-right: 12px;"></div>
+        </td>
+      </tr>
+    </table>
+
     <table *ngIf="!loading">
       <tr id="headerTable" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
         <th>{{trans.t('APERCEVOIR')}}</th>

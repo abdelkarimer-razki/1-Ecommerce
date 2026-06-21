@@ -182,5 +182,17 @@
       <p class="errorP">{{trans.t('AUCUN_PRODUIT')}}</p>
     </div>
   </div>
-  <img *ngIf="loading" class="loadingIcon" src="../../assets/loading.gif" alt="">
+  <!-- Shimmer Skeleton grid -->
+  <div *ngIf="loading" class="produitContainaire skeleton-container">
+    <div *ngFor='let dummy of [1, 2, 3, 4, 5, 6, 7, 8]' class="Products skeleton-card">
+      <div class="productImageWrapper skeleton-item" style="margin-bottom: 20px; width: 100%; height: 200px;"></div>
+      <div class="skeleton-item product-badge-skeleton"></div>
+      <div class="skeleton-item title-skeleton"></div>
+      <div class="price-wrapper-skeleton">
+        <div class="skeleton-item price-skeleton"></div>
+        <div class="skeleton-item pricef-skeleton"></div>
+      </div>
+      <div class="skeleton-item action-skeleton"></div>
+    </div>
+  </div>
 </div>

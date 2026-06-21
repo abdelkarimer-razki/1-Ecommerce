@@ -55,13 +55,17 @@
                 <div class="oHCon">
                     <h3>{{trans.t('SORTES_MIELS')}}</h3>
                     <img src="../../assets/honey3.png" alt="">
-                    <p *ngIf="loading"><img class="loading" src="../../assets/loading.gif" alt=""></p>
+                    <div class="counter-skeleton-wrapper" *ngIf="loading">
+                        <span class="skeleton-item counter-skeleton"></span>
+                    </div>
                     <p class="counter" *ngIf="!loading">{{countH}}</p>
                 </div>
                 <div class="oHCon">
                     <h3>{{trans.t('SORTES_HUILES')}}</h3>
                     <img src="../../assets/oil3.png" alt="">
-                    <p *ngIf="loading"><img class="loading" src="../../assets/loading.gif" alt=""></p>
+                    <div class="counter-skeleton-wrapper" *ngIf="loading">
+                        <span class="skeleton-item counter-skeleton"></span>
+                    </div>
                     <p class="counter" *ngIf="!loading">{{countO}}</p>
                 </div>
             </div>

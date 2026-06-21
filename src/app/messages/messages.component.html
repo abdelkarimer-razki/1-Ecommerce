@@ -7,9 +7,25 @@
     </div>
   </div>
 
-  <!-- LOADING SPINNER -->
-  <div class="loading-wrapper" *ngIf="loading">
-    <img src="../../assets/loading.gif" [alt]="trans.t('CHARGEMENT')">
+  <!-- MESSAGE CARD SKELETONS -->
+  <div class="messages-grid" *ngIf="loading">
+    <div class="message-card skeleton-container" *ngFor="let dummy of [1, 2, 3]">
+      <div class="card-header" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+        <div class="sender-info" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+          <div class="skeleton-item" style="width: 150px; height: 1.15rem; border-radius: var(--border-radius-sm); margin-bottom: 6px;"></div>
+          <div class="skeleton-item" style="width: 100px; height: 0.9rem; border-radius: var(--border-radius-sm);"></div>
+        </div>
+        <div class="header-right" style="display: flex; gap: 12px; align-items: center;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+          <div class="skeleton-item" style="width: 120px; height: 1.25rem; border-radius: 12px;"></div>
+          <div class="skeleton-item" style="width: 32px; height: 32px; border-radius: 6px;"></div>
+        </div>
+      </div>
+      <div class="card-body" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+        <div class="skeleton-item" style="width: 100%; height: 0.95rem; margin-bottom: 8px; border-radius: var(--border-radius-sm);"></div>
+        <div class="skeleton-item" style="width: 90%; height: 0.95rem; margin-bottom: 8px; border-radius: var(--border-radius-sm);"></div>
+        <div class="skeleton-item" style="width: 60%; height: 0.95rem; border-radius: var(--border-radius-sm);"></div>
+      </div>
+    </div>
   </div>
 
   <!-- EMPTY STATE -->

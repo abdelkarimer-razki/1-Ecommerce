@@ -66,9 +66,9 @@
         <h4 class="m-0">{{trans.t('TOTAL')}} :</h4>
         <h4 class="m-0 text-primary font-weight-bold">{{total}} DH</h4>
       </div>
-      <button class="acheter" (click)="achetertous()">
+      <button class="acheter" (click)="achetertous()" [disabled]="achate">
         <span *ngIf="!achate">{{trans.t('FINALISER_ACHAT')}}</span>
-        <img *ngIf="achate" src="../../assets/loading.gif" width="30px" alt="">
+        <span *ngIf="achate" class="spinner-inline"></span>
       </button>
     </div>
   </div>

@@ -1,5 +1,27 @@
 <div id="pagecont" style="flex-direction: column; gap: 40px; justify-content: flex-start; align-items: center; min-height: calc(100vh - 80px); padding: 40px 20px;">
-  <img *ngIf="loading" src="../../assets/loading.gif" class="loadingIcon" alt="">
+  <!-- Detail Page Shimmer Skeleton -->
+  <div *ngIf="loading" id="produit-skeleton" class="skeleton-container">
+    <div class="picture-skeleton skeleton-item"></div>
+    <div class="info-skeleton">
+      <div class="skeleton-item title-line"></div>
+      <div class="skeleton-item desc-line1"></div>
+      <div class="skeleton-item desc-line2"></div>
+      <div class="skeleton-item desc-line3"></div>
+      <div class="skeleton-item input-label-line"></div>
+      <div class="sizes-row">
+        <div class="skeleton-item size-box"></div>
+        <div class="skeleton-item size-box"></div>
+        <div class="skeleton-item size-box"></div>
+      </div>
+      <div class="skeleton-item input-label-line" style="width: 25%;"></div>
+      <div class="skeleton-item qty-line"></div>
+      <div class="skeleton-item price-box"></div>
+      <div class="buttons-row">
+        <div class="skeleton-item btn-skeleton"></div>
+        <div class="skeleton-item cart-skeleton"></div>
+      </div>
+    </div>
+  </div>
   
   <div *ngFor="let item of product" id="produit" [style.display]="loading ? 'none' : 'flex'">
     <div class="picture">
