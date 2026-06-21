@@ -29,8 +29,8 @@
     </div>
     
     <div class="info" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
-      <p class="proname">{{trans.t(item.name)}}</p>
-      <p id="description">{{trans.t(item.description)}}</p>
+      <p class="proname">{{trans.pName(item)}}</p>
+      <p id="description">{{trans.pDesc(item)}}</p>
       
       <div class="inputGroup" *ngIf="item.sizes && item.sizes.length > 0">
         <label>{{trans.t('TAILLE')}}</label>
@@ -75,9 +75,9 @@
     <div class="similar-grid">
       <div *ngFor="let prod of similarProducts" class="similar-card" (click)="viewProduct(prod)">
         <div class="similar-img-wrapper">
-          <img [src]="transform(prod.picture)" alt="{{trans.t(prod.name)}}">
+          <img [src]="transform(prod.picture)" alt="{{trans.pName(prod)}}">
         </div>
-        <p class="similar-name">{{trans.t(prod.name)}}</p>
+        <p class="similar-name">{{trans.pName(prod)}}</p>
         <p class="similar-price">{{prod.prix}} DH</p>
       </div>
     </div>

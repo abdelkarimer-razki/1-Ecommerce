@@ -40,12 +40,121 @@ app.use(cors());
 app.use(express.json());
 app.listen(5000);
 
+// Helper to call google translate API on backend
+async function translateText(text, targetLang) {
+  if (!text || text.trim() === '') return '';
+  const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=fr&tl=${targetLang.toLowerCase()}&dt=t&q=${encodeURIComponent(text)}`;
+  try {
+    const res = await fetch(url);
+    const json = await res.json();
+    if (json && json[0]) {
+      return json[0].map(item => item[0]).join('') || text;
+    }
+    return text;
+  } catch (err) {
+    console.error("Backend translation error:", err);
+    return text;
+  }
+}
+
 async function initCategoriesTable() {
   try {
-    // Add highlighted column if not exists
+    // Add columns if not exists
     await p1.query(`
       ALTER TABLE products ADD COLUMN IF NOT EXISTS highlighted BOOLEAN DEFAULT FALSE
     `);
+    await p1.query(`
+      ALTER TABLE products ADD COLUMN IF NOT EXISTS name_en VARCHAR(255)
+    `);
+    await p1.query(`
+      ALTER TABLE products ADD COLUMN IF NOT EXISTS name_ar VARCHAR(255)
+    `);
+    await p1.query(`
+      ALTER TABLE products ADD COLUMN IF NOT EXISTS description_en TEXT
+    `);
+    await p1.query(`
+      ALTER TABLE products ADD COLUMN IF NOT EXISTS description_ar TEXT
+    `);
+    await p1.query(`
+      ALTER TABLE categories ADD COLUMN IF NOT EXISTS name_en VARCHAR(100)
+    `);
+    await p1.query(`
+      ALTER TABLE categories ADD COLUMN IF NOT EXISTS name_ar VARCHAR(100)
+    `);
+
+    // Migrate translations for existing records in background
+    setTimeout(async () => {
+      try {
+        console.log("Starting backend translation migration for empty DB columns...");
+        
+        // Products translation migration
+        const productsRes = await p1.query("SELECT idproducts, name, description, name_en, name_ar, description_en, description_ar FROM products");
+        for (const row of productsRes.rows) {
+          let needsUpdate = false;
+          let nameEn = row.name_en;
+          let nameAr = row.name_ar;
+          let descEn = row.description_en;
+          let descAr = row.description_ar;
+
+          if (!nameEn) {
+            nameEn = await translateText(row.name, 'en');
+            needsUpdate = true;
+          }
+          if (!nameAr) {
+            nameAr = await translateText(row.name, 'ar');
+            needsUpdate = true;
+          }
+          if (row.description && !descEn) {
+            descEn = await translateText(row.description, 'en');
+            needsUpdate = true;
+          }
+          if (row.description && !descAr) {
+            descAr = await translateText(row.description, 'ar');
+            needsUpdate = true;
+          }
+
+          if (needsUpdate) {
+            await p1.query(
+              "UPDATE products SET name_en=$1, name_ar=$2, description_en=$3, description_ar=$4 WHERE idproducts=$5",
+              [nameEn, nameAr, descEn, descAr, row.idproducts]
+            );
+            console.log(`Migrated translations for product: "${row.name}" -> EN: "${nameEn}", AR: "${nameAr}"`);
+          }
+        }
+
+        // Categories translation migration
+        const categoriesRes = await p1.query("SELECT idcategory, name, name_en, name_ar FROM categories");
+        for (const row of categoriesRes.rows) {
+          let needsUpdate = false;
+          let nameEn = row.name_en;
+          let nameAr = row.name_ar;
+
+          if (!nameEn) {
+            if (row.name === 'MIEL') nameEn = 'Honey';
+            else if (row.name === 'HUILE') nameEn = 'Oil';
+            else nameEn = await translateText(row.name, 'en');
+            needsUpdate = true;
+          }
+          if (!nameAr) {
+            if (row.name === 'MIEL') nameAr = 'عسل';
+            else if (row.name === 'HUILE') nameAr = 'زيت';
+            else nameAr = await translateText(row.name, 'ar');
+            needsUpdate = true;
+          }
+
+          if (needsUpdate) {
+            await p1.query(
+              "UPDATE categories SET name_en=$1, name_ar=$2 WHERE idcategory=$3",
+              [nameEn, nameAr, row.idcategory]
+            );
+            console.log(`Migrated translations for category: "${row.name}" -> EN: "${nameEn}", AR: "${nameAr}"`);
+          }
+        }
+        console.log("Backend translation migration complete!");
+      } catch (err) {
+        console.error("Migration background error:", err);
+      }
+    }, 2000);
 
     await p1.query(`
       CREATE TABLE IF NOT EXISTS categories (
@@ -230,9 +339,27 @@ app.post('/p12',verifyToken,async(req,res)=>{
     await p1.query("INSERT INTO categories (name) VALUES ($1) ON CONFLICT DO NOTHING", [cat.trim().toUpperCase()]);
   }
 
+  let name_en = req.body.name_en;
+  let name_ar = req.body.name_ar;
+  let desc_en = req.body.description_en;
+  let desc_ar = req.body.description_ar;
+
+  if (!name_en || name_en.trim() === '') {
+    name_en = await translateText(name, 'en');
+  }
+  if (!name_ar || name_ar.trim() === '') {
+    name_ar = await translateText(name, 'ar');
+  }
+  if (desc && (!desc_en || desc_en.trim() === '')) {
+    desc_en = await translateText(desc, 'en');
+  }
+  if (desc && (!desc_ar || desc_ar.trim() === '')) {
+    desc_ar = await translateText(desc, 'ar');
+  }
+
   const query = await p1.query(
-    "UPDATE products SET name=$1,description=$2,categorie=$3,mangable=$4,prixf=$5,picture=$7 WHERE idproducts=$6",
-    [name,desc,cat,mange,prixf,id,pic]
+    "UPDATE products SET name=$1,description=$2,categorie=$3,mangable=$4,prixf=$5,picture=$7,name_en=$8,name_ar=$9,description_en=$10,description_ar=$11 WHERE idproducts=$6",
+    [name,desc,cat,mange,prixf,id,pic,name_en,name_ar,desc_en,desc_ar]
   );
 
   await p1.query("DELETE FROM product_sizes WHERE idproducts = $1", [id]);
@@ -273,9 +400,27 @@ app.post('/addpro',verifyToken,async(req,res)=>
     await p1.query("INSERT INTO categories (name) VALUES ($1) ON CONFLICT DO NOTHING", [cat.trim().toUpperCase()]);
   }
 
+  let name_en = req.body.name_en;
+  let name_ar = req.body.name_ar;
+  let desc_en = req.body.description_en;
+  let desc_ar = req.body.description_ar;
+
+  if (!name_en || name_en.trim() === '') {
+    name_en = await translateText(name, 'en');
+  }
+  if (!name_ar || name_ar.trim() === '') {
+    name_ar = await translateText(name, 'ar');
+  }
+  if (desc && (!desc_en || desc_en.trim() === '')) {
+    desc_en = await translateText(desc, 'en');
+  }
+  if (desc && (!desc_ar || desc_ar.trim() === '')) {
+    desc_ar = await translateText(desc, 'ar');
+  }
+
   const query = await p1.query(
-    "INSERT INTO products (name,picture,description,categorie,mangable,prixf) VALUES ($1,$2,$3,$4,$5,$6) RETURNING idproducts",
-    [name,pic,desc,cat,mange,prixf]
+    "INSERT INTO products (name,picture,description,categorie,mangable,prixf,name_en,name_ar,description_en,description_ar) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING idproducts",
+    [name,pic,desc,cat,mange,prixf,name_en,name_ar,desc_en,desc_ar]
   );
   
   const idproducts = query.rows[0].idproducts;

@@ -92,8 +92,12 @@ export class ProductsComponent implements OnInit {
     this.product = {
       idproducts: 0,
       name: "",
+      name_en: "",
+      name_ar: "",
       picture: "",
       description: "",
+      description_en: "",
+      description_ar: "",
       prix: 0,
       categorie: "MIEL",
       mangable: true,
@@ -107,6 +111,18 @@ export class ProductsComponent implements OnInit {
     };
     this.myimage = '';
     this.modalActive = true;
+  }
+
+  autoTranslateProduct() {
+    const active = this.activeProduct();
+    if (active.name && active.name.trim() !== '') {
+      this.trans.translateText(active.name, 'EN').then(res => active.name_en = res);
+      this.trans.translateText(active.name, 'AR').then(res => active.name_ar = res);
+    }
+    if (active.description && active.description.trim() !== '') {
+      this.trans.translateText(active.description, 'EN').then(res => active.description_en = res);
+      this.trans.translateText(active.description, 'AR').then(res => active.description_ar = res);
+    }
   }
 
   openEditModal(prod: any) {

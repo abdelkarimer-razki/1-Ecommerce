@@ -19,6 +19,10 @@ export interface products{
   taille3:String;
   prix2:Number;
   prix3:Number;
+  name_en?: string;
+  name_ar?: string;
+  description_en?: string;
+  description_ar?: string;
   sizes?: ProductSize[];
   highlighted?: boolean;
 }

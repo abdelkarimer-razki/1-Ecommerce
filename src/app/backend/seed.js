@@ -119,7 +119,11 @@ async function main() {
         taille2 VARCHAR(50),
         taille3 VARCHAR(50),
         prix2 NUMERIC DEFAULT 0,
-        prix3 NUMERIC DEFAULT 0
+        prix3 NUMERIC DEFAULT 0,
+        name_en VARCHAR(255),
+        name_ar VARCHAR(255),
+        description_en TEXT,
+        description_ar TEXT
       )
     `);
     console.log('Table "products" verified/created.');
@@ -180,8 +184,12 @@ async function main() {
       const initialProducts = [
         {
           name: "Miel d'Eucalyptus Premium",
+          name_en: "Premium Eucalyptus Honey",
+          name_ar: "عسل الكالبتوس الممتاز",
           picture: mockPic,
           description: "Miel de fleurs d'Eucalyptus pur récolté à froid dans les forêts du Moyen Atlas.",
+          description_en: "Pure Eucalyptus honey cold-harvested in the Middle Atlas forests.",
+          description_ar: "عسل أزهار الكالبتوس الطبيعي المستخلص على البارد من غابات الأطلس المتوسط.",
           prix: 60,
           categorie: "MIEL",
           mangable: true,
@@ -194,8 +202,12 @@ async function main() {
         },
         {
           name: "Miel de Thym Pur",
+          name_en: "Pure Thyme Honey",
+          name_ar: "عسل الزعتر الصافي",
           picture: mockPic,
           description: "Miel de thym sauvage réputé pour sa saveur aromatique forte et ses propriétés antiseptiques.",
+          description_en: "Wild thyme honey renowned for its strong aroma and antiseptic properties.",
+          description_ar: "عسل الزعتر البري المعروف بنكهته العطرية القوية وخصائصه المطهرة.",
           prix: 90,
           categorie: "MIEL",
           mangable: true,
@@ -208,8 +220,12 @@ async function main() {
         },
         {
           name: "Huile d'Argan Alimentaire",
+          name_en: "Culinary Argan Oil",
+          name_ar: "زيت أركان للأكل",
           picture: mockPic,
           description: "Huile d'argan torréfiée traditionnelle bio, au goût subtil de noisette.",
+          description_en: "Traditional organic culinary argan oil, with a subtle hazelnut taste.",
+          description_ar: "زيت الأركان العضوي المحمص التقليدي، بنكهة البندق الخفيفة.",
           prix: 120,
           categorie: "HUILE",
           mangable: true,
@@ -222,8 +238,12 @@ async function main() {
         },
         {
           name: "Huile d'Argan Cosmétique",
+          name_en: "Cosmetic Argan Oil",
+          name_ar: "زيت أركان للتجميل",
           picture: mockPic,
           description: "Huile d'argan pure de première pression à froid, idéale pour l'hydratation de la peau et des cheveux.",
+          description_en: "Pure cosmetic cold-pressed argan oil, ideal for skin and hair hydration.",
+          description_ar: "زيت الأركان النقي من العصرة الأولى على البارد، مثالي لترطيب البشرة والشعر.",
           prix: 80,
           categorie: "HUILE",
           mangable: false,
@@ -236,8 +256,12 @@ async function main() {
         },
         {
           name: "Huile d'Olive Extra Vierge",
+          name_en: "Extra Virgin Olive Oil",
+          name_ar: "زيت الزيتون البكر الممتاز",
           picture: mockPic,
           description: "Huile d'olive vierge extra pressée à froid de la région de Meknès.",
+          description_en: "Extra virgin olive oil cold-pressed from the Meknes region.",
+          description_ar: "زيت زيتون بكر ممتاز معصور على البارد من منطقة مكناس.",
           prix: 40,
           categorie: "HUILE",
           mangable: true,
@@ -252,9 +276,9 @@ async function main() {
 
       for (const p of initialProducts) {
         await pool.query(
-          `INSERT INTO products (name, picture, description, prix, categorie, mangable, prixf, taille, taille2, taille3, prix2, prix3)
-           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
-          [p.name, p.picture, p.description, p.prix, p.categorie, p.mangable, p.prixf, p.taille, p.taille2, p.taille3, p.prix2, p.prix3]
+          `INSERT INTO products (name, picture, description, prix, categorie, mangable, prixf, taille, taille2, taille3, prix2, prix3, name_en, name_ar, description_en, description_ar)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)`,
+          [p.name, p.picture, p.description, p.prix, p.categorie, p.mangable, p.prixf, p.taille, p.taille2, p.taille3, p.prix2, p.prix3, p.name_en, p.name_ar, p.description_en, p.description_ar]
         );
       }
       console.log('Products seeded.');

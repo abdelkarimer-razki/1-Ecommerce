@@ -375,21 +375,10 @@ export class TranslationService {
     'ALIGN_AR': { FR: 'left', EN: 'left', AR: 'right' }
   };
 
-  private dynamicDictionary: { [key: string]: { FR: string; EN: string; AR: string } } = {};
-  private loadingKeys = new Set<string>();
-
   constructor(private appRef: ApplicationRef) {
     const saved = localStorage.getItem('active_lang');
     if (saved === 'EN' || saved === 'AR' || saved === 'FR') {
       this.activeLang.next(saved);
-    }
-    const dynamicSaved = localStorage.getItem('dynamic_dictionary');
-    if (dynamicSaved) {
-      try {
-        this.dynamicDictionary = JSON.parse(dynamicSaved);
-      } catch (e) {
-        this.dynamicDictionary = {};
-      }
     }
   }
 
@@ -417,66 +406,41 @@ export class TranslationService {
       return this.dictionary[upperKey][lang];
     }
 
-    // 2. Check dynamic cache dictionary
-    if (this.dynamicDictionary[key] && this.dynamicDictionary[key][lang]) {
-      return this.dynamicDictionary[key][lang];
-    }
-    if (this.dynamicDictionary[upperKey] && this.dynamicDictionary[upperKey][lang]) {
-      return this.dynamicDictionary[upperKey][lang];
-    }
-
-    // 3. Trigger dynamic translation in background (if lang is not French, key is text, and not loaded yet)
-    if (lang !== 'FR' && isNaN(Number(key)) && key.length > 1) {
-      if (!this.loadingKeys.has(key)) {
-        this.loadingKeys.add(key);
-        this.fetchDynamicTranslation(key);
-      }
-    }
-
     return key;
   }
 
-  private fetchDynamicTranslation(key: string) {
-    const translateText = (text: string, targetLang: string): Promise<string> => {
-      const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=fr&tl=${targetLang.toLowerCase()}&dt=t&q=${encodeURIComponent(text)}`;
-      return fetch(url)
-        .then(res => res.json())
-        .then(json => {
-          try {
-            if (json && json[0]) {
-              return json[0].map((item: any) => item[0]).join('') || text;
-            }
-            return text;
-          } catch (e) {
-            return text;
+  pName(product: any): string {
+    if (!product) return '';
+    const lang = this.getLang();
+    if (lang === 'EN') return product.name_en || product.name;
+    if (lang === 'AR') return product.name_ar || product.name;
+    return product.name;
+  }
+
+  pDesc(product: any): string {
+    if (!product) return '';
+    const lang = this.getLang();
+    if (lang === 'EN') return product.description_en || product.description;
+    if (lang === 'AR') return product.description_ar || product.description;
+    return product.description || '';
+  }
+
+  translateText(text: string, targetLang: string): Promise<string> {
+    if (!text || text.trim() === '') return Promise.resolve('');
+    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=fr&tl=${targetLang.toLowerCase()}&dt=t&q=${encodeURIComponent(text)}`;
+    return fetch(url)
+      .then(res => res.json())
+      .then(json => {
+        try {
+          if (json && json[0]) {
+            return json[0].map((item: any) => item[0]).join('') || text;
           }
-        })
-        .catch(() => text);
-    };
-
-    Promise.all([
-      translateText(key, 'EN'),
-      translateText(key, 'AR')
-    ]).then(([enTranslation, arTranslation]) => {
-      this.dynamicDictionary[key] = {
-        FR: key,
-        EN: enTranslation,
-        AR: arTranslation
-      };
-      
-      const upperKey = key.trim().toUpperCase();
-      this.dynamicDictionary[upperKey] = {
-        FR: key,
-        EN: enTranslation,
-        AR: arTranslation
-      };
-
-      localStorage.setItem('dynamic_dictionary', JSON.stringify(this.dynamicDictionary));
-      
-      // Push event update to reload view bindings
-      this.activeLang.next(this.getLang());
-      this.appRef.tick();
-    });
+          return text;
+        } catch (e) {
+          return text;
+        }
+      })
+      .catch(() => text);
   }
 
   isRtl(): boolean {

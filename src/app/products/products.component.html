@@ -174,7 +174,7 @@
             >
               {{ produit.highlighted ? 'star' : 'star_outline' }}
             </span>
-            <span>{{trans.t(produit.name)}}</span>
+            <span>{{trans.pName(produit)}}</span>
           </div>
         </td>
         <td>
@@ -184,7 +184,7 @@
         </td>
         <td>
           <div class="product-desc-preview" style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--color-text-muted); font-size: 0.85rem;">
-            {{trans.t(produit.description) || '-'}}
+            {{trans.pDesc(produit) || '-'}}
           </div>
         </td>
         <td>
@@ -285,12 +285,26 @@
 
       <!-- Product Name -->
       <div class="input-group">
-        <label style="display: flex; justify-content: space-between;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
-          <span>{{trans.t('NOM_PRODUIT')}} <span style="color: #dc2626;">*</span></span>
-          <span style="font-size: 0.75rem; color: #dc2626; font-weight: normal;">({{trans.t('REQUIS')}})</span>
-        </label>
+        <div style="display: flex; justify-content: space-between; align-items: center;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+          <label style="margin: 0;">{{trans.t('NOM_PRODUIT')}} (FR) <span style="color: #dc2626;">*</span></label>
+          <button type="button" class="btn-action-secondary" (click)="autoTranslateProduct()" style="font-size: 0.8rem; height: 28px; padding: 0 10px; display: inline-flex; align-items: center; gap: 4px; font-weight: 700; border-radius: 4px; border: 1px solid var(--color-primary); color: var(--color-primary); background: none; cursor: pointer;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+            <span class="material-symbols-outlined" style="font-size: 1rem;">g_translate</span> Auto-Translate
+          </button>
+        </div>
         <input class="text" type="text" [(ngModel)]="activeProduct().name" placeholder="Ex: Miel d'Eucalyptus Premium" required [style.text-align]="trans.isRtl() ? 'right' : 'left'" [style.border-color]="productFormSubmitted && (!activeProduct().name || activeProduct().name.trim() === '') ? '#dc2626' : ''">
         <span *ngIf="productFormSubmitted && (!activeProduct().name || activeProduct().name.trim() === '')" style="color: #dc2626; font-size: 0.75rem; display: block; margin-top: 4px; font-weight: 600;">{{trans.t('CHAMP_REQUIS')}}</span>
+      </div>
+
+      <!-- Name Translation inputs -->
+      <div class="form-row" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row' " style="gap: 12px; margin-bottom: 16px;">
+        <div class="input-group" style="flex: 1; margin: 0;">
+          <label>Name (English)</label>
+          <input class="text" type="text" [(ngModel)]="activeProduct().name_en" placeholder="Auto-translated or manual input" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+        </div>
+        <div class="input-group" style="flex: 1; margin: 0;">
+          <label>الاسم (العربية)</label>
+          <input class="text" type="text" [(ngModel)]="activeProduct().name_ar" placeholder="ترجمة تلقائية أو يدوية" style="text-align: right; direction: rtl;">
+        </div>
       </div>
 
       <!-- Categories & Edible Toggles -->
@@ -329,10 +343,22 @@
       <!-- Description -->
       <div class="input-group">
         <label style="display: flex; justify-content: space-between;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
-          <span>{{trans.t('DESCRIPTION_PRODUIT_LABEL')}}</span>
+          <span>{{trans.t('DESCRIPTION_PRODUIT_LABEL')}} (FR)</span>
           <span style="font-size: 0.75rem; color: #9ca3af; font-weight: normal;">({{trans.t('OPTIONNEL')}})</span>
         </label>
         <textarea class="text textarea" [(ngModel)]="activeProduct().description" [placeholder]="trans.t('SAISIR_DESCRIPTION_PLACEHOLDER')" [style.text-align]="trans.isRtl() ? 'right' : 'left'"></textarea>
+      </div>
+
+      <!-- Description Translation inputs -->
+      <div class="form-row" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row' " style="gap: 12px; margin-bottom: 16px;">
+        <div class="input-group" style="flex: 1; margin: 0;">
+          <label>Description (English)</label>
+          <textarea class="text textarea" [(ngModel)]="activeProduct().description_en" placeholder="Auto-translated or manual input" [style.text-align]="trans.isRtl() ? 'right' : 'left'"></textarea>
+        </div>
+        <div class="input-group" style="flex: 1; margin: 0;">
+          <label>الوصف (العربية)</label>
+          <textarea class="text textarea" [(ngModel)]="activeProduct().description_ar" placeholder="ترجمة تلقائية أو يدوية" style="text-align: right; direction: rtl;"></textarea>
+        </div>
       </div>
 
       <!-- Strike-through Original Price -->
@@ -406,7 +432,7 @@
 
     <!-- Product name -->
     <div style="text-align: center;">
-      <h4 style="font-family: var(--font-serif) !important; font-size: 1.5rem; font-weight: 700; color: var(--color-text-main); margin-bottom: 8px;">{{trans.t(viewedProduct.name)}}</h4>
+      <h4 style="font-family: var(--font-serif) !important; font-size: 1.5rem; font-weight: 700; color: var(--color-text-main); margin-bottom: 8px;">{{trans.pName(viewedProduct)}}</h4>
       <div style="display: flex; justify-content: center; gap: 8px; align-items: center;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
         <label class="tickets huile" *ngIf="viewedProduct.categorie == 'HUILE'">{{trans.t('HUILE')}}</label>
         <label class="tickets miel" *ngIf="viewedProduct.categorie == 'MIEL'">{{trans.t('MIEL')}}</label>
@@ -423,7 +449,7 @@
     <div>
       <span style="font-size: 0.8rem; font-weight: 700; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 6px;">{{trans.t('DESCRIPTION')}}</span>
       <p style="font-size: 0.9rem; color: var(--color-text-main); line-height: 1.5; margin: 0; background-color: var(--color-bg-main); border-radius: var(--border-radius-md); padding: 12px; border: 1px solid var(--border-color);">
-        {{trans.t(viewedProduct.description) || trans.t('AUCUNE_DESCRIPTION')}}
+        {{trans.pDesc(viewedProduct) || trans.t('AUCUNE_DESCRIPTION')}}
       </p>
     </div>
 
@@ -475,7 +501,7 @@
     <div>
       <h4 style="font-family: var(--font-serif) !important; font-size: 1.25rem; font-weight: 700; color: var(--color-text-main); margin-bottom: 8px;">{{trans.t('SUPPRIMER_PRODUIT_QUESTION')}}</h4>
       <p style="font-size: 0.95rem; color: var(--color-text-muted); line-height: 1.5; margin: 0;">
-        {{trans.t('SUPPRIMER_PRODUIT_WARN_START')}}<strong style="color: var(--color-text-main);">"{{trans.t(deletingProduct.name)}}"</strong>{{trans.t('SUPPRIMER_PRODUIT_WARN_END')}}
+        {{trans.t('SUPPRIMER_PRODUIT_WARN_START')}}<strong style="color: var(--color-text-main);">"{{trans.pName(deletingProduct)}}"</strong>{{trans.t('SUPPRIMER_PRODUIT_WARN_END')}}
       </p>
     </div>
   </div>

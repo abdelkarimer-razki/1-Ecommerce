@@ -25,10 +25,10 @@
           </div>
 
           <!-- Large serif title -->
-          <h2 class="spotlight-title">{{trans.t(item.name)}}</h2>
+          <h2 class="spotlight-title">{{trans.pName(item)}}</h2>
 
           <!-- Description -->
-          <p class="spotlight-desc">{{trans.t(item.description) || trans.t('PRODUIT_EXCEPTIONNEL_DEFAULT')}}</p>
+          <p class="spotlight-desc">{{trans.pDesc(item) || trans.t('PRODUIT_EXCEPTIONNEL_DEFAULT')}}</p>
 
           <!-- Price -->
           <div class="spotlight-price-row">
@@ -163,10 +163,10 @@
   <div *ngIf="!loading" class="produitContainaire">
     <div *ngFor='let item of products' class="Products reveal" (click)="routerBuyProduct(item)">
       <div class="productImageWrapper">
-        <img [src]="transform(item.picture)" alt="{{trans.t(item.name)}}">
+        <img [src]="transform(item.picture)" alt="{{trans.pName(item)}}">
       </div>
       <span class="productBadge" *ngIf="item.categorie">{{trans.t(item.categorie)}}</span>
-      <p class="titleProduit">{{trans.t(item.name)}}</p>
+      <p class="titleProduit">{{trans.pName(item)}}</p>
       <div class="priceWrapper">
         <span class="titlePrix">{{item.prix}} DH</span>
         <span class="titlePrixf" *ngIf="item.prixf!=0">{{item.prixf}} DH</span>
