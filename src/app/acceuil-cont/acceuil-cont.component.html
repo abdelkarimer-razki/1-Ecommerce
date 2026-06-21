@@ -10,10 +10,12 @@
                 <p class="heroDescription">
                     {{ config.heroDescription }}
                 </p>
-                <div id="bt" routerLink="/shopping" [style.float]="trans.isRtl() ? 'right' : 'left'">
-                    <a id="btText">
-                        {{trans.t('DECOUVRIR_BOUTIQUE')}} <span class="material-symbols-outlined" [style.transform]="trans.isRtl() ? 'rotate(180deg)' : 'none'">arrow_right_alt</span>
-                    </a>
+                <div class="hero-cta-wrapper" style="display: flex; width: 100%; margin-top: 20px;" [style.justify-content]="trans.isRtl() ? 'flex-end' : 'flex-start'">
+                    <div id="bt" routerLink="/shopping">
+                        <a id="btText">
+                            {{trans.t('DECOUVRIR_BOUTIQUE')}} <span class="material-symbols-outlined" [style.transform]="trans.isRtl() ? 'rotate(180deg)' : 'none'">arrow_right_alt</span>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
