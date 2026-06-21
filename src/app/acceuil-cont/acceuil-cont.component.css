@@ -670,7 +670,22 @@
     text-align: center;
   }
   .principlesGrid {
-    gap: 20px;
+    display: flex;
+    flex-direction: row !important;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 16px;
+    padding: 10px 4px 20px 4px;
+    width: 100%;
+    scrollbar-width: none;
+  }
+  .principlesGrid::-webkit-scrollbar {
+    display: none;
+  }
+  .principlesGrid .Con {
+    flex: 0 0 85%;
+    scroll-snap-align: center;
+    box-shadow: var(--shadow-md);
   }
   .Con > p {
     margin: 0 16px 20px 16px;
@@ -687,8 +702,32 @@
     height: 180px;
   }
   .statsWrapper {
-    flex-direction: column;
-    gap: 20px;
+    flex-direction: row !important;
+    gap: 12px;
+    width: 100%;
+  }
+  .statsWrapper .oHCon {
+    padding: 18px 12px 16px 12px;
+  }
+  .statsWrapper .stat-icon-wrapper {
+    width: 48px;
+    height: 48px;
+    margin: 10px auto;
+  }
+  .statsWrapper .stat-icon-wrapper img {
+    width: 24px;
+    height: 24px;
+  }
+  .statsWrapper .stat-number {
+    font-size: 1.5rem !important;
+  }
+  .statsWrapper .stat-desc {
+    font-size: 0.72rem;
+    line-height: 1.3;
+    margin-top: 4px;
+  }
+  .statsWrapper .oHCon > h3 {
+    font-size: 0.75rem;
   }
   .ConBottom {
     padding: 20px 16px;

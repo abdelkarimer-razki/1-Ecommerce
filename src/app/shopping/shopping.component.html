@@ -97,10 +97,15 @@
           </ul>
         </div>
       </div>
+      <button class="mobile-filter-toggle-btn" (click)="toggleMobileFilters()">
+        <span class="material-symbols-outlined">tune</span>
+        <span>{{trans.t('FILTRER_TRIER')}}</span>
+        <span class="material-symbols-outlined toggle-chevron">{{ showMobileFilters ? 'expand_less' : 'expand_more' }}</span>
+      </button>
     </div>
 
     <!-- Bottom Row: Category, Type, Promo, Price Range, Sort By, Reset -->
-    <div class="filter-row-bottom">
+    <div class="filter-row-bottom" [class.expanded]="showMobileFilters">
       <!-- Category selector -->
       <div class="filter-group">
         <label for="shopper-filter-category"><span class="material-symbols-outlined filter-icon">category</span>{{trans.t('CATEGORIES')}}</label>

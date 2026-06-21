@@ -40,6 +40,7 @@ export class TranslationService {
     'NOM_AZ': { FR: 'Nom (A-Z)', EN: 'Name (A-Z)', AR: 'الاسم (أ-ي)' },
     'NOM_ZA': { FR: 'Nom (Z-A)', EN: 'Name (Z-A)', AR: 'الاسم (ي-أ)' },
     'REINITIALISER': { FR: 'Réinitialiser', EN: 'Reset', AR: 'إعادة تعيين' },
+    'FILTRER_TRIER': { FR: 'Filtrer & Trier', EN: 'Filter & Sort', AR: 'تصفية وترتيب' },
     'RECHERCHER_PLACEHOLDER': { FR: 'Rechercher par nom ou description (ex: Miel...)', EN: 'Search by name or description (e.g. Honey...)', AR: 'ابحث بالاسم أو الوصف (مثال: عسل...)' },
 
     // Shopping List / Catalog

@@ -38,6 +38,12 @@ export class ShoppingComponent implements OnInit, OnDestroy {
   showSuggestions: boolean = false;
   activeSuggestionIndex: number = -1;
 
+  showMobileFilters: boolean = false;
+
+  toggleMobileFilters(): void {
+    this.showMobileFilters = !this.showMobileFilters;
+  }
+
   constructor(
     private shop: ShoppingserviceService, 
     private sanitizer: DomSanitizer, 
