@@ -884,5 +884,8 @@
   .filter-panel.shopper-filters .btn-reset-filters {
     width: 100%;
   }
+  .action-skeleton {
+    display: none !important;
+  }
 }
 

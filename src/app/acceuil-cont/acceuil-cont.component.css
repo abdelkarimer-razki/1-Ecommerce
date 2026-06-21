@@ -658,6 +658,34 @@
   #title > p:first-child {
     font-size: 2.2rem;
   }
+  #title > p:nth-child(2) {
+    font-size: 0.95rem;
+    margin-bottom: 12px;
+    letter-spacing: 1px;
+  }
+  .heroDescription {
+    font-size: 0.88rem;
+    line-height: 1.5;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  .principlesGrid {
+    gap: 20px;
+  }
+  .Con > p {
+    margin: 0 16px 20px 16px;
+    padding: 16px 12px;
+    font-size: 0.85rem;
+  }
+  .Con > h3 {
+    margin-top: 18px;
+    margin-bottom: 8px;
+    padding: 0 16px;
+    font-size: 1.2rem;
+  }
+  .Con > img {
+    height: 180px;
+  }
   .statsWrapper {
     flex-direction: column;
     gap: 20px;
