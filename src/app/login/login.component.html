@@ -1,32 +1,61 @@
-<div class="pageContanaire">
-  <div class="connexionDetails" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
-    <h2 class="title" [style.text-align]="trans.isRtl() ? 'right' : 'left'">{{trans.t('CONNEXION')}}</h2>
-    
-    <div class="errorMsg" *ngIf="incorect" [style.direction]="trans.isRtl() ? 'rtl' : 'ltr'">
-      <span class="material-symbols-outlined" style="font-size: 1.1rem; margin-right: 4px;">error</span> {{trans.t('LOGIN_ERROR')}}
+<div class="login-page-container" [style.direction]="trans.isRtl() ? 'rtl' : 'ltr'">
+  <div class="login-card-wrapper">
+    <div class="login-card">
+      <!-- Left side: visual pane -->
+      <div class="login-visual-pane" style="background-image: url('assets/coop_honey_harvest.jpg');">
+        <div class="visual-overlay"></div>
+        <div class="visual-content">
+          <div class="logo-wrapper">
+            <img src="assets/logo31.png" alt="Coop Logo">
+          </div>
+          <h2 class="brand-title">Bab Mansour</h2>
+          <p class="brand-subtitle">{{trans.t('COOPERATIVE')}}</p>
+          <div class="visual-divider"></div>
+          <p class="brand-tagline">Espace d'administration sécurisé pour la gestion de la coopérative, des ventes et du catalogue de produits.</p>
+        </div>
+      </div>
+      
+      <!-- Right side: form pane -->
+      <div class="login-form-pane" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+        <div class="form-header">
+          <h2 class="form-title">{{trans.t('CONNEXION')}}</h2>
+          <p class="form-subtitle">Veuillez vous connecter pour accéder au tableau de bord.</p>
+        </div>
+
+        <div class="errorMsg" *ngIf="incorect" [style.direction]="trans.isRtl() ? 'rtl' : 'ltr'">
+          <span class="material-symbols-outlined" style="font-size: 1.15rem;">error</span> 
+          <span>{{trans.t('LOGIN_ERROR')}}</span>
+        </div>
+
+        <div class="form-inputs">
+          <div class="inputGroup">
+            <label style="display: flex; justify-content: space-between;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+              <span>{{trans.t('EMAIL_TEL_LABEL')}} <span style="color: #dc2626;">*</span></span>
+            </label>
+            <div class="input-wrapper">
+              <span class="material-symbols-outlined input-icon" [style.left]="trans.isRtl() ? 'auto' : '14px'" [style.right]="trans.isRtl() ? '14px' : 'auto'">mail</span>
+              <input type="text" [(ngModel)]="user.email" (ngModelChange)="test()" placeholder="Ex: example@email.com ou 0600000000" [style.border-color]="loginFormSubmitted && !user.email ? '#dc2626' : ''" [style.text-align]="trans.isRtl() ? 'right' : 'left'" [style.padding-left]="trans.isRtl() ? '14px' : '42px'" [style.padding-right]="trans.isRtl() ? '42px' : '14px'">
+            </div>
+            <span *ngIf="loginFormSubmitted && !user.email" style="color: #dc2626; font-size: 0.75rem; display: block; margin-top: 4px; font-weight: 600;">{{trans.t('CHAMP_REQUIS')}}</span>
+          </div>
+
+          <div class="inputGroup">
+            <label style="display: flex; justify-content: space-between;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+              <span>{{trans.t('PASSWORD_LABEL')}} <span style="color: #dc2626;">*</span></span>
+            </label>
+            <div class="input-wrapper">
+              <span class="material-symbols-outlined input-icon" [style.left]="trans.isRtl() ? 'auto' : '14px'" [style.right]="trans.isRtl() ? '14px' : 'auto'">lock</span>
+              <input type="password" [(ngModel)]="password" (ngModelChange)="test()" placeholder="••••••••" [style.border-color]="loginFormSubmitted && !password ? '#dc2626' : ''" [style.text-align]="trans.isRtl() ? 'right' : 'left'" [style.padding-left]="trans.isRtl() ? '14px' : '42px'" [style.padding-right]="trans.isRtl() ? '42px' : '14px'">
+            </div>
+            <span *ngIf="loginFormSubmitted && !password" style="color: #dc2626; font-size: 0.75rem; display: block; margin-top: 4px; font-weight: 600;">{{trans.t('CHAMP_REQUIS')}}</span>
+          </div>
+        </div>
+
+        <button class="connecter-btn" (click)="connect()" [ngClass]="{buttoninv: emailinv}" id="connecter" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+          <span>{{trans.t('SE_CONNECTER')}}</span>
+          <span class="material-symbols-outlined">login</span>
+        </button>
+      </div>
     </div>
-
-    <div class="inputGroup">
-      <label style="display: flex; justify-content: space-between;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
-        <span>{{trans.t('EMAIL_TEL_LABEL')}} <span style="color: #dc2626;">*</span></span>
-        <span style="font-size: 0.75rem; color: #dc2626; font-weight: normal;">({{trans.t('REQUIS')}})</span>
-      </label>
-      <input type="text" [(ngModel)]="user.email" (ngModelChange)="test()" placeholder="Ex: example@email.com ou 0600000000" [style.border-color]="loginFormSubmitted && !user.email ? '#dc2626' : ''" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
-      <span *ngIf="loginFormSubmitted && !user.email" style="color: #dc2626; font-size: 0.75rem; display: block; margin-top: 4px; font-weight: 600;">{{trans.t('CHAMP_REQUIS')}}</span>
-    </div>
-
-    <div class="inputGroup">
-      <label style="display: flex; justify-content: space-between;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
-        <span>{{trans.t('PASSWORD_LABEL')}} <span style="color: #dc2626;">*</span></span>
-        <span style="font-size: 0.75rem; color: #dc2626; font-weight: normal;">({{trans.t('REQUIS')}})</span>
-      </label>
-      <input type="password" [(ngModel)]="password" (ngModelChange)="test()" placeholder="••••••••" [style.border-color]="loginFormSubmitted && !password ? '#dc2626' : ''" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
-      <span *ngIf="loginFormSubmitted && !password" style="color: #dc2626; font-size: 0.75rem; display: block; margin-top: 4px; font-weight: 600;">{{trans.t('CHAMP_REQUIS')}}</span>
-    </div>
-
-    <button class="connecter" (click)="connect()" [ngClass]="{buttoninv: emailinv}" id="connecter">
-      {{trans.t('SE_CONNECTER')}} <span class="material-symbols-outlined">login</span>
-    </button>
-
   </div>
 </div>
