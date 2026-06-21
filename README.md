@@ -18,9 +18,15 @@ Cette plateforme intègre une boutique en ligne haut de gamme pour les clients a
 *   **Tableau de Bord des Produits** :
     *   Affichage en liste épurée avec aperçus en miniatures circulaires.
     *   Popup de détails ("View") moderne et centré.
-    *   Formulaires d'ajout et de modification sous forme de modals centrés.
+    *   Formulaires d'ajout et de modification sous forme de modals centrés avec onglets interactifs (*Détails*, *Traductions*, *Variations & Tarifs*).
+*   **Formulaire Produit Ergonomique (Design Côte-à-Côte)** : 
+    *   Mise en page épurée sur deux colonnes (détourage d'image sur la gauche, informations textuelles et description sur la droite) pour réduire la hauteur de défilement.
+    *   Tableau de variations fluide avec en-têtes fixes, évitant la répétition fastidieuse des libellés de champs.
+*   **Traduction Automatique Intelligente (Smart Auto-Translate)** :
+    *   Traduction à la volée en un clic des fiches produits (Nom et Description) en anglais et en arabe directement depuis l'onglet *Traductions*.
+    *   Pipeline de traduction automatique côté serveur (Node.js/Express) qui complète automatiquement les champs de langue vides lors de la création ou mise à jour de produits et de catégories.
 *   **Gestion Multi-Variations (Tailles & Prix)** : Gestion en base de données permettant de lier plusieurs déclinaisons de conditionnement (ex: 250g, 500g, 1L) avec des prix distincts pour un seul produit.
-*   **Création Dynamique de Catégories** : Possibilité de créer des catégories personnalisées à la volée directement depuis le formulaire produit.
+*   **Création Dynamique de Catégories** : Possibilité de créer des catégories personnalisées à la volée directement depuis le formulaire produit, avec traduction automatique automatique de leur nom en base de données.
 *   **Détourage Intelligent des Photos (Background Remover)** : Un outil de détourage intégré basé sur le canvas HTML5. Supprimez instantanément les arrière-plans des images importées grâce à un curseur de sensibilité (tolérance) interactif.
 *   **Configuration du Site (Settings)** : Modification dynamique des textes statiques du site (titres, description de l'histoire) et des bannières/images directement depuis l'interface d'administration.
 *   **Suivi des Commandes** : Visualisation en temps réel des commandes clients passées avec le détail des produits achetés.
