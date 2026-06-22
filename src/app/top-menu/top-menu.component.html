@@ -29,8 +29,78 @@
               </select>
             </li>
             <li class="menuElements" id="settings" (click)="showMenu()" *ngIf="log.isToken()"><span class="material-symbols-outlined">account_circle</span></li>
+            
+            <!-- Burger Menu toggle button -->
+            <li class="menuElements burger-toggle" (click)="toggleMobileMenu()">
+              <span class="material-symbols-outlined">{{ mobileMenuOpen ? 'close' : 'menu' }}</span>
+            </li>
         </ul>
     </div>
+</div>
+
+<!-- Mobile Drawer / Dropdown Menu -->
+<div id="mobileMenu" *ngIf="mobileMenuOpen">
+  <ul>
+    <!-- Public navigation links -->
+    <li routerLink="/" (click)="toggleMobileMenu()" *ngIf="!log.isntAdmin()">
+      <span class="material-symbols-outlined">shopping_bag</span>
+      <a>{{ trans.t('SHOPPING') }}</a>
+    </li>
+    <li routerLink="/about" (click)="toggleMobileMenu()" *ngIf="!log.isntAdmin()">
+      <span class="material-symbols-outlined">info</span>
+      <a>{{ trans.t('ACCUEIL') }}</a>
+    </li>
+    <!-- Admin dashboard link -->
+    <li routerLink="/admin/dashboard" (click)="toggleMobileMenu()" *ngIf="log.isntAdmin()">
+      <span class="material-symbols-outlined">analytics</span>
+      <a>{{ trans.t('DASHBOARD') }}</a>
+    </li>
+
+    <div class="divider"></div>
+
+    <!-- Anonymous users authentication links -->
+    <ng-container *ngIf="!log.isToken()">
+      <li routerLink="/connexion" (click)="toggleMobileMenu()">
+        <span class="material-symbols-outlined">login</span>
+        {{ trans.t('CONNEXION') }}
+      </li>
+      <li routerLink="/inscrire" (click)="toggleMobileMenu()">
+        <span class="material-symbols-outlined">person_add</span>
+        {{ trans.t('INSCRIPTION') }}
+      </li>
+    </ng-container>
+
+    <!-- Logged in users custom links -->
+    <ng-container *ngIf="log.isToken()">
+      <p class="mobile-username">{{name}}</p>
+      <p class="mobile-email">{{email}}</p>
+      <div class="divider"></div>
+      
+      <li routerLink="/cart" (click)="toggleMobileMenu()" *ngIf="log.isuser()">
+        <span class="material-symbols-outlined">local_mall</span>
+        {{ trans.t('MES_COMMANDES') }}
+      </li>
+      <li (click)="log.logout(); toggleMobileMenu()" routerLink="/">
+        <span class="material-symbols-outlined">logout</span>
+        {{ trans.t('DECONNEXION') }}
+      </li>
+    </ng-container>
+
+    <div class="divider"></div>
+
+    <!-- Language selector inside mobile menu -->
+    <li class="mobile-lang-selector-li">
+      <span class="material-symbols-outlined">language</span>
+      <select 
+        [ngModel]="trans.getLang()" 
+        (ngModelChange)="trans.setLang($event)" 
+      >
+        <option value="FR">FR</option>
+        <option value="EN">EN</option>
+        <option value="AR">العربية</option>
+      </select>
+    </li>
+  </ul>
 </div>
 <div id="menuMore" *ngIf="menuMore">
   <ul>

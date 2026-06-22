@@ -13,6 +13,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 })
 export class TopMenuComponent implements OnInit {
   menuMore: boolean = false;
+  mobileMenuOpen: boolean = false;
   name: any;
   email: any;
   cartCount: number = 0;
@@ -54,8 +55,13 @@ export class TopMenuComponent implements OnInit {
     this.menuMore = !this.menuMore;
   }
 
+  toggleMobileMenu() {
+    this.mobileMenuOpen = !this.mobileMenuOpen;
+  }
+
   disableMenu() {
     this.menuMore = false;
+    this.mobileMenuOpen = false;
   }
 
   transformImage(pic: string) {
