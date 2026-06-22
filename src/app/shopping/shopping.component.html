@@ -166,7 +166,7 @@
   </div>
 
   <div *ngIf="!loading" class="produitContainaire">
-    <div *ngFor='let item of products' class="Products reveal" (click)="routerBuyProduct(item)">
+    <div *ngFor='let item of products' class="Products" (click)="routerBuyProduct(item)">
       <div class="productImageWrapper">
         <img [src]="transform(item.picture)" alt="{{trans.pName(item)}}">
       </div>
