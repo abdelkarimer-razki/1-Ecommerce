@@ -52,6 +52,10 @@
             <label>{{trans.t('LOCALISATION_COOPERATIVE') || 'Localisation de la Coopérative'}}</label>
             <input class="text" type="text" [(ngModel)]="config.coopLocation" placeholder="Ex: Taroudant, Maroc">
           </div>
+          <div class="input-group" style="margin-top: 16px;">
+            <label>{{trans.t('LIEN_LOCALISATION_COOPERATIVE') || 'Lien Google Maps de la Coopérative'}}</label>
+            <input class="text" type="text" [(ngModel)]="config.coopLocationLink" placeholder="Ex: https://goo.gl/maps/... ou https://maps.google.com/...">
+          </div>
         </div>
         
         <!-- Right Side: Image Upload Card -->

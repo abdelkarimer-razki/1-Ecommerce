@@ -831,6 +831,16 @@
   margin: 0;
 }
 
+.story-location {
+  transition: var(--transition-smooth);
+  cursor: pointer;
+}
+
+.story-location:hover {
+  color: var(--color-primary) !important;
+  transform: translateY(-1px);
+}
+
 /* ── Nos Engagements Section ── */
 .page-commitments {
   padding: 80px 8%;
