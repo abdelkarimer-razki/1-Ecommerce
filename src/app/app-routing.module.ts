@@ -21,7 +21,8 @@ import { MessagesComponent } from './messages/messages.component';
 
 const routes: Routes = [
   {path:'shopping',component:ShoppingComponent},
-  {path:'',component:AcceuilContComponent},
+  {path:'about',component:AcceuilContComponent},
+  {path:'',component:ShoppingComponent},
   {path:'cart',component:AproposComponent,canActivate:[ConnectedGuard]},
   {path:'checkout',component:CheckoutComponent},
   {path:'produit/:idproducts',component:BuyproductComponent},

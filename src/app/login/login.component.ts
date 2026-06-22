@@ -80,7 +80,7 @@ export class LoginComponent implements OnInit {
           });
           localStorage.setItem("#bsXpEcIouiz","UF7wcFy9rl&wv$adaLGkkJ@0KX$wWKTt*")
         }else{
-          this.router.navigate(['/shopping']).then(()=>{
+          this.router.navigate(['/']).then(()=>{
             window.location.reload();
           });
         }

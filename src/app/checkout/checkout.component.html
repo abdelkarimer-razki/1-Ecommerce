@@ -6,7 +6,7 @@
     </div>
     <h1>{{trans.t('PANIER_VIDE_TITLE')}}</h1>
     <p>{{trans.t('PANIER_VIDE_SUB')}}</p>
-    <button class="btn-primary" routerLink="/shopping">
+    <button class="btn-primary" routerLink="/">
       <span class="material-symbols-outlined">storefront</span>
       {{trans.t('VOIR_BOUTIQUE')}}
     </button>
@@ -19,7 +19,7 @@
     </div>
     <h1>{{trans.t('COMMANDE_CONFIRMEE')}}</h1>
     <p>{{trans.t('COMMANDE_SUCCES_TEXT')}}</p>
-    <button class="btn-primary" routerLink="/shopping">
+    <button class="btn-primary" routerLink="/">
       <span class="material-symbols-outlined">storefront</span>
       {{trans.t('CONTINUER_ACHATS')}}
     </button>
@@ -124,7 +124,7 @@
         </div>
 
         <div class="checkout-actions">
-          <button type="button" class="btn-back" routerLink="/shopping">
+          <button type="button" class="btn-back" routerLink="/">
             <span class="material-symbols-outlined" [style.transform]="trans.isRtl() ? 'rotate(180deg)' : 'none'">arrow_back</span>
             {{trans.t('CONTINUER_ACHATS')}}
           </button>
