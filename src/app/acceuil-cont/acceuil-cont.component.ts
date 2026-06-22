@@ -64,7 +64,7 @@ export class AcceuilContComponent implements OnInit {
 
   ngOnInit(): void {
     this.getCountOil();
-    this.titleService.setTitle("COOP BABMANSOUR");
+    this.titleService.setTitle(this.trans.getLang() === 'AR' ? 'من نحن - تعاونية باب منصور' : this.trans.getLang() === 'EN' ? 'About Us - Bab Mansour Cooperative' : 'À Propos - Coopérative Bab Mansour');
     this.getCountHoney();
     this.loadConfig();
   }

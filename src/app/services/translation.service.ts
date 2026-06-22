@@ -11,7 +11,7 @@ export class TranslationService {
   private dictionary: { [key: string]: { FR: string; EN: string; AR: string } } = {
     // Top menu / navbar
     'COOPERATIVE': { FR: 'COOPÉRATIVE BAB MANSOUR', EN: 'BAB MANSOUR COOPERATIVE', AR: 'تعاونية باب منصور' },
-    'ACCUEIL': { FR: 'Accueil', EN: 'Home', AR: 'الرئيسية' },
+    'ACCUEIL': { FR: 'À Propos', EN: 'About Us', AR: 'من نحن' },
     'SHOPPING': { FR: 'Shopping', EN: 'Shopping', AR: 'المتجر' },
     'DASHBOARD': { FR: 'Dashboard', EN: 'Dashboard', AR: 'لوحة التحكم' },
     'CONNEXION': { FR: 'Connexion', EN: 'Login', AR: 'تسجيل الدخول' },
