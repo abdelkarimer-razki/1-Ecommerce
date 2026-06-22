@@ -59,12 +59,8 @@
     <!-- Section: Notre Histoire (Brand Story) -->
     <div class="page-story reveal active" id="storySection" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
         <div class="story-content" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
-            <div class="story-tag-row" style="display: flex; justify-content: space-between; align-items: center; width: 100%;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+            <div class="story-tag-row" style="display: flex; align-items: center; width: 100%;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
                 <span class="story-tag">{{trans.t('NOTRE_HISTOIRE')}}</span>
-                <a class="story-location" *ngIf="config.coopLocation || trans.t('DEFAULT_LOCATION')" [href]="config.coopLocationLink || 'https://maps.google.com/?q=' + (config.coopLocation || trans.t('DEFAULT_LOCATION'))" target="_blank" rel="noopener noreferrer" style="font-size: 0.85rem; font-weight: 700; color: var(--color-text-light); display: flex; align-items: center; gap: 4px; text-decoration: none;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
-                    <span class="material-symbols-outlined" style="font-size: 1.15rem; color: var(--color-primary);">location_on</span>
-                    {{config.coopLocation || trans.t('DEFAULT_LOCATION')}}
-                </a>
             </div>
             <h2>{{config.storyTitle || trans.t('NOTRE_HISTOIRE_TITLE')}}</h2>
             <p class="story-text">{{config.storyDescription1 || trans.t('NOTRE_HISTOIRE_DESC1')}}</p>
@@ -159,6 +155,20 @@
                 </div>
             </div>
             <div class="ConBottom">
+                <!-- Location Info Row -->
+                <div class="location-row" *ngIf="config.coopLocation || trans.t('DEFAULT_LOCATION')" style="display: flex; align-items: center; gap: 16px; margin-bottom: 12px; padding-bottom: 16px; border-bottom: 1px dashed var(--border-color);" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+                    <a class="location-icon-link" [href]="config.coopLocationLink || 'https://maps.google.com/?q=' + (config.coopLocation || trans.t('DEFAULT_LOCATION'))" target="_blank" rel="noopener noreferrer" style="text-decoration: none; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 50%; background-color: var(--color-primary-light); border: 1px dashed rgba(180, 83, 9, 0.25); color: var(--color-primary); flex-shrink: 0;">
+                        <span class="material-symbols-outlined" style="font-size: 1.35rem;">location_on</span>
+                    </a>
+                    <div class="location-text" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+                        <label style="font-family: var(--font-serif) !important; font-size: 1.15rem; font-weight: 700; color: var(--color-text-main); margin: 0; display: block;">{{trans.t('NOTRE_LOCALISATION')}}</label>
+                        <a [href]="config.coopLocationLink || 'https://maps.google.com/?q=' + (config.coopLocation || trans.t('DEFAULT_LOCATION'))" target="_blank" rel="noopener noreferrer" class="location-link-text" style="font-size: 0.85rem; color: var(--color-text-muted); text-decoration: none; font-weight: 600; transition: var(--transition-smooth);">
+                            {{config.coopLocation || trans.t('DEFAULT_LOCATION')}}
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Social Header & Networks -->
                 <div class="social-header" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
                     <span class="material-symbols-outlined social-main-icon">share</span>
                     <div class="social-header-text" [style.text-align]="trans.isRtl() ? 'right' : 'left'">

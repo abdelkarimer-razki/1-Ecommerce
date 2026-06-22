@@ -831,14 +831,22 @@
   margin: 0;
 }
 
-.story-location {
+.location-link-text {
   transition: var(--transition-smooth);
-  cursor: pointer;
 }
 
-.story-location:hover {
+.location-link-text:hover {
   color: var(--color-primary) !important;
-  transform: translateY(-1px);
+}
+
+.location-icon-link {
+  transition: var(--transition-smooth);
+}
+
+.location-icon-link:hover {
+  background-color: var(--color-primary) !important;
+  color: white !important;
+  transform: translateY(-2px);
 }
 
 /* ── Nos Engagements Section ── */
