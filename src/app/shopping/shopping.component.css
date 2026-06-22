@@ -807,6 +807,9 @@
 
 /* ── Responsive ── */
 @media (max-width: 768px) {
+  .spotlight-carousel {
+    display: none;
+  }
   #conPage {
     padding: 24px 16px;
     gap: 20px;

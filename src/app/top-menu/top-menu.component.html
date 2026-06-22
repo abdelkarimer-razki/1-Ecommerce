@@ -7,8 +7,8 @@
     </ul>
     <div id="sTopMenu">
         <ul>
-            <li class="menuElements" routerLink="/about" id="Home" (click)="disableMenu()" *ngIf="!log.isntAdmin()"><span class="material-symbols-outlined">info</span><a> {{ trans.t('ACCUEIL') }}</a></li>
             <li class="menuElements" routerLink="/" id="Shopping" (click)="disableMenu()" *ngIf="!log.isntAdmin()"><span class="material-symbols-outlined">shopping_bag</span><a> {{ trans.t('SHOPPING') }}</a></li>
+            <li class="menuElements" routerLink="/about" id="Home" (click)="disableMenu()" *ngIf="!log.isntAdmin()"><span class="material-symbols-outlined">info</span><a> {{ trans.t('ACCUEIL') }}</a></li>
             <li class="menuElements" routerLink="/admin/dashboard" id="AdminDash" (click)="disableMenu()" *ngIf="log.isntAdmin()"><span class="material-symbols-outlined">analytics</span><a> {{ trans.t('DASHBOARD') }}</a></li>
             <!-- Cart icon (visible for non-admins) -->
             <li class="menuElements cart-menu-btn" routerLink="/checkout" id="CartBtn" (click)="disableMenu()" *ngIf="!log.isntAdmin()">
