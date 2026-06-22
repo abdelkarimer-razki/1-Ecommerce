@@ -113,4 +113,10 @@ export class AcceuilContComponent implements OnInit {
       return pic;
     }
 
+    getSafeMapUrl() {
+      const loc = this.config.coopLocation || 'Taroudant, Maroc';
+      const url = `https://maps.google.com/maps?q=${encodeURIComponent(loc)}&t=&z=14&ie=UTF8&iwloc=&output=embed`;
+      return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    }
+
 }
