@@ -59,10 +59,16 @@
     <!-- Section: Notre Histoire (Brand Story) -->
     <div class="page-story reveal active" id="storySection" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
         <div class="story-content" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
-            <div class="story-tag">{{trans.t('NOTRE_HISTOIRE')}}</div>
-            <h2>{{trans.t('NOTRE_HISTOIRE_TITLE')}}</h2>
-            <p class="story-text">{{trans.t('NOTRE_HISTOIRE_DESC1')}}</p>
-            <p class="story-text">{{trans.t('NOTRE_HISTOIRE_DESC2')}}</p>
+            <div class="story-tag-row" style="display: flex; justify-content: space-between; align-items: center; width: 100%;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+                <span class="story-tag">{{trans.t('NOTRE_HISTOIRE')}}</span>
+                <span class="story-location" *ngIf="config.coopLocation" style="font-size: 0.85rem; font-weight: 700; color: var(--color-text-light); display: flex; align-items: center; gap: 4px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+                    <span class="material-symbols-outlined" style="font-size: 1.15rem; color: var(--color-primary);">location_on</span>
+                    {{config.coopLocation}}
+                </span>
+            </div>
+            <h2>{{config.storyTitle || trans.t('NOTRE_HISTOIRE_TITLE')}}</h2>
+            <p class="story-text">{{config.storyDescription1 || trans.t('NOTRE_HISTOIRE_DESC1')}}</p>
+            <p class="story-text">{{config.storyDescription2 || trans.t('NOTRE_HISTOIRE_DESC2')}}</p>
         </div>
         <div class="story-image-wrapper">
             <img [src]="transformImage(config.principle2Image)" alt="Coopérative Bab Mansour Story">
@@ -86,31 +92,31 @@
     <!-- Section: Nos Engagements / Valeurs -->
     <div class="page-commitments reveal active" id="commitmentsSection">
         <div class="commitments-header">
-            <h1>{{trans.t('NOS_ENGAGEMENTS')}}</h1>
+            <h1>{{config.commitmentsTitle || trans.t('NOS_ENGAGEMENTS')}}</h1>
         </div>
         <div class="commitments-grid" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
             <div class="commitment-card">
                 <div class="commitment-icon-wrapper social-impact">
                     <span class="material-symbols-outlined">groups</span>
                 </div>
-                <h3>{{trans.t('ENGAGEMENT_SOCIAL_TITLE')}}</h3>
-                <p>{{trans.t('ENGAGEMENT_SOCIAL_DESC')}}</p>
+                <h3>{{config.engagementSocialTitle || trans.t('ENGAGEMENT_SOCIAL_TITLE')}}</h3>
+                <p>{{config.engagementSocialDesc || trans.t('ENGAGEMENT_SOCIAL_DESC')}}</p>
             </div>
             
             <div class="commitment-card">
                 <div class="commitment-icon-wrapper eco-impact">
                     <span class="material-symbols-outlined">nature</span>
                 </div>
-                <h3>{{trans.t('ENGAGEMENT_ECO_TITLE')}}</h3>
-                <p>{{trans.t('ENGAGEMENT_ECO_DESC')}}</p>
+                <h3>{{config.engagementEcoTitle || trans.t('ENGAGEMENT_ECO_TITLE')}}</h3>
+                <p>{{config.engagementEcoDesc || trans.t('ENGAGEMENT_ECO_DESC')}}</p>
             </div>
 
             <div class="commitment-card">
                 <div class="commitment-icon-wrapper natural-impact">
                     <span class="material-symbols-outlined">workspace_premium</span>
                 </div>
-                <h3>{{trans.t('ENGAGEMENT_NATURAL_TITLE')}}</h3>
-                <p>{{trans.t('ENGAGEMENT_NATURAL_DESC')}}</p>
+                <h3>{{config.engagementNaturalTitle || trans.t('ENGAGEMENT_NATURAL_TITLE')}}</h3>
+                <p>{{config.engagementNaturalDesc || trans.t('ENGAGEMENT_NATURAL_DESC')}}</p>
             </div>
         </div>
     </div>

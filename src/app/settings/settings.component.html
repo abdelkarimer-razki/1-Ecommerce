@@ -48,6 +48,10 @@
             <label>{{trans.t('NOM_COOPERATIVE') || 'Nom de la Coopérative'}}</label>
             <input class="text" type="text" [(ngModel)]="config.coopName" placeholder="Ex: Bab Mansour">
           </div>
+          <div class="input-group" style="margin-top: 16px;">
+            <label>{{trans.t('LOCALISATION_COOPERATIVE') || 'Localisation de la Coopérative'}}</label>
+            <input class="text" type="text" [(ngModel)]="config.coopLocation" placeholder="Ex: Taroudant, Maroc">
+          </div>
         </div>
         
         <!-- Right Side: Image Upload Card -->
@@ -192,6 +196,87 @@
                   <span>{{trans.t('REMPLACER_IMAGE_2')}}</span>
                 </label>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Brand Story Section Content -->
+    <div class="form-section">
+      <div class="form-section-header" style="display: flex; align-items: center; gap: 8px; margin-bottom: 24px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+        <span class="material-symbols-outlined section-icon">auto_stories</span>
+        <h3 style="margin: 0;">{{trans.t('NOTRE_HISTOIRE')}}</h3>
+      </div>
+      
+      <div class="form-grid-side-by-side">
+        <div class="form-inputs-col" style="flex: 1;">
+          <div class="input-group">
+            <label>{{trans.t('TITRE')}}</label>
+            <input class="text" type="text" [(ngModel)]="config.storyTitle" placeholder="Ex: Depuis les Terroirs de Taroudant">
+          </div>
+          <div class="input-group" style="margin-top: 16px;">
+            <label>{{trans.t('HISTOIRE_PARAGRAPHE_1') || 'Histoire (Paragraphe 1)'}}</label>
+            <textarea class="text textarea" rows="4" [(ngModel)]="config.storyDescription1" placeholder="Premier paragraphe de l'histoire..."></textarea>
+          </div>
+          <div class="input-group" style="margin-top: 16px;">
+            <label>{{trans.t('HISTOIRE_PARAGRAPHE_2') || 'Histoire (Paragraphe 2)'}}</label>
+            <textarea class="text textarea" rows="4" [(ngModel)]="config.storyDescription2" placeholder="Second paragraphe de l'histoire..."></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Nos Engagements Section Content -->
+    <div class="form-section">
+      <div class="form-section-header" style="display: flex; align-items: center; gap: 8px; margin-bottom: 24px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+        <span class="material-symbols-outlined section-icon">verified_user</span>
+        <h3 style="margin: 0;">{{trans.t('NOS_ENGAGEMENTS')}}</h3>
+      </div>
+      
+      <div class="form-grid-side-by-side" style="display: flex; flex-direction: column; gap: 20px;">
+        <div class="input-group" style="width: 100%;">
+          <label>{{trans.t('TITRE_SECTION') || 'Titre de la Section'}}</label>
+          <input class="text" type="text" [(ngModel)]="config.commitmentsTitle" placeholder="Ex: Nos Engagements">
+        </div>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; width: 100%;">
+          <!-- Social Commitment -->
+          <div style="background-color: var(--color-bg-main); padding: 16px; border-radius: var(--border-radius-md); border: 1px solid var(--border-color);">
+            <h4 style="margin-bottom: 12px; color: var(--color-primary);">{{trans.t('ENGAGEMENT_SOCIAL_TITLE')}}</h4>
+            <div class="input-group">
+              <label>{{trans.t('TITRE')}}</label>
+              <input class="text" type="text" [(ngModel)]="config.engagementSocialTitle" placeholder="Ex: Impact Social & Solidaire">
+            </div>
+            <div class="input-group" style="margin-top: 10px;">
+              <label>{{trans.t('DESCRIPTION')}}</label>
+              <textarea class="text textarea" rows="3" [(ngModel)]="config.engagementSocialDesc" placeholder="Description de l'impact..."></textarea>
+            </div>
+          </div>
+
+          <!-- Ecological Commitment -->
+          <div style="background-color: var(--color-bg-main); padding: 16px; border-radius: var(--border-radius-md); border: 1px solid var(--border-color);">
+            <h4 style="margin-bottom: 12px; color: var(--color-secondary);">{{trans.t('ENGAGEMENT_ECO_TITLE')}}</h4>
+            <div class="input-group">
+              <label>{{trans.t('TITRE')}}</label>
+              <input class="text" type="text" [(ngModel)]="config.engagementEcoTitle" placeholder="Ex: Préservation de l'Écosystème">
+            </div>
+            <div class="input-group" style="margin-top: 10px;">
+              <label>{{trans.t('DESCRIPTION')}}</label>
+              <textarea class="text textarea" rows="3" [(ngModel)]="config.engagementEcoDesc" placeholder="Description de la préservation..."></textarea>
+            </div>
+          </div>
+
+          <!-- Natural Commitment -->
+          <div style="background-color: var(--color-bg-main); padding: 16px; border-radius: var(--border-radius-md); border: 1px solid var(--border-color);">
+            <h4 style="margin-bottom: 12px; color: var(--color-terracotta);">{{trans.t('ENGAGEMENT_NATURAL_TITLE')}}</h4>
+            <div class="input-group">
+              <label>{{trans.t('TITRE')}}</label>
+              <input class="text" type="text" [(ngModel)]="config.engagementNaturalTitle" placeholder="Ex: Pureté 100% Garantie">
+            </div>
+            <div class="input-group" style="margin-top: 10px;">
+              <label>{{trans.t('DESCRIPTION')}}</label>
+              <textarea class="text textarea" rows="3" [(ngModel)]="config.engagementNaturalDesc" placeholder="Description de la garantie..."></textarea>
             </div>
           </div>
         </div>

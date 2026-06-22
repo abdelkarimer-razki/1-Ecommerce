@@ -139,6 +139,10 @@ export class TranslationService {
     'ENGAGEMENT_NATURAL_DESC': { FR: 'Aucun additif ni produit chimique. Nos miels et huiles conservent toutes leurs vertus nutritionnelles et gustatives.', EN: 'No additives or chemicals. Our honeys and oils preserve all their nutritional and taste benefits.', AR: 'بدون أي إضافات أو مواد كيميائية. عسلنا وزيوتنا تحافظ على كامل فوائدها الغذائية والمذاقية.' },
     'ENGAGEMENT_ECO_TITLE': { FR: 'Préservation de l’Écosystème', EN: 'Ecosystem Preservation', AR: 'الحفاظ على النظام البيئي' },
     'ENGAGEMENT_ECO_DESC': { FR: 'Pratiques agricoles et apicoles durables respectant le cycle de vie des abeilles et la biodiversité locale.', EN: 'Sustainable agricultural and beekeeping practices respecting the life cycle of bees and local biodiversity.', AR: 'ممارسات فلاحية وتربية نحل مستدامة تحترم دورة حياة النحل والتنوع البيولوجي المحلي.' },
+    'LOCALISATION_COOPERATIVE': { FR: 'Localisation de la Coopérative', EN: 'Cooperative Location', AR: 'موقع التعاونية' },
+    'HISTOIRE_PARAGRAPHE_1': { FR: 'Histoire (Paragraphe 1)', EN: 'Story (Paragraph 1)', AR: 'قصتنا (الفقرة 1)' },
+    'HISTOIRE_PARAGRAPHE_2': { FR: 'Histoire (Paragraphe 2)', EN: 'Story (Paragraph 2)', AR: 'قصتنا (الفقرة 2)' },
+    'TITRE_SECTION': { FR: 'Titre de la Section', EN: 'Section Title', AR: 'عنوان القسم' },
 
     // Admin Sidebar / General
     'ADMIN_PANEL': { FR: 'Administration', EN: 'Administration', AR: 'الإدارة' },
