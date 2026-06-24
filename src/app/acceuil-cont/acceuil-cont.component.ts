@@ -3,6 +3,7 @@ import { Title, DomSanitizer } from '@angular/platform-browser';
 import { HomepageService } from '../services/homepage.service';
 import { TranslationService } from '../services/translation.service';
 import { DashboardService } from '../services/dashboard.service';
+import { SeoService } from '../services/seo.service';
 
 @Component({
   selector: 'app-acceuil-cont',
@@ -34,7 +35,8 @@ export class AcceuilContComponent implements OnInit {
     private titleService:Title,
     private sanitizer: DomSanitizer,
     public trans: TranslationService,
-    private dash: DashboardService
+    private dash: DashboardService,
+    private seoService: SeoService
   ) { }
 
   onSubmitContact() {
@@ -64,9 +66,34 @@ export class AcceuilContComponent implements OnInit {
 
   ngOnInit(): void {
     this.getCountOil();
-    this.titleService.setTitle(this.trans.getLang() === 'AR' ? 'من نحن - تعاونية باب منصور' : this.trans.getLang() === 'EN' ? 'About Us - Bab Mansour Cooperative' : 'À Propos - Coopérative Bab Mansour');
     this.getCountHoney();
     this.loadConfig();
+
+    const lang = this.trans.getLang();
+    let seoTitle = '';
+    let seoDesc = '';
+    let seoKeywords = '';
+
+    if (lang === 'EN') {
+      seoTitle = 'About Us | Natural Moroccan Honey & Organic Oils';
+      seoDesc = 'Discover Coopérative Bab Mansour, producer of authentic Moroccan pure honey, argan oil, olive oil and natural cosmetics. Harvested artisanally in Taroudant.';
+      seoKeywords = 'cooperative bab mansour, taroudant, moroccan honey, argan oil cosmetic, pure organic honey, moroccan terroir';
+    } else if (lang === 'AR') {
+      seoTitle = 'من نحن | تعاونية باب منصور للعسل الحر والزيوت';
+      seoDesc = 'تعرف على تعاونية باب منصور بتارودانت، رائدة إنتاج العسل الحر الطبيعي، زيت الأركان، وزيت الزيتون البكر. منتجات طبيعية 100% من قلب المغرب.';
+      seoKeywords = 'تعاونية باب منصور, تارودانت, عسل حر مغربي, زيت أركان للتجميل, منتجات بلدية طبيعية';
+    } else { // default FR
+      seoTitle = 'À Propos | Miel Pur du Maroc & Huiles Bio';
+      seoDesc = 'Découvrez la Coopérative Bab Mansour à Taroudant, productrice de miel pur artisanal, d\'huile d\'argan et d\'olive biologiques. Excellence et tradition marocaine.';
+      seoKeywords = 'coopérative bab mansour, taroudant, miel pur maroc, huile argan cosmétique, miel de thym, miel eucalyptus';
+    }
+
+    this.seoService.generateTags({
+      title: seoTitle,
+      description: seoDesc,
+      keywords: seoKeywords,
+      type: 'website'
+    });
   }
 
   loadConfig() {

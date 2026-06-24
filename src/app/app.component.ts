@@ -15,6 +15,7 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     const dir = this.trans.isRtl() ? 'rtl' : 'ltr';
     document.documentElement.setAttribute('dir', dir);
+    document.documentElement.setAttribute('lang', this.trans.getLang().toLowerCase());
   }
 
   isAdminRoute(): boolean {

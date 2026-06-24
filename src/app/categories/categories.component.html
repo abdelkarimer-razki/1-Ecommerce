@@ -1,28 +1,12 @@
-<div class="admin-categories-container">
+<div class="admin-categories-container" *ngIf="!onlyModal">
   <div class="header-section" style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
     <h1 class="title" style="margin: 0; display: flex; align-items: center; gap: 8px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
       <span class="material-symbols-outlined">category</span> {{trans.t('CATEGORIES')}}
     </h1>
-  </div>
-
-  <!-- Add Category Form Card -->
-  <div class="card-box add-category-card" style="background-color: var(--color-bg-card); border: 1px solid var(--border-color); border-radius: var(--border-radius-lg); padding: 24px; box-shadow: var(--shadow-sm); margin-bottom: 28px;" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
-    <h3 style="font-family: var(--font-serif) !important; font-size: 1.15rem; font-weight: 700; color: var(--color-text-main); margin-top: 0; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
-      <span class="material-symbols-outlined" style="color: var(--color-primary); font-size: 1.25rem;">add_circle</span> {{trans.t('AJOUTER_NOUVELLE_CATEGORIE')}}
-    </h3>
-    <div style="margin-bottom: 12px;">
-      <label style="display: flex; justify-content: space-between; max-width: 400px; margin-bottom: 6px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
-        <span style="font-weight: 700; font-size: 0.85rem; color: var(--color-text-muted);">{{trans.t('NOM_CATEGORIE_HEADER')}} <span style="color: #dc2626;">*</span></span>
-        <span style="font-size: 0.75rem; color: #dc2626; font-weight: normal;">({{trans.t('REQUIS')}})</span>
-      </label>
-      <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
-        <input class="text" type="text" [(ngModel)]="newCategoryName" placeholder="Ex: COSMETIQUES, AMLOU, SAVONS" style="flex-grow: 1; max-width: 400px; box-sizing: border-box; margin: 0;" [style.border-color]="categoryFormSubmitted && (!newCategoryName || newCategoryName.trim() === '') ? '#dc2626' : ''" (keyup.enter)="addCategory()">
-        <button class="btn-save" (click)="addCategory()" style="margin: 0; display: inline-flex; align-items: center; gap: 8px; background: var(--color-primary); border: none; color: white; padding: 0 20px; border-radius: 6px; font-family: var(--font-sans); font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: var(--transition-smooth); height: 38px; box-sizing: border-box; box-shadow: var(--shadow-sm);" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
-          <span class="material-symbols-outlined" style="font-size: 1.15rem;">add</span> {{trans.t('CREER_CATEGORIE')}}
-        </button>
-      </div>
-      <span *ngIf="categoryFormSubmitted && (!newCategoryName || newCategoryName.trim() === '')" style="color: #dc2626; font-size: 0.75rem; display: block; margin-top: 6px; font-weight: 600;">{{trans.t('CHAMP_REQUIS')}}</span>
-    </div>
+    <!-- Open Add Category Popup Button -->
+    <button (click)="openAddModal()" class="btn-save" style="margin: 0; display: inline-flex; align-items: center; gap: 8px; background: var(--color-primary); border: none; color: white; padding: 0 20px; border-radius: 6px; font-family: var(--font-sans); font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: var(--transition-smooth); height: 38px; box-sizing: border-box; box-shadow: var(--shadow-sm);" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+      <span class="material-symbols-outlined" style="font-size: 1.15rem;">add_circle</span> {{trans.t('CREER_CATEGORIE') || 'Créer une catégorie'}}
+    </button>
   </div>
 
   <!-- Categories Table / List -->
@@ -67,18 +51,82 @@
         <tbody>
           <tr *ngFor="let cat of categories" style="border-bottom: 1px solid var(--border-color); transition: var(--transition-smooth);">
             <td style="padding: 14px 18px; font-weight: 600; color: var(--color-text-main);">
-              <span class="tickets rien" style="font-size: 0.85rem; font-weight: 700; padding: 4px 10px; border-radius: 12px; text-transform: uppercase;">
-                {{trans.t(cat)}}
-              </span>
+              <div style="display: flex; align-items: center; gap: 16px;">
+                <!-- Category picture container with background color -->
+                <div 
+                  style="position: relative; width: 48px; height: 48px; border-radius: 50%; overflow: hidden; border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center;"
+                  [style.background-color]="cat.bg_color || 'var(--color-bg-main)'"
+                >
+                  <img *ngIf="cat.picture" [src]="transform(cat.picture)" style="width: 100%; height: 100%; object-fit: cover;">
+                  <span *ngIf="!cat.picture" class="material-symbols-outlined" style="color: var(--color-text-muted); font-size: 1.5rem;">category</span>
+                </div>
+                
+                <span class="tickets rien" style="font-size: 0.85rem; font-weight: 700; padding: 4px 10px; border-radius: 12px; text-transform: uppercase;">
+                  {{trans.t(cat.name)}}
+                </span>
+              </div>
             </td>
             <td style="padding: 14px 18px; text-align: center; color: var(--color-text-muted); font-weight: 700; font-size: 0.95rem;">
-              {{getProductCount(cat)}}
+              {{getProductCount(cat.name)}}
             </td>
-            <td style="padding: 14px 18px; text-align: right;" [style.text-align]="trans.isRtl() ? 'left' : 'right'">
-              <button *ngIf="cat !== 'MIEL' && cat !== 'HUILE'" (click)="deleteCategory(cat)" style="background: none; border: 1px solid var(--border-color); border-radius: 6px; padding: 6px 12px; color: var(--color-terracotta); cursor: pointer; font-family: var(--font-sans); font-weight: 700; font-size: 0.82rem; display: inline-flex; align-items: center; gap: 4px; transition: var(--transition-smooth);" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'" [title]="trans.t('SUPPRIMER')">
-                <span class="material-symbols-outlined" style="font-size: 1rem;">delete</span> {{trans.t('SUPPRIMER')}}
+            <td style="padding: 14px 18px; text-align: right; position: relative;" [style.text-align]="trans.isRtl() ? 'left' : 'right'">
+              
+              <!-- Three Dots Dropdown Toggle Button -->
+              <button 
+                (click)="toggleDropdown(cat.name, $event)" 
+                style="background: none; border: none; padding: 6px; cursor: pointer; color: var(--color-text-muted); display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; transition: var(--transition-smooth);"
+                onmouseenter="this.style.backgroundColor='var(--color-bg-main)'; this.style.color='var(--color-text-main)'" 
+                onmouseleave="this.style.backgroundColor='transparent'; this.style.color='var(--color-text-muted)'"
+              >
+                <span class="material-symbols-outlined">more_vert</span>
               </button>
-              <span *ngIf="cat === 'MIEL' || cat === 'HUILE'" style="font-size: 0.8rem; font-weight: 700; color: var(--color-text-light); text-transform: uppercase; letter-spacing: 0.3px;">{{trans.t('SYSTEME')}}</span>
+
+              <!-- Action Menu List Dropdown (aligned with RTL logic) -->
+              <div 
+                *ngIf="activeDropdownCategory === cat.name" 
+                class="dropdown-menu-list"
+                style="position: absolute; z-index: 100; background-color: var(--color-bg-card); border: 1px solid var(--border-color); border-radius: 8px; box-shadow: var(--shadow-md); min-width: 150px; overflow: hidden; margin-top: 4px;"
+                [style.right]="trans.isRtl() ? 'auto' : '18px'"
+                [style.left]="trans.isRtl() ? '18px' : 'auto'"
+                (click)="$event.stopPropagation()"
+              >
+                <!-- Edit Action -->
+                <button 
+                  (click)="openEditModal(cat); activeDropdownCategory = null;" 
+                  style="width: 100%; text-align: left; background: none; border: none; padding: 10px 16px; color: var(--color-text-main); font-family: var(--font-sans); font-size: 0.85rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: var(--transition-smooth);"
+                  onmouseenter="this.style.backgroundColor='var(--color-bg-main)'; this.style.color='var(--color-primary)'" 
+                  onmouseleave="this.style.backgroundColor='transparent'; this.style.color='var(--color-text-main)'"
+                  [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'"
+                  [style.text-align]="trans.isRtl() ? 'right' : 'left'"
+                >
+                  <span class="material-symbols-outlined" style="font-size: 1.1rem;">edit</span>
+                  <span>{{trans.t('MODIFIER') || 'Modifier'}}</span>
+                </button>
+
+                <!-- Delete Action (if not default category) -->
+                <button 
+                  *ngIf="cat.name !== 'MIEL' && cat.name !== 'HUILE'"
+                  (click)="deleteCategory(cat.name); activeDropdownCategory = null;" 
+                  style="width: 100%; text-align: left; background: none; border: none; padding: 10px 16px; color: var(--color-terracotta); font-family: var(--font-sans); font-size: 0.85rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: var(--transition-smooth);"
+                  onmouseenter="this.style.backgroundColor='var(--color-bg-main)'" 
+                  onmouseleave="this.style.backgroundColor='transparent'"
+                  [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'"
+                  [style.text-align]="trans.isRtl() ? 'right' : 'left'"
+                >
+                  <span class="material-symbols-outlined" style="font-size: 1.1rem;">delete</span>
+                  <span>{{trans.t('SUPPRIMER')}}</span>
+                </button>
+
+                <!-- Locked Category label -->
+                <div 
+                  *ngIf="cat.name === 'MIEL' || cat.name === 'HUILE'"
+                  style="padding: 10px 16px; font-size: 0.75rem; font-weight: 700; color: var(--color-text-light); text-transform: uppercase; border-top: 1px solid var(--border-color); background-color: var(--color-bg-main);"
+                  [style.text-align]="trans.isRtl() ? 'right' : 'left'"
+                >
+                  {{trans.t('SYSTEME')}}
+                </div>
+              </div>
+
             </td>
           </tr>
         </tbody>
@@ -87,10 +135,191 @@
   </div>
 </div>
 
-<!-- Modal Delete Confirmation Backdrop -->
-<div class="modal-backdrop" *ngIf="deleteModalActive" (click)="closeDeleteModal()"></div>
+<!-- Modal Add Category Window -->
+<div class="modal-backdrop" *ngIf="addModalActive" (click)="closeAddModal()"></div>
+<div class="modal-window" *ngIf="addModalActive" style="max-width: 600px;" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+  <div class="modal-header" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+    <h3 style="font-family: var(--font-serif) !important;">{{trans.t('AJOUTER_NOUVELLE_CATEGORIE')}}</h3>
+    <button class="modal-close-btn" (click)="closeAddModal()"><span class="material-symbols-outlined">close</span></button>
+  </div>
+
+  <div class="modal-body" style="padding: 24px; display: flex; flex-direction: column; gap: 20px;">
+    
+    <div style="display: flex; gap: 24px; flex-wrap: wrap;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+      <!-- Image Upload Area -->
+      <div style="flex: 0 0 150px; display: flex; flex-direction: column; gap: 8px; align-items: center;">
+        <label style="font-weight: 700; font-size: 0.85rem; color: var(--color-text-muted);">{{trans.t('IMAGE_CATEGORIE') || 'Image'}}</label>
+        <div style="position: relative; width: 140px; height: 140px; border: 2px dashed var(--border-color); border-radius: 12px; display: flex; align-items: center; justify-content: center; overflow: hidden;" [style.background-color]="categoryBgColor">
+          <input id="cat-image-file" type="file" style="display: none;" (change)="onChange($event)">
+          
+          <label *ngIf="!categoryPicture" for="cat-image-file" style="cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--color-text-light); text-align: center; padding: 10px; margin: 0; width: 100%; height: 100%;">
+            <span class="material-symbols-outlined" style="font-size: 2rem; color: var(--color-text-muted);">cloud_upload</span>
+            <span style="font-size: 0.75rem; font-weight: 600; margin-top: 4px;">{{trans.t('SELECTIONNER') || 'Choisir'}}</span>
+          </label>
+
+          <div *ngIf="categoryPicture" style="width: 100%; height: 100%; position: relative;">
+            <img [src]="transform(categoryPicture)" style="width: 100%; height: 100%; object-fit: cover;">
+            <button type="button" (click)="clearImage()" style="position: absolute; top: 4px; right: 4px; background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;">
+              <span class="material-symbols-outlined" style="font-size: 0.95rem;">close</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Background Remover & Colors -->
+      <div style="flex: 1; min-width: 250px; display: flex; flex-direction: column; gap: 16px;">
+        
+        <!-- Background Remover Panel -->
+        <div *ngIf="categoryPicture" class="modern-bg-remover-card" style="margin: 0; border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; background-color: var(--color-bg-main);">
+          <div style="display: flex; gap: 8px; margin-bottom: 12px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+            <button type="button" class="btn-action-primary" (click)="removeBgAdd()" style="padding: 6px 12px; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 4px; background-color: var(--color-primary); color: white; border: none; border-radius: 4px; cursor: pointer;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+              <span class="material-symbols-outlined" style="font-size: 1rem;">magic_button</span> {{trans.t('RETIRER_FOND')}}
+            </button>
+            <button type="button" class="btn-action-secondary" *ngIf="categoryOriginalPicture" (click)="resetBgAdd()" style="padding: 6px 12px; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--border-color); border-radius: 4px; background: none; cursor: pointer;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+              <span class="material-symbols-outlined" style="font-size: 1rem;">restart_alt</span> {{trans.t('RESTAURER')}}
+            </button>
+          </div>
+          
+          <div *ngIf="categoryOriginalPicture" style="display: flex; flex-direction: column; gap: 6px;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 600; color: var(--color-text-muted);" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+              <span>{{trans.t('SENSIBILITE_DETOURAGE')}}</span>
+              <span>{{ toleranceThresholdAdd }}</span>
+            </div>
+            <input type="range" min="5" max="150" [(ngModel)]="toleranceThresholdAdd" (ngModelChange)="removeBgAdd()" style="width: 100%;">
+          </div>
+        </div>
+
+        <!-- Background Color presets -->
+        <div>
+          <label style="font-weight: 700; font-size: 0.85rem; color: var(--color-text-muted); display: block; margin-bottom: 8px;">{{trans.t('COULEUR_CATEGORIE') || 'Couleur de fond'}}</label>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+            <div 
+              *ngFor="let color of presetColors" 
+              [style.background-color]="color"
+              (click)="selectColorAdd(color)"
+              style="width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid var(--border-color); transition: 0.2s;"
+              [style.border-color]="categoryBgColor === color ? 'var(--color-primary)' : 'var(--border-color)'"
+              [style.transform]="categoryBgColor === color ? 'scale(1.15)' : 'none'"
+            ></div>
+            <!-- Custom color picker -->
+            <div style="display: flex; align-items: center; gap: 6px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+              <input type="color" [(ngModel)]="categoryBgColor" style="width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--border-color); cursor: pointer; padding: 0; background: none;">
+              <span style="font-size: 0.75rem; font-weight: 700; color: var(--color-text-light);">{{categoryBgColor}}</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Category Name Input -->
+    <div style="display: flex; flex-direction: column;">
+      <label style="display: flex; justify-content: space-between; margin-bottom: 6px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+        <span style="font-weight: 700; font-size: 0.85rem; color: var(--color-text-muted);">{{trans.t('NOM_CATEGORIE_HEADER')}} <span style="color: #dc2626;">*</span></span>
+        <span style="font-size: 0.75rem; color: #dc2626; font-weight: normal;">({{trans.t('REQUIS')}})</span>
+      </label>
+      <input class="text" type="text" [(ngModel)]="newCategoryName" placeholder="Ex: COSMETIQUES, AMLOU, SAVONS" style="width: 100%; box-sizing: border-box; margin: 0;" [style.border-color]="categoryFormSubmitted && (!newCategoryName || newCategoryName.trim() === '') ? '#dc2626' : ''" (keyup.enter)="addCategory()">
+      <span *ngIf="categoryFormSubmitted && (!newCategoryName || newCategoryName.trim() === '')" style="color: #dc2626; font-size: 0.75rem; display: block; margin-top: 6px; font-weight: 600;">{{trans.t('CHAMP_REQUIS')}}</span>
+    </div>
+
+  </div>
+
+  <div class="modal-footer" style="background-color: var(--color-bg-main); border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 12px; padding: 16px 24px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+    <button class="btn-cancel" (click)="closeAddModal()" style="margin: 0;">{{trans.t('ANNULER')}}</button>
+    <button class="btn-save" (click)="addCategory()" style="background-color: var(--color-primary); margin: 0;">
+      {{trans.t('CREER_CATEGORIE')}}
+    </button>
+  </div>
+</div>
+
+<!-- Modal Edit Category Window -->
+<div class="modal-backdrop" *ngIf="editModalActive" (click)="closeEditModal()"></div>
+<div class="modal-window" *ngIf="editModalActive && editingCategory" style="max-width: 600px;" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+  <div class="modal-header" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+    <h3 style="font-family: var(--font-serif) !important;">{{trans.t('MODIFIER_CATEGORIE') || 'Modifier la catégorie'}}: {{editingCategory.name}}</h3>
+    <button class="modal-close-btn" (click)="closeEditModal()"><span class="material-symbols-outlined">close</span></button>
+  </div>
+
+  <div class="modal-body" style="padding: 24px; display: flex; flex-direction: column; gap: 20px;">
+    
+    <div style="display: flex; gap: 24px; flex-wrap: wrap;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+      <!-- Image Edit / Upload Area -->
+      <div style="flex: 0 0 150px; display: flex; flex-direction: column; gap: 8px; align-items: center;">
+        <label style="font-weight: 700; font-size: 0.85rem; color: var(--color-text-muted);">{{trans.t('IMAGE_CATEGORIE') || 'Image'}}</label>
+        <div style="position: relative; width: 140px; height: 140px; border: 2px dashed var(--border-color); border-radius: 12px; display: flex; align-items: center; justify-content: center; overflow: hidden;" [style.background-color]="editCategoryBgColor">
+          <input id="edit-cat-image-file" type="file" style="display: none;" (change)="onChangeEdit($event)">
+          
+          <label *ngIf="!myimage" for="edit-cat-image-file" style="cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--color-text-light); text-align: center; padding: 10px; margin: 0; width: 100%; height: 100%;">
+            <span class="material-symbols-outlined" style="font-size: 2rem; color: var(--color-text-muted);">cloud_upload</span>
+            <span style="font-size: 0.75rem; font-weight: 600; margin-top: 4px;">{{trans.t('SELECTIONNER') || 'Choisir'}}</span>
+          </label>
+
+          <div *ngIf="myimage" style="width: 100%; height: 100%; position: relative;">
+            <img [src]="transform(myimage)" style="width: 100%; height: 100%; object-fit: cover;">
+            <button type="button" (click)="clearImageEdit()" style="position: absolute; top: 4px; right: 4px; background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;">
+              <span class="material-symbols-outlined" style="font-size: 0.95rem;">close</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bg Remover and Color Selection -->
+      <div style="flex: 1; display: flex; flex-direction: column; gap: 16px; min-width: 250px;">
+        
+        <!-- Background Remover Panel -->
+        <div *ngIf="myimage" class="modern-bg-remover-card" style="margin: 0; border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; background-color: var(--color-bg-main);">
+          <div style="display: flex; gap: 8px; margin-bottom: 12px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+            <button type="button" class="btn-action-primary" (click)="removeBgEdit()" style="padding: 6px 12px; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 4px; background-color: var(--color-primary); color: white; border: none; border-radius: 4px; cursor: pointer;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+              <span class="material-symbols-outlined" style="font-size: 1rem;">magic_button</span> {{trans.t('RETIRER_FOND')}}
+            </button>
+            <button type="button" class="btn-action-secondary" *ngIf="originalImage" (click)="resetBgEdit()" style="padding: 6px 12px; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--border-color); border-radius: 4px; background: none; cursor: pointer;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+              <span class="material-symbols-outlined" style="font-size: 1rem;">restart_alt</span> {{trans.t('RESTAURER')}}
+            </button>
+          </div>
+          <div *ngIf="originalImage" style="display: flex; flex-direction: column; gap: 6px;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 600; color: var(--color-text-muted);" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+              <span>{{trans.t('SENSIBILITE_DETOURAGE')}}</span>
+              <span>{{ toleranceThresholdEdit }}</span>
+            </div>
+            <input type="range" min="5" max="150" [(ngModel)]="toleranceThresholdEdit" (ngModelChange)="removeBgEdit()" style="width: 100%;">
+          </div>
+        </div>
+
+        <!-- Color Selector -->
+        <div>
+          <label style="font-weight: 700; font-size: 0.85rem; color: var(--color-text-muted); display: block; margin-bottom: 8px;">{{trans.t('COULEUR_CATEGORIE') || 'Couleur de fond'}}</label>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+            <div 
+              *ngFor="let color of presetColors" 
+              [style.background-color]="color"
+              (click)="selectColorEdit(color)"
+              style="width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid var(--border-color); transition: 0.2s;"
+              [style.border-color]="editCategoryBgColor === color ? 'var(--color-primary)' : 'var(--border-color)'"
+              [style.transform]="editCategoryBgColor === color ? 'scale(1.15)' : 'none'"
+            ></div>
+            <!-- Custom color picker -->
+            <div style="display: flex; align-items: center; gap: 6px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+              <input type="color" [(ngModel)]="editCategoryBgColor" style="width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--border-color); cursor: pointer; padding: 0; background: none;">
+              <span style="font-size: 0.75rem; font-weight: 700; color: var(--color-text-light);">{{editCategoryBgColor}}</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div class="modal-footer" style="background-color: var(--color-bg-main); border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 12px; padding: 16px 24px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+    <button class="btn-cancel" (click)="closeEditModal()" style="margin: 0;">{{trans.t('ANNULER')}}</button>
+    <button class="btn-save" (click)="saveCategoryEdit()" style="background-color: var(--color-primary); margin: 0;">
+      {{trans.t('ENREGISTRER') || 'Enregistrer'}}
+    </button>
+  </div>
+</div>
 
 <!-- Modal Delete Confirmation Window -->
+<div class="modal-backdrop" *ngIf="deleteModalActive" (click)="closeDeleteModal()"></div>
 <div class="modal-window" *ngIf="deleteModalActive && deletingCategory" style="max-width: 450px;" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
   <div class="modal-header" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
     <h3>{{trans.t('CONFIRMATION_SUPPRESSION')}}</h3>

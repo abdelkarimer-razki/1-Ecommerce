@@ -24,7 +24,7 @@ export class ShoppingserviceService {
     return this.http.get<products[]>(this.url2+mangable);
   }
 
-  getCategories(): Observable<string[]>{
-    return this.http.get<string[]>(this.url+'/categories/all');
+  getCategories(): Observable<any[]>{
+    return this.http.get<any[]>(this.url+'/categories/all');
   }
 }

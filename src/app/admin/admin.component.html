@@ -33,11 +33,83 @@
      <router-outlet></router-outlet>
   </div>
  </div>
- 
- <!-- Floating Quick Access Button -->
- <button type="button" class="admin-fab-quick-add" (click)="openAddModal()" [title]="trans.t('CREER_COMMANDE_MANUELLE')">
-   <span class="material-symbols-outlined">add_shopping_cart</span>
- </button>
+  <!-- Floating Quick Actions Menu & FAB (aligned dynamically for RTL/LTR layout) -->
+  <div 
+    class="admin-fab-container" 
+    style="position: fixed; bottom: 30px; z-index: 2000; display: flex; flex-direction: column; gap: 14px;"
+    [style.right]="trans.isRtl() ? 'auto' : '30px'"
+    [style.left]="trans.isRtl() ? '30px' : 'auto'"
+    [style.align-items]="trans.isRtl() ? 'flex-start' : 'flex-end'"
+  >
+    <!-- Quick Actions Submenu Stack -->
+    <div 
+      *ngIf="showQuickActions" 
+      class="admin-fab-menu" 
+      style="display: flex; flex-direction: column; gap: 10px; animation: fabMenuFadeIn 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;"
+      [style.align-items]="trans.isRtl() ? 'flex-start' : 'flex-end'"
+      (click)="$event.stopPropagation()"
+    >
+      <!-- Action 1: Add Order -->
+      <div style="display: flex; align-items: center; gap: 10px;" [style.flex-direction]="trans.isRtl() ? 'row' : 'row-reverse'">
+        <span style="background-color: var(--color-bg-card); padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; color: var(--color-text-main); border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); white-space: nowrap;">
+          {{trans.t('NOUVELLE_COMMANDE') || 'Nouvelle commande'}}
+        </span>
+        <button 
+          type="button" 
+          (click)="quickAddCommand()" 
+          style="width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--border-color); background-color: var(--color-bg-card); color: var(--color-primary); display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: var(--shadow-sm); transition: 0.2s; padding: 0;"
+          onmouseenter="this.style.backgroundColor='var(--color-primary)'; this.style.color='white'"
+          onmouseleave="this.style.backgroundColor='var(--color-bg-card)'; this.style.color='var(--color-primary)'"
+        >
+          <span class="material-symbols-outlined" style="font-size: 1.25rem;">add_shopping_cart</span>
+        </button>
+      </div>
+
+      <!-- Action 2: Add Product -->
+      <div style="display: flex; align-items: center; gap: 10px;" [style.flex-direction]="trans.isRtl() ? 'row' : 'row-reverse'">
+        <span style="background-color: var(--color-bg-card); padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; color: var(--color-text-main); border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); white-space: nowrap;">
+          {{trans.t('AJOUTER_PRODUIT') || 'Ajouter un produit'}}
+        </span>
+        <button 
+          type="button" 
+          (click)="quickAddProduct()" 
+          style="width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--border-color); background-color: var(--color-bg-card); color: var(--color-secondary); display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: var(--shadow-sm); transition: 0.2s; padding: 0;"
+          onmouseenter="this.style.backgroundColor='var(--color-secondary)'; this.style.color='white'"
+          onmouseleave="this.style.backgroundColor='var(--color-bg-card)'; this.style.color='var(--color-secondary)'"
+        >
+          <span class="material-symbols-outlined" style="font-size: 1.25rem;">add_box</span>
+        </button>
+      </div>
+
+      <!-- Action 3: Add Category -->
+      <div style="display: flex; align-items: center; gap: 10px;" [style.flex-direction]="trans.isRtl() ? 'row' : 'row-reverse'">
+        <span style="background-color: var(--color-bg-card); padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; color: var(--color-text-main); border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); white-space: nowrap;">
+          {{trans.t('CREER_CATEGORIE') || 'Créer une catégorie'}}
+        </span>
+        <button 
+          type="button" 
+          (click)="quickAddCategory()" 
+          style="width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--border-color); background-color: var(--color-bg-card); color: var(--color-terracotta); display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: var(--shadow-sm); transition: 0.2s; padding: 0;"
+          onmouseenter="this.style.backgroundColor='var(--color-terracotta)'; this.style.color='white'"
+          onmouseleave="this.style.backgroundColor='var(--color-bg-card)'; this.style.color='var(--color-terracotta)'"
+        >
+          <span class="material-symbols-outlined" style="font-size: 1.25rem;">category</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Floating Quick Access Button (FAB) -->
+    <button 
+      type="button" 
+      class="admin-fab-quick-add" 
+      (click)="toggleQuickActions($event)" 
+      [title]="trans.t('ACTIONS_RAPIDES') || 'Actions rapides'"
+      style="margin: 0; position: static; display: flex; align-items: center; justify-content: center; transition: transform 0.25s ease;"
+      [style.transform]="showQuickActions ? 'rotate(45deg)' : 'none'"
+    >
+      <span class="material-symbols-outlined">add</span>
+    </button>
+  </div>
  
  <!-- Modal Backdrop -->
  <div class="modal-backdrop" *ngIf="addModalActive" (click)="closeAddModal()"></div>
@@ -153,3 +225,7 @@
      </button>
    </div>
  </div>
+
+ <!-- Global Modal instances for quick actions -->
+ <app-products *ngIf="globalProductModalActive" [onlyModal]="true" (closeModalEvent)="onGlobalProductModalClose($event)"></app-products>
+ <app-categories *ngIf="globalCategoryModalActive" [onlyModal]="true" (closeModalEvent)="onGlobalCategoryModalClose($event)"></app-categories>

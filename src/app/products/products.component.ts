@@ -1,9 +1,10 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener, Input, Output, EventEmitter } from '@angular/core';
 import { Observable, Subscriber } from 'rxjs';
 import { DomSanitizer } from '@angular/platform-browser';
 import { DashboardService } from '../services/dashboard.service';
 import { products } from '../backend/products';
 import { TranslationService } from '../services/translation.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-products',
@@ -11,6 +12,9 @@ import { TranslationService } from '../services/translation.service';
   styleUrls: ['./products.component.css']
 })
 export class ProductsComponent implements OnInit {
+  @Input() onlyModal: boolean = false;
+  @Output() closeModalEvent = new EventEmitter<boolean>();
+
   produits: any;
   loading: boolean = true;
   myimage: any;
@@ -38,7 +42,7 @@ export class ProductsComponent implements OnInit {
   more: Boolean[] = [];
   details: Boolean[] = [];
   pname: any = "";
- 
+  
   // Categories state
   registeredCategories: string[] = [];
   selectedCategoryFilter: string = 'TOUS';
@@ -67,12 +71,24 @@ export class ProductsComponent implements OnInit {
   constructor(
     private sanitizer: DomSanitizer,
     private dash: DashboardService,
-    public trans: TranslationService
+    public trans: TranslationService,
+    private route: ActivatedRoute,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
-    this.loadProducts();
-    this.loadCategories();
+    if (this.onlyModal) {
+      this.loadCategories();
+      this.openAddModal();
+    } else {
+      this.loadProducts();
+      this.loadCategories();
+      this.route.queryParams.subscribe(params => {
+        if (params['action'] === 'add') {
+          this.openAddModal();
+        }
+      });
+    }
   }
 
   loadProducts() {
@@ -160,6 +176,14 @@ export class ProductsComponent implements OnInit {
 
   closeModal() {
     this.modalActive = false;
+    if (!this.onlyModal) {
+      this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: { action: null },
+        queryParamsHandling: 'merge'
+      });
+    }
+    this.closeModalEvent.emit(false);
   }
 
   openViewModal(prod: any) {
@@ -333,14 +357,20 @@ export class ProductsComponent implements OnInit {
     if (this.modalMode === 'add') {
       this.dash.addproduct(this.product).subscribe(data => {
         this.modalActive = false;
-        this.loadProducts();
-        this.loadCategories();
+        if (!this.onlyModal) {
+          this.loadProducts();
+          this.loadCategories();
+        }
+        this.closeModalEvent.emit(true);
       });
     } else {
       this.dash.updateProduct(this.editingProduct).subscribe(data => {
         this.modalActive = false;
-        this.loadProducts();
-        this.loadCategories();
+        if (!this.onlyModal) {
+          this.loadProducts();
+          this.loadCategories();
+        }
+        this.closeModalEvent.emit(true);
       });
     }
   }
@@ -433,7 +463,7 @@ export class ProductsComponent implements OnInit {
 
   loadCategories() {
     this.dash.getAllCategories().subscribe((cats: any) => {
-      this.registeredCategories = cats || [];
+      this.registeredCategories = (cats || []).map((c: any) => typeof c === 'string' ? c : c.name);
     });
   }
 

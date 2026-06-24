@@ -942,3 +942,106 @@
   }
 }
 
+/* Category Horizontal Grid Filter */
+.category-grid-container {
+  width: 100%;
+  margin: 20px 0;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.category-grid-wrapper {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  padding: 8px 4px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-primary) transparent;
+  -webkit-overflow-scrolling: touch;
+}
+
+.category-grid-wrapper::-webkit-scrollbar {
+  height: 6px;
+}
+
+.category-grid-wrapper::-webkit-scrollbar-thumb {
+  background-color: var(--color-primary);
+  border-radius: 4px;
+}
+
+.category-grid-card {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  width: 115px;
+  text-align: center;
+  transition: transform 0.25s ease, filter 0.25s ease;
+}
+
+.category-grid-card:hover {
+  transform: translateY(-4px);
+}
+
+.category-img-circle {
+  width: 85px;
+  height: 85px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid var(--border-color);
+  background-color: var(--color-bg-card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.25s ease;
+}
+
+.category-img-circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.category-grid-card:hover .category-img-circle img {
+  transform: scale(1.1);
+}
+
+.category-img-circle span {
+  font-size: 2.4rem;
+  color: var(--color-text-muted);
+}
+
+.all-cats-circle {
+  background: var(--color-terracotta-light) !important;
+  border-color: rgba(194, 65, 12, 0.25) !important;
+}
+
+.all-cats-circle span {
+  color: var(--color-terracotta) !important;
+}
+
+.category-grid-name {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  transition: color 0.25s ease;
+}
+
+/* Active State styles */
+.category-grid-card.active .category-img-circle {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 12px rgba(180, 83, 9, 0.3);
+  transform: scale(1.05);
+}
+
+.category-grid-card.active .category-grid-name {
+  color: var(--color-primary);
+}
+

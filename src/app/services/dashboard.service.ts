@@ -75,11 +75,14 @@ export class DashboardService {
   showproducts(){
     return this.http.get(this.url1+"productshow");
   }
-  getAllCategories(): Observable<string[]> {
-    return this.http.get<string[]>(this.url1 + "categories/all");
+  getAllCategories(): Observable<any[]> {
+    return this.http.get<any[]>(this.url1 + "categories/all");
   }
-  addCategory(name: string): Observable<any> {
-    return this.http.post(this.url1 + "categories/add", { name });
+  addCategory(name: string, picture?: string, bg_color?: string): Observable<any> {
+    return this.http.post(this.url1 + "categories/add", { name, picture, bg_color });
+  }
+  updateCategory(name: string, picture: string, bg_color: string): Observable<any> {
+    return this.http.put(this.url1 + "categories/" + name + "/update", { picture, bg_color });
   }
   deleteCategory(name: string): Observable<any> {
     return this.http.delete(this.url1 + "categories/" + name);

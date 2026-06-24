@@ -1,19 +1,38 @@
 <div id="topMenu">
     <ul id="logo" style="list-style: none;display: inline-block;">
-        <li [routerLink]="log.isntAdmin() ? '/admin/dashboard' : '/'">
-            <img [src]="config.coopLogo ? transformImage(config.coopLogo) : '../../assets/logo31.png'" width="50px" alt="Logo" style="object-fit: contain;">
-            <a> {{ config.coopName || trans.t('COOPERATIVE') }}</a>
+        <li>
+            <a [routerLink]="log.isntAdmin() ? '/admin/dashboard' : '/'" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit;">
+                <img [src]="config.coopLogo ? transformImage(config.coopLogo) : '../../assets/logo31.png'" width="50px" alt="Logo" style="object-fit: contain;">
+                <span> {{ config.coopName || trans.t('COOPERATIVE') }}</span>
+            </a>
         </li>
     </ul>
     <div id="sTopMenu">
         <ul>
-            <li class="menuElements" routerLink="/" id="Shopping" (click)="disableMenu()" *ngIf="!log.isntAdmin()"><span class="material-symbols-outlined">shopping_bag</span><a> {{ trans.t('SHOPPING') }}</a></li>
-            <li class="menuElements" routerLink="/about" id="Home" (click)="disableMenu()" *ngIf="!log.isntAdmin()"><span class="material-symbols-outlined">info</span><a> {{ trans.t('ACCUEIL') }}</a></li>
-            <li class="menuElements" routerLink="/admin/dashboard" id="AdminDash" (click)="disableMenu()" *ngIf="log.isntAdmin()"><span class="material-symbols-outlined">analytics</span><a> {{ trans.t('DASHBOARD') }}</a></li>
+            <li class="menuElements" id="Shopping" (click)="disableMenu()" *ngIf="!log.isntAdmin()">
+                <a routerLink="/" style="display: flex; align-items: center; gap: 8px; text-decoration: none; color: inherit;">
+                    <span class="material-symbols-outlined">shopping_bag</span>
+                    <span>{{ trans.t('SHOPPING') }}</span>
+                </a>
+            </li>
+            <li class="menuElements" id="Home" (click)="disableMenu()" *ngIf="!log.isntAdmin()">
+                <a routerLink="/about" style="display: flex; align-items: center; gap: 8px; text-decoration: none; color: inherit;">
+                    <span class="material-symbols-outlined">info</span>
+                    <span>{{ trans.t('ACCUEIL') }}</span>
+                </a>
+            </li>
+            <li class="menuElements" id="AdminDash" (click)="disableMenu()" *ngIf="log.isntAdmin()">
+                <a routerLink="/admin/dashboard" style="display: flex; align-items: center; gap: 8px; text-decoration: none; color: inherit;">
+                    <span class="material-symbols-outlined">analytics</span>
+                    <span>{{ trans.t('DASHBOARD') }}</span>
+                </a>
+            </li>
             <!-- Cart icon (visible for non-admins) -->
-            <li class="menuElements cart-menu-btn" routerLink="/checkout" id="CartBtn" (click)="disableMenu()" *ngIf="!log.isntAdmin()">
-              <span class="material-symbols-outlined">shopping_cart</span>
-              <span *ngIf="cartCount > 0" class="not not1">{{cartCount}}</span>
+            <li class="menuElements cart-menu-btn" id="CartBtn" (click)="disableMenu()" *ngIf="!log.isntAdmin()">
+                <a routerLink="/checkout" style="display: flex; align-items: center; gap: 8px; text-decoration: none; color: inherit; position: relative;">
+                    <span class="material-symbols-outlined">shopping_cart</span>
+                    <span *ngIf="cartCount > 0" class="not not1">{{cartCount}}</span>
+                </a>
             </li>
             <!-- Language Selector -->
             <li class="menuElements lang-selector-li" style="padding: 4px 8px; border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); background-color: var(--color-bg-card);">
@@ -42,31 +61,41 @@
 <div id="mobileMenu" *ngIf="mobileMenuOpen">
   <ul>
     <!-- Public navigation links -->
-    <li routerLink="/" (click)="toggleMobileMenu()" *ngIf="!log.isntAdmin()">
-      <span class="material-symbols-outlined">shopping_bag</span>
-      <a>{{ trans.t('SHOPPING') }}</a>
+    <li *ngIf="!log.isntAdmin()">
+      <a routerLink="/" (click)="toggleMobileMenu()" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; width: 100%;">
+        <span class="material-symbols-outlined">shopping_bag</span>
+        <span>{{ trans.t('SHOPPING') }}</span>
+      </a>
     </li>
-    <li routerLink="/about" (click)="toggleMobileMenu()" *ngIf="!log.isntAdmin()">
-      <span class="material-symbols-outlined">info</span>
-      <a>{{ trans.t('ACCUEIL') }}</a>
+    <li *ngIf="!log.isntAdmin()">
+      <a routerLink="/about" (click)="toggleMobileMenu()" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; width: 100%;">
+        <span class="material-symbols-outlined">info</span>
+        <span>{{ trans.t('ACCUEIL') }}</span>
+      </a>
     </li>
     <!-- Admin dashboard link -->
-    <li routerLink="/admin/dashboard" (click)="toggleMobileMenu()" *ngIf="log.isntAdmin()">
-      <span class="material-symbols-outlined">analytics</span>
-      <a>{{ trans.t('DASHBOARD') }}</a>
+    <li *ngIf="log.isntAdmin()">
+      <a routerLink="/admin/dashboard" (click)="toggleMobileMenu()" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; width: 100%;">
+        <span class="material-symbols-outlined">analytics</span>
+        <span>{{ trans.t('DASHBOARD') }}</span>
+      </a>
     </li>
 
     <div class="divider"></div>
 
     <!-- Anonymous users authentication links -->
     <ng-container *ngIf="!log.isToken()">
-      <li routerLink="/connexion" (click)="toggleMobileMenu()">
-        <span class="material-symbols-outlined">login</span>
-        {{ trans.t('CONNEXION') }}
+      <li>
+        <a routerLink="/connexion" (click)="toggleMobileMenu()" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; width: 100%;">
+          <span class="material-symbols-outlined">login</span>
+          <span>{{ trans.t('CONNEXION') }}</span>
+        </a>
       </li>
-      <li routerLink="/inscrire" (click)="toggleMobileMenu()">
-        <span class="material-symbols-outlined">person_add</span>
-        {{ trans.t('INSCRIPTION') }}
+      <li>
+        <a routerLink="/inscrire" (click)="toggleMobileMenu()" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; width: 100%;">
+          <span class="material-symbols-outlined">person_add</span>
+          <span>{{ trans.t('INSCRIPTION') }}</span>
+        </a>
       </li>
     </ng-container>
 
@@ -76,13 +105,17 @@
       <p class="mobile-email">{{email}}</p>
       <div class="divider"></div>
       
-      <li routerLink="/cart" (click)="toggleMobileMenu()" *ngIf="log.isuser()">
-        <span class="material-symbols-outlined">local_mall</span>
-        {{ trans.t('MES_COMMANDES') }}
+      <li *ngIf="log.isuser()">
+        <a routerLink="/cart" (click)="toggleMobileMenu()" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; width: 100%;">
+          <span class="material-symbols-outlined">local_mall</span>
+          <span>{{ trans.t('MES_COMMANDES') }}</span>
+        </a>
       </li>
-      <li (click)="log.logout(); toggleMobileMenu()" routerLink="/">
-        <span class="material-symbols-outlined">logout</span>
-        {{ trans.t('DECONNEXION') }}
+      <li>
+        <a routerLink="/" (click)="log.logout(); toggleMobileMenu()" style="display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; width: 100%;">
+          <span class="material-symbols-outlined">logout</span>
+          <span>{{ trans.t('DECONNEXION') }}</span>
+        </a>
       </li>
     </ng-container>
 
@@ -107,9 +140,29 @@
     <p *ngIf="log.isToken()" class="username">{{name}}</p>
     <p *ngIf="log.isToken()" class="email">{{email}}</p>
     <div class="divider" *ngIf="log.isToken()"></div>
-    <li (click)="disableMenu()" *ngIf="!log.isToken()" routerLink="/connexion"><span class="material-symbols-outlined">login</span> {{ trans.t('CONNEXION') }}</li>
-    <li (click)="disableMenu()" *ngIf="!log.isToken()" routerLink="/inscrire"><span class="material-symbols-outlined">person_add</span> {{ trans.t('INSCRIPTION') }}</li>
-    <li (click)="disableMenu()" routerLink="/cart" *ngIf="log.isuser()"><span class="material-symbols-outlined">local_mall</span> {{ trans.t('MES_COMMANDES') }}</li>
-    <li (click)="log.logout();disableMenu()" *ngIf="log.isToken()" routerLink="/"><span class="material-symbols-outlined">logout</span> {{ trans.t('DECONNEXION') }}</li>
+    <li *ngIf="!log.isToken()">
+      <a routerLink="/connexion" (click)="disableMenu()" style="display: flex; align-items: center; gap: 8px; text-decoration: none; color: inherit; width: 100%;">
+        <span class="material-symbols-outlined">login</span>
+        <span>{{ trans.t('CONNEXION') }}</span>
+      </a>
+    </li>
+    <li *ngIf="!log.isToken()">
+      <a routerLink="/inscrire" (click)="disableMenu()" style="display: flex; align-items: center; gap: 8px; text-decoration: none; color: inherit; width: 100%;">
+        <span class="material-symbols-outlined">person_add</span>
+        <span>{{ trans.t('INSCRIPTION') }}</span>
+      </a>
+    </li>
+    <li *ngIf="log.isuser()">
+      <a routerLink="/cart" (click)="disableMenu()" style="display: flex; align-items: center; gap: 8px; text-decoration: none; color: inherit; width: 100%;">
+        <span class="material-symbols-outlined">local_mall</span>
+        <span>{{ trans.t('MES_COMMANDES') }}</span>
+      </a>
+    </li>
+    <li *ngIf="log.isToken()">
+      <a routerLink="/" (click)="log.logout(); disableMenu()" style="display: flex; align-items: center; gap: 8px; text-decoration: none; color: inherit; width: 100%;">
+        <span class="material-symbols-outlined">logout</span>
+        <span>{{ trans.t('DECONNEXION') }}</span>
+      </a>
+    </li>
   </ul>
 </div>

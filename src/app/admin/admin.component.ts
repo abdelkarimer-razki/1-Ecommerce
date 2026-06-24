@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { DashboardService } from '../services/dashboard.service';
 import { TranslationService } from '../services/translation.service';
@@ -15,6 +15,11 @@ export class AdminComponent implements OnInit {
   isCategories: boolean = false;
   isSettings: boolean = false;
   isMessages: boolean = false;
+
+  // FAB Quick Actions State
+  showQuickActions: boolean = false;
+  globalProductModalActive: boolean = false;
+  globalCategoryModalActive: boolean = false;
 
   // Global Manual Command Modal (multi-product)
   addModalActive: boolean = false;
@@ -85,6 +90,45 @@ export class AdminComponent implements OnInit {
 
   closeAddModal() {
     this.addModalActive = false;
+  }
+
+  toggleQuickActions(event: Event) {
+    event.stopPropagation();
+    this.showQuickActions = !this.showQuickActions;
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event) {
+    this.showQuickActions = false;
+  }
+
+  quickAddProduct() {
+    this.showQuickActions = false;
+    this.globalProductModalActive = true;
+  }
+
+  quickAddCategory() {
+    this.showQuickActions = false;
+    this.globalCategoryModalActive = true;
+  }
+
+  onGlobalProductModalClose(saved: boolean) {
+    this.globalProductModalActive = false;
+    if (saved) {
+      window.location.reload();
+    }
+  }
+
+  onGlobalCategoryModalClose(saved: boolean) {
+    this.globalCategoryModalActive = false;
+    if (saved) {
+      window.location.reload();
+    }
+  }
+
+  quickAddCommand() {
+    this.showQuickActions = false;
+    this.openAddModal();
   }
 
   onManualProductSelect(prodId: any) {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
@@ -9,13 +9,14 @@ import { LoginService } from '../services/login.service';
 import { CartService } from '../services/cart.service';
 import { ShoppingserviceService } from '../services/shoppingservice.service';
 import { TranslationService } from '../services/translation.service';
+import { SeoService } from '../services/seo.service';
 
 @Component({
   selector: 'app-buyproduct',
   templateUrl: './buyproduct.component.html',
   styleUrls: ['./buyproduct.component.css']
 })
-export class BuyproductComponent implements OnInit {
+export class BuyproductComponent implements OnInit, OnDestroy {
    id: String = '';
    loading: boolean = true;
    qte: any = 1;
@@ -35,7 +36,8 @@ export class BuyproductComponent implements OnInit {
     private sanitizer: DomSanitizer,
     private titleService: Title,
     private cartService: CartService,
-    public trans: TranslationService
+    public trans: TranslationService,
+    private seoService: SeoService
   ) {}
 
   ngOnInit(): void {
@@ -55,37 +57,75 @@ export class BuyproductComponent implements OnInit {
     }
   }
 
+  ngOnDestroy(): void {
+    this.seoService.removeSchema();
+  }
+
   loadProductDetails() {
     this.buyService.getProducts(this.id).subscribe(data => {
       this.product = data;
       this.loading = false;
       if (this.product && this.product[0]) {
-        if (!this.product[0].sizes || this.product[0].sizes.length === 0) {
-          this.product[0].sizes = [];
-          if (this.product[0].taille && this.product[0].taille !== '0') {
-            this.product[0].sizes.push({ taille: String(this.product[0].taille), prix: Number(this.product[0].prix) });
+        const prod = this.product[0];
+        if (!prod.sizes || prod.sizes.length === 0) {
+          prod.sizes = [];
+          if (prod.taille && prod.taille !== '0') {
+            prod.sizes.push({ taille: String(prod.taille), prix: Number(prod.prix) });
           }
-          if (this.product[0].taille2 && this.product[0].taille2 !== '0') {
-            this.product[0].sizes.push({ taille: String(this.product[0].taille2), prix: Number(this.product[0].prix2) });
+          if (prod.taille2 && prod.taille2 !== '0') {
+            prod.sizes.push({ taille: String(prod.taille2), prix: Number(prod.prix2) });
           }
-          if (this.product[0].taille3 && this.product[0].taille3 !== '0') {
-            this.product[0].sizes.push({ taille: String(this.product[0].taille3), prix: Number(this.product[0].prix3) });
+          if (prod.taille3 && prod.taille3 !== '0') {
+            prod.sizes.push({ taille: String(prod.taille3), prix: Number(prod.prix3) });
           }
         }
-        if (this.product[0].sizes && this.product[0].sizes.length > 0) {
-          this.selectedSize = this.product[0].sizes[0];
+        if (prod.sizes && prod.sizes.length > 0) {
+          this.selectedSize = prod.sizes[0];
         } else {
-          // Fallback: use prix directly from product even if no sizes configured
-          this.selectedSize = { taille: '', prix: Number(this.product[0].prix) || 0 };
+          this.selectedSize = { taille: '', prix: Number(prod.prix) || 0 };
         }
-        this.titleService.setTitle(this.product[0].name);
+
+        // Set Dynamic Translated SEO Title, Meta Tags & OG Tags
+        const name = this.trans.pName(prod);
+        const desc = this.trans.pDesc(prod);
+        const cleanDesc = desc ? (desc.length > 155 ? desc.substring(0, 152) + '...' : desc) : `${name} - COOP BABMANSOUR`;
+        const imagePath = prod.picture ? window.location.origin + '/' + prod.picture.replace(/kigmfhhh/gi, '/') : '';
+        const keywords = [name, prod.name, prod.name_en, prod.name_ar, prod.categorie, 'Coopérative Bab Mansour', 'Maroc'].filter(Boolean).join(', ');
+
+        this.seoService.generateTags({
+          title: name,
+          description: cleanDesc,
+          keywords: keywords,
+          image: imagePath,
+          type: 'product'
+        });
+
+        // Set JSON-LD Schema.org Structured Data
+        const price = this.selectedSize ? this.selectedSize.prix : prod.prix || 0;
+        const schema = {
+          '@context': 'https://schema.org/',
+          '@type': 'Product',
+          'name': name,
+          'image': [ imagePath ],
+          'description': desc || cleanDesc,
+          'category': prod.categorie,
+          'offers': {
+            '@type': 'Offer',
+            'url': window.location.href,
+            'priceCurrency': 'MAD',
+            'price': price,
+            'availability': 'https://schema.org/InStock',
+            'itemCondition': 'https://schema.org/NewCondition'
+          }
+        };
+        this.seoService.setSchema(schema);
 
         // Check if already in cart
         const cartItems = this.cartService.getItems();
         this.addedToCart = cartItems.some(i => i.idproducts === Number(this.id));
 
         // Load similar products
-        this.loadSimilarProducts(this.product[0]);
+        this.loadSimilarProducts(prod);
       }
     });
   }

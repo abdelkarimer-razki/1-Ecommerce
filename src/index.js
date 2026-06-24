@@ -81,6 +81,12 @@ async function initCategoriesTable() {
     await p1.query(`
       ALTER TABLE categories ADD COLUMN IF NOT EXISTS name_ar VARCHAR(100)
     `);
+    await p1.query(`
+      ALTER TABLE categories ADD COLUMN IF NOT EXISTS picture TEXT
+    `);
+    await p1.query(`
+      ALTER TABLE categories ADD COLUMN IF NOT EXISTS bg_color VARCHAR(50)
+    `);
 
     // Migrate translations for existing records in background
     setTimeout(async () => {
@@ -727,8 +733,8 @@ app.get('/:categorie',async(req,res)=>{
 
 app.get('/categories/all', async(req, res) => {
   try {
-    const query = await p1.query("SELECT name FROM categories ORDER BY name ASC");
-    res.json(query.rows.map(r => r.name));
+    const query = await p1.query("SELECT * FROM categories ORDER BY name ASC");
+    res.json(query.rows);
   } catch (err) {
     console.error(err);
     res.status(500).json([]);
@@ -736,7 +742,7 @@ app.get('/categories/all', async(req, res) => {
 });
 
 app.post('/categories/add', async(req, res) => {
-  const { name } = req.body;
+  const { name, picture, bg_color } = req.body;
   if (!name || name.trim() === '') {
     return res.status(400).send('Category name is required');
   }
@@ -744,8 +750,20 @@ app.post('/categories/add', async(req, res) => {
   try {
     const catEn = await translateText(cleanName, 'en');
     const catAr = await translateText(cleanName, 'ar');
-    await p1.query("INSERT INTO categories (name, name_en, name_ar) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING", [cleanName, catEn, catAr]);
+    await p1.query("INSERT INTO categories (name, name_en, name_ar, picture, bg_color) VALUES ($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING", [cleanName, catEn, catAr, picture || null, bg_color || null]);
     res.status(201).json({ success: true, name: cleanName });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Server error');
+  }
+});
+
+app.put('/categories/:name/update', async(req, res) => {
+  const { name } = req.params;
+  const { picture, bg_color } = req.body;
+  try {
+    await p1.query("UPDATE categories SET picture=$1, bg_color=$2 WHERE name=$3", [picture || null, bg_color || null, name]);
+    res.json({ success: true });
   } catch (err) {
     console.error(err);
     res.status(500).send('Server error');

@@ -5,6 +5,7 @@ import { products } from '../backend/products';
 import { Title } from '@angular/platform-browser';
 import { ShoppingserviceService } from '../services/shoppingservice.service';
 import { TranslationService } from '../services/translation.service';
+import { SeoService } from '../services/seo.service';
 
 
 @Component({
@@ -16,7 +17,7 @@ export class ShoppingComponent implements OnInit, OnDestroy {
   allProducts: products[] = [];
   products: products[] = [];
   img: string[] = [];
-  categories: string[] = [];
+  categories: any[] = [];
   pname: any = "";
   failed: boolean = false;
   loading: boolean = true;
@@ -50,7 +51,8 @@ export class ShoppingComponent implements OnInit, OnDestroy {
     private router: Router, 
     private route: ActivatedRoute,
     private titleService: Title,
-    public trans: TranslationService
+    public trans: TranslationService,
+    private seoService: SeoService
   ) {}
 
   ngOnInit(): void {
@@ -76,6 +78,7 @@ export class ShoppingComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.stopCarouselAutoPlay();
+    this.seoService.removeSchema();
   }
 
   loadCategories() {
@@ -234,6 +237,70 @@ export class ShoppingComponent implements OnInit, OnDestroy {
 
     this.products = temp;
     this.failed = this.products.length === 0;
+    this.updateSeoTags();
+  }
+
+  updateSeoTags() {
+    const lang = this.trans.getLang();
+    let title = '';
+    let description = '';
+    let keywords = '';
+
+    const categoryText = this.selectedCategory !== 'TOUS' 
+      ? this.trans.t(this.selectedCategory)
+      : '';
+
+    if (lang === 'EN') {
+      title = categoryText 
+        ? `${categoryText} collection - Natural Moroccan Products`
+        : 'Moroccan Terroir Products - Honey, Oils & Cosmetics';
+      description = categoryText
+        ? `Explore our premium organic ${categoryText.toLowerCase()} selection. Direct from Moroccan cooperatives. 100% natural and pure.`
+        : 'Shop 100% pure organic Moroccan honey, essential oils, cosmetic argan oil, and traditional terroir products from Coopérative Bab Mansour.';
+      keywords = `moroccan terroir, organic shop, pure honey, natural oils, ${categoryText ? categoryText.toLowerCase() + ' marrakesh, ' : ''}cooperative bab mansour`;
+    } else if (lang === 'AR') {
+      title = categoryText
+        ? `تشكيلة ${categoryText} - منتجات طبيعية مغربية`
+        : 'المنتجات المغربية الطبيعية - عسل حر، زيوت وأعشاب';
+      description = categoryText
+        ? `اكتشف تشكيلة ال${categoryText} الطبيعية والفاخرة من تعاونية باب منصور. جودة عالية ومذاق أصيل.`
+        : 'تسوق أفضل أنواع العسل الحر الطبيعي، زيت الأركان للتجميل، والزيوت الأساسية من تعاونية باب منصور. منتجات مغربية طبيعية 100%.';
+      keywords = `تعاونية باب منصور, عسل حر, منتجات مغربية طبيعية, زيت أركان, ${categoryText ? categoryText + ' مغربي, ' : ''}منتجات بلدية`;
+    } else { // default FR
+      title = categoryText
+        ? `Collection ${categoryText} - Produits Naturels du Maroc`
+        : 'Produits du Terroir Marocain - Miel Pur, Huiles & Cosmétiques';
+      description = categoryText
+        ? `Découvrez notre sélection de ${categoryText.toLowerCase()} biologique et naturel. Directement issu des coopératives marocaines.`
+        : 'Achetez en ligne le miel pur biologique du Maroc, l\'huile d\'argan cosmétique et alimentaire, et les produits du terroir de la Coopérative Bab Mansour.';
+      keywords = `produits terroir marocain, miel pur maroc, huile argan, cosmétique naturelle, ${categoryText ? categoryText.toLowerCase() + ' maroc, ' : ''}coopérative bab mansour`;
+    }
+
+    this.seoService.generateTags({
+      title: title,
+      description: description,
+      keywords: keywords,
+      type: 'website'
+    });
+
+    // Generate JSON-LD list schema for products
+    if (this.products && this.products.length > 0) {
+      const items = this.products.slice(0, 10).map((prod, index) => ({
+        '@type': 'ListItem',
+        'position': index + 1,
+        'url': window.location.origin + '/produit/' + prod.idproducts,
+        'name': this.trans.pName(prod)
+      }));
+      
+      const schema = {
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        'itemListElement': items
+      };
+      this.seoService.setSchema(schema);
+    } else {
+      this.seoService.removeSchema();
+    }
   }
 
   onSearchChange() {

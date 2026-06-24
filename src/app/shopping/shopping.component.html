@@ -67,6 +67,36 @@
     </div>
   </div>
 
+  <!-- Categories Horizontal Grid Filter -->
+  <div class="category-grid-container" *ngIf="categories && categories.length > 0">
+    <div class="category-grid-wrapper">
+      <!-- "Tous" / All Categories option -->
+      <div 
+        class="category-grid-card" 
+        [class.active]="selectedCategory === 'TOUS'"
+        (click)="getProductsCategorie('TOUS')"
+      >
+        <div class="category-img-circle all-cats-circle">
+          <span class="material-symbols-outlined">storefront</span>
+        </div>
+        <span class="category-grid-name">{{trans.t('TOUTES_CATEGORIES')}}</span>
+      </div>
+
+      <!-- Each Category card -->
+      <div 
+        class="category-grid-card" 
+        *ngFor="let cat of categories"
+        [class.active]="selectedCategory === cat.name"
+        (click)="getProductsCategorie(cat.name)"
+      >
+        <div class="category-img-circle" [style.background-color]="cat.bg_color || 'var(--color-bg-card)'">
+          <img *ngIf="cat.picture" [src]="transform(cat.picture)" alt="{{trans.t(cat.name)}}">
+          <span *ngIf="!cat.picture" class="material-symbols-outlined">category</span>
+        </div>
+        <span class="category-grid-name">{{trans.t(cat.name)}}</span>
+      </div>
+    </div>
+  </div>
 
   <div class="filter-panel shopper-filters" style="margin-top: 15px; margin-bottom: 20px;">
     <!-- Top Row: Autocomplete Search -->
@@ -111,7 +141,7 @@
         <label for="shopper-filter-category"><span class="material-symbols-outlined filter-icon">category</span>{{trans.t('CATEGORIES')}}</label>
         <select id="shopper-filter-category" [(ngModel)]="selectedCategory" (ngModelChange)="applyFilters()">
           <option value="TOUS">{{trans.t('TOUTES_CATEGORIES')}}</option>
-          <option *ngFor="let cat of categories" [value]="cat">{{trans.t(cat)}}</option>
+          <option *ngFor="let cat of categories" [value]="cat.name">{{trans.t(cat.name)}}</option>
         </select>
       </div>
 
@@ -166,7 +196,7 @@
   </div>
 
   <div *ngIf="!loading" class="produitContainaire">
-    <div *ngFor='let item of products' class="Products" (click)="routerBuyProduct(item)">
+    <a *ngFor='let item of products' class="Products" [routerLink]="['/produit', item.idproducts]" style="text-decoration: none; color: inherit; display: flex;">
       <div class="productImageWrapper">
         <img [src]="transform(item.picture)" alt="{{trans.pName(item)}}">
       </div>
@@ -179,7 +209,7 @@
       <div class="productAction">
         <span>{{trans.t('DECOUVRIR')}}</span> <span class="material-symbols-outlined">chevron_right</span>
       </div>
-    </div>
+    </a>
   </div>
   <div *ngIf="failed">
     <div class="products1 Products">
