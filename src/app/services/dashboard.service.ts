@@ -90,11 +90,11 @@ export class DashboardService {
 
   //delete commande item
   deletecommande(id:any){
-    return this.http.get(this.url1+"deletecommande/"+id);
+    return this.http.delete(this.url1+"deletecommande/"+id);
   }
   //delete products
   deleteproduct(id:any){
-    return this.http.get(this.url1+"deletepro/"+id);
+    return this.http.delete(this.url1+"deletepro/"+id);
   }
 
   // Delete entire order group

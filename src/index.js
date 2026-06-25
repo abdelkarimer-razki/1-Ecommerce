@@ -6,6 +6,7 @@ const path = require("path");
 const fs = require('fs');
 const p1=require('./app/backend/db');
 const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
 const app=express();
 
 // Security constants from environment
@@ -18,6 +19,15 @@ const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 10,
   message: { error: 'Too many login attempts, please try again in 15 minutes.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Rate limiter for registration: max 5 per hour per IP
+const registreLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 5,
+  message: { error: 'Too many registration attempts, please try again later.' },
   standardHeaders: true,
   legacyHeaders: false,
 });
@@ -45,15 +55,18 @@ app.use(cors({
 }));
 app.options('*', cors());
 
+// HTTP security headers
+app.use(helmet({ contentSecurityPolicy: false }));
+
 var bodyParser = require('body-parser');
-app.use(bodyParser.json({limit: "50mb"}));
-app.use(bodyParser.urlencoded({limit: "50mb", extended: true, parameterLimit:50000}));
+// 5MB limit — enough for product images; 50MB was a DoS risk
+app.use(bodyParser.json({limit: "5mb"}));
+app.use(bodyParser.urlencoded({limit: "5mb", extended: true, parameterLimit:5000}));
 
 var i=0;
 var today = new Date();
 var dd = String(today.getDate()).padStart(2, '0');
 
-app.use(cors());
 app.use(express.json());
 app.listen(5000);
 
@@ -656,14 +669,14 @@ app.put('/effectue1/:id',verifyToken,async(req,res)=>{
   res.json({success:true});
 })
 
-// Verify order group
-app.put('/v/:id',async(req,res)=>{
+// Verify/unverify order group — admin only
+app.put('/v/:id', verifyToken, async(req,res)=>{
   const {id}=req.params;
   await p1.query("UPDATE order_group SET verifie=false WHERE idgroup=$1",[id]);
   res.json({success:true});
 })
 
-app.put('/v1/:id',async(req,res)=>{
+app.put('/v1/:id', verifyToken, async(req,res)=>{
   const {id}=req.params;
   await p1.query("UPDATE order_group SET verifie=true WHERE idgroup=$1",[id]);
   res.json({success:true});
@@ -727,7 +740,7 @@ app.post('/checkout',async(req,res)=>{
     res.status(201).json({ success: true, idgroup });
   } catch (err) {
     console.error("Checkout error:", err);
-    res.status(500).json({ success: false, error: err.message });
+    res.status(500).json({ success: false, error: 'Internal server error' });
   }
 });
 
@@ -776,7 +789,7 @@ app.post('/addManualCommand',verifyToken,async(req,res)=>{
     res.status(201).json({ success: true, idgroup });
   } catch (err) {
     console.error("Error adding manual command:", err);
-    res.status(500).json({ success: false, error: err.message });
+    res.status(500).json({ success: false, error: 'Internal server error' });
   }
 });
 
@@ -808,7 +821,7 @@ app.get('/categories/all', async(req, res) => {
   }
 });
 
-app.post('/categories/add', async(req, res) => {
+app.post('/categories/add', verifyToken, async(req, res) => {
   const { name, picture, bg_color } = req.body;
   if (!name || name.trim() === '') {
     return res.status(400).send('Category name is required');
@@ -825,7 +838,7 @@ app.post('/categories/add', async(req, res) => {
   }
 });
 
-app.put('/categories/:name/update', async(req, res) => {
+app.put('/categories/:name/update', verifyToken, async(req, res) => {
   const { name } = req.params;
   const { newName, picture, bg_color } = req.body;
   try {
@@ -862,7 +875,7 @@ app.put('/categories/:name/update', async(req, res) => {
   }
 });
 
-app.delete('/categories/:name', async(req, res) => {
+app.delete('/categories/:name', verifyToken, async(req, res) => {
   const { name } = req.params;
   try {
     await p1.query("DELETE FROM categories WHERE name = $1", [name]);
@@ -971,16 +984,16 @@ app.get('/cartcount/:id',async(req,res)=>
   res.json(query.rows);
 })
 
-//delete commande item
-app.get('/deletecommande/:id',async(req,res)=>
+//delete commande item — requires auth
+app.delete('/deletecommande/:id', verifyToken, async(req,res)=>
 {
   const id=req.params.id;
   const query = await p1.query("Delete FROM commande WHERE idcommande=$1",[id]);
   res.json(query.rows);
 })
 
-//delete product
-app.get('/deletepro/:id',async(req,res)=>
+//delete product — requires auth
+app.delete('/deletepro/:id', verifyToken, async(req,res)=>
 {
   const id=req.params.id;
   const query = await p1.query("DELETE FROM products WHERE idproducts=$1",[id]);
@@ -1003,8 +1016,8 @@ app.get("/userM/:id&:adress",verifyToken,async(req,res)=>{
   res.json(query.rows)
 })
 
-//registre
-app.post('/registre',async(req,res)=>
+//registre — rate limited, basic validation
+app.post('/registre', registreLimiter, async(req,res)=>
 {
   const fname=req.body.fname;
   const lname=req.body.lname;
@@ -1012,16 +1025,19 @@ app.post('/registre',async(req,res)=>
   const tel=req.body.tel;
   const password=req.body.password;
   const adress=req.body.adress;
+  if (!fname || !lname || !email || !tel || !password) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
   const query=await p1.query("INSERT INTO users (fname,lname,email,tel,password,adress) VALUES ($1,$2,$3,$4,$5,$6)",[fname,lname,email,tel,password,adress]);
   res.json(query.rows);
 })
 
-//test email or tel
-app.get('/test/:test',async(req,res)=>
+// Check if email/tel exists — returns only existence, not full user data
+app.get('/test/:test', async(req,res)=>
 {
   const test=req.params.test;
-  const query=await p1.query("SELECT * FROM users WHERE email=$1 OR tel=$1",[test]);
-  res.json(query.rows);
+  const query=await p1.query("SELECT iduser FROM users WHERE email=$1 OR tel=$1",[test]);
+  res.json(query.rows); // only returns iduser, not passwords
 })
 
 // Legacy cart routes (for logged-in users' cart page /cart)
@@ -1095,7 +1111,7 @@ app.get('/cartotachat/:idcommande',async(req,res)=>{
     res.json({ success: true, idgroup });
   } catch (err) {
     console.error("cartotachat error:", err);
-    res.status(500).json({ success: false, error: err.message });
+    res.status(500).json({ success: false, error: 'Internal server error' });
   }
 })
 
@@ -1137,7 +1153,7 @@ app.get('/cartotachatall/:iduser',async(req,res)=>{
     res.json({ success: true, idgroup });
   } catch (err) {
     console.error("cartotachatall error:", err);
-    res.status(500).json({ success: false, error: err.message });
+    res.status(500).json({ success: false, error: 'Internal server error' });
   }
 })
 app.get('/checkcart/:iduser&:idproduit',async(req,res)=>{
