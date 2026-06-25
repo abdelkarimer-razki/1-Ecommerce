@@ -10,16 +10,36 @@
       <li routerLink="products" [ngClass]="{clicked: isProduits}"><a class="element" [ngClass]="{color: isProduits}"><span class="material-symbols-outlined">inventory_2</span> {{trans.t('PRODUITS')}}</a> </li>
       <li routerLink="categories" [ngClass]="{clicked: isCategories}"><a class="element" [ngClass]="{color: isCategories}"><span class="material-symbols-outlined">category</span> {{trans.t('CATEGORIES')}}</a></li>
       <li routerLink="messages" [ngClass]="{clicked: isMessages}"><a class="element" [ngClass]="{color: isMessages}"><span class="material-symbols-outlined">forum</span> {{trans.t('MESSAGES')}}</a></li>
-      <li routerLink="settings" [ngClass]="{clicked: isSettings}"><a class="element" [ngClass]="{color: isSettings}"><span class="material-symbols-outlined">settings</span> {{trans.t('SETTINGS')}}</a></li>
     </ul>
 
     <!-- Section 2: Analytics & Reports (Analyses) -->
     <div class="sidebar-section-header" style="font-size: 0.72rem; font-weight: 800; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 1px; padding: 6px 14px 6px 14px; opacity: 0.7; border-top: 1px dashed var(--border-color); margin-top: 6px; padding-top: 12px;">
       {{trans.t('RAPPORTS_STATS')}}
     </div>
-    <ul class="listRoute" style="padding: 0;">
+    <ul class="listRoute" style="padding: 0; margin-bottom: 12px;">
       <li routerLink="dashboard" [ngClass]="{clicked: isDashboard}"><a class="element" [ngClass]="{color: isDashboard}"><span class="material-symbols-outlined">analytics</span> {{trans.t('DASHBOARD')}}</a></li>
       <li routerLink="stats" [ngClass]="{clicked: isStats}"><a class="element" [ngClass]="{color: isStats}"><span class="material-symbols-outlined">query_stats</span> {{trans.t('STATS_PRODUITS') || 'Statistiques'}}</a></li>
+    </ul>
+
+    <!-- Section 3: Settings (Paramètres) -->
+    <div class="sidebar-section-header" style="font-size: 0.72rem; font-weight: 800; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 1px; padding: 6px 14px 6px 14px; opacity: 0.7; border-top: 1px dashed var(--border-color); margin-top: 6px; padding-top: 12px;">
+      {{trans.t('SETTINGS')}}
+    </div>
+    <ul class="listRoute" style="padding: 0;">
+      <li routerLink="settings" [ngClass]="{clicked: isSettings}"><a class="element" [ngClass]="{color: isSettings}"><span class="material-symbols-outlined">tune</span> {{trans.t('PERSONNALISER')}}</a></li>
+      <li style="padding: 8px 12px; margin-bottom: 4px; border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); background-color: var(--color-bg-card); display: flex; align-items: center; gap: 8px; justify-content: center; width: calc(100% - 24px); box-sizing: border-box; margin-left: auto; margin-right: auto;">
+        <span class="material-symbols-outlined" style="font-size: 1.15rem; color: var(--color-text-muted);">language</span>
+        <select 
+          [ngModel]="trans.getLang()" 
+          (ngModelChange)="trans.setLang($event)" 
+          style="background: transparent; border: none; font-family: var(--font-sans); font-weight: 700; font-size: 0.85rem; color: var(--color-text-muted); outline: none; cursor: pointer; padding-left: 2px; flex-grow: 1;"
+        >
+          <option value="FR">Français (FR)</option>
+          <option value="EN">English (EN)</option>
+          <option value="AR">العربية (AR)</option>
+        </select>
+      </li>
+      <li (click)="logout()"><a class="element" style="color: #b45309; cursor: pointer;"><span class="material-symbols-outlined" style="color: #b45309;">logout</span> {{trans.t('DECONNEXION')}}</a></li>
     </ul>
   </div>
   <div class="admin-content" [style.text-align]="trans.isRtl() ? 'right' : 'left'">

@@ -4,7 +4,6 @@ import { NotifierService } from 'angular-notifier';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Subscriber, Observable } from 'rxjs';
 import { TranslationService } from '../services/translation.service';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-settings',
@@ -20,8 +19,7 @@ export class SettingsComponent implements OnInit {
     private homepageService: HomepageService,
     notifierService: NotifierService,
     private sanitizer: DomSanitizer,
-    public trans: TranslationService,
-    private router: Router
+    public trans: TranslationService
   ) {
     this.notifier = notifierService;
   }
@@ -90,12 +88,5 @@ export class SettingsComponent implements OnInit {
       return this.sanitizer.bypassSecurityTrustUrl(pic);
     }
     return pic;
-  }
-
-  logout() {
-    localStorage.clear();
-    this.router.navigate(["/connexion"]).then(() => {
-      window.location.reload();
-    });
   }
 }
