@@ -24,7 +24,7 @@
     <!-- Section 3: Settings (Paramètres) -->
     <ul class="listRoute" style="padding: 0; border-top: 1px dashed var(--border-color); margin-top: 12px; padding-top: 12px;">
       <!-- Main Settings Toggle Button -->
-      <li (click)="toggleSettingsSubmenu()" [ngClass]="{clicked: isSettings || showSettingsSubmenu}">
+      <li (click)="toggleSettingsSubmenu($event)" [ngClass]="{clicked: isSettings || showSettingsSubmenu}">
         <a class="element" style="cursor: pointer; justify-content: space-between; display: flex; align-items: center; width: 100%;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
           <div style="display: flex; align-items: center; gap: 10px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
             <span class="material-symbols-outlined">settings</span> 
@@ -37,7 +37,7 @@
       </li>
       
       <!-- Embedded Sub-list -->
-      <div *ngIf="showSettingsSubmenu" class="submenu-container">
+      <div *ngIf="showSettingsSubmenu" class="submenu-container" (click)="$event.stopPropagation()">
         <!-- Customize Site (Personnaliser) -->
         <li routerLink="settings" class="submenu-item" [ngClass]="{clicked: isSettings}">
           <a class="submenu-link">

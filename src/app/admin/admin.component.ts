@@ -78,7 +78,8 @@ export class AdminComponent implements OnInit {
   IsMessages() { this.isDashboard = false; this.isCommands = false; this.isProduits = false; this.isCategories = false; this.isSettings = false; this.isMessages = true; this.isStats = false; }
   IsStats() { this.isDashboard = false; this.isCommands = false; this.isProduits = false; this.isCategories = false; this.isSettings = false; this.isMessages = false; this.isStats = true; }
 
-  toggleSettingsSubmenu() {
+  toggleSettingsSubmenu(event: Event) {
+    event.stopPropagation();
     this.showSettingsSubmenu = !this.showSettingsSubmenu;
   }
 
@@ -110,6 +111,7 @@ export class AdminComponent implements OnInit {
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: Event) {
     this.showQuickActions = false;
+    this.showSettingsSubmenu = false;
   }
 
   quickAddProduct() {
