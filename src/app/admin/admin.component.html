@@ -22,24 +22,52 @@
     </ul>
 
     <!-- Section 3: Settings (Paramètres) -->
-    <div class="sidebar-section-header" style="font-size: 0.72rem; font-weight: 800; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 1px; padding: 6px 14px 6px 14px; opacity: 0.7; border-top: 1px dashed var(--border-color); margin-top: 6px; padding-top: 12px;">
-      {{trans.t('SETTINGS')}}
-    </div>
-    <ul class="listRoute" style="padding: 0;">
-      <li routerLink="settings" [ngClass]="{clicked: isSettings}"><a class="element" [ngClass]="{color: isSettings}"><span class="material-symbols-outlined">tune</span> {{trans.t('PERSONNALISER')}}</a></li>
-      <li style="padding: 8px 12px; margin-bottom: 4px; border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); background-color: var(--color-bg-card); display: flex; align-items: center; gap: 8px; justify-content: center; width: calc(100% - 24px); box-sizing: border-box; margin-left: auto; margin-right: auto;">
-        <span class="material-symbols-outlined" style="font-size: 1.15rem; color: var(--color-text-muted);">language</span>
-        <select 
-          [ngModel]="trans.getLang()" 
-          (ngModelChange)="trans.setLang($event)" 
-          style="background: transparent; border: none; font-family: var(--font-sans); font-weight: 700; font-size: 0.85rem; color: var(--color-text-muted); outline: none; cursor: pointer; padding-left: 2px; flex-grow: 1;"
-        >
-          <option value="FR">Français (FR)</option>
-          <option value="EN">English (EN)</option>
-          <option value="AR">العربية (AR)</option>
-        </select>
+    <ul class="listRoute" style="padding: 0; border-top: 1px dashed var(--border-color); margin-top: 12px; padding-top: 12px;">
+      <!-- Main Settings Toggle Button -->
+      <li (click)="toggleSettingsSubmenu()" [ngClass]="{clicked: isSettings || showSettingsSubmenu}">
+        <a class="element" style="cursor: pointer; justify-content: space-between; display: flex; align-items: center; width: 100%;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+          <div style="display: flex; align-items: center; gap: 10px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+            <span class="material-symbols-outlined">settings</span> 
+            <span>{{trans.t('SETTINGS')}}</span>
+          </div>
+          <span class="material-symbols-outlined" style="font-size: 1.15rem; transition: transform 0.2s;" [style.transform]="showSettingsSubmenu ? 'rotate(180deg)' : 'none'">
+            expand_more
+          </span>
+        </a>
       </li>
-      <li (click)="logout()"><a class="element" style="color: #b45309; cursor: pointer;"><span class="material-symbols-outlined" style="color: #b45309;">logout</span> {{trans.t('DECONNEXION')}}</a></li>
+      
+      <!-- Embedded Sub-list -->
+      <div *ngIf="showSettingsSubmenu" style="margin-top: 4px; display: flex; flex-direction: column; gap: 4px; border-left: 1px dashed var(--border-color); padding-left: 14px; margin-left: 18px;" [style.border-left]="trans.isRtl() ? 'none' : '1px dashed var(--border-color)'" [style.border-right]="trans.isRtl() ? '1px dashed var(--border-color)' : 'none'" [style.padding-left]="trans.isRtl() ? '0' : '14px'" [style.padding-right]="trans.isRtl() ? '14px' : '0'" [style.margin-left]="trans.isRtl() ? '0' : '18px'" [style.margin-right]="trans.isRtl() ? '18px' : '0'">
+        <!-- Customize Site (Personnaliser) -->
+        <li routerLink="settings" [ngClass]="{clicked: isSettings}" style="margin-bottom: 2px;">
+          <a class="element" [ngClass]="{color: isSettings}" style="font-size: 0.85rem; padding: 6px 12px;">
+            <span class="material-symbols-outlined" style="font-size: 1.1rem;">tune</span> 
+            {{trans.t('PERSONNALISER')}}
+          </a>
+        </li>
+        
+        <!-- Language Selector -->
+        <li style="padding: 6px 12px; margin-bottom: 2px; border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); background-color: var(--color-bg-card); display: flex; align-items: center; gap: 8px; justify-content: center; box-sizing: border-box; width: 100%;">
+          <span class="material-symbols-outlined" style="font-size: 1.1rem; color: var(--color-text-muted);">language</span>
+          <select 
+            [ngModel]="trans.getLang()" 
+            (ngModelChange)="trans.setLang($event)" 
+            style="background: transparent; border: none; font-family: var(--font-sans); font-weight: 700; font-size: 0.8rem; color: var(--color-text-muted); outline: none; cursor: pointer; padding-left: 2px; flex-grow: 1;"
+          >
+            <option value="FR">Français (FR)</option>
+            <option value="EN">English (EN)</option>
+            <option value="AR">العربية (AR)</option>
+          </select>
+        </li>
+
+        <!-- Disconnect -->
+        <li (click)="logout()" style="margin-bottom: 2px;">
+          <a class="element" style="color: #b45309; cursor: pointer; font-size: 0.85rem; padding: 6px 12px;">
+            <span class="material-symbols-outlined" style="color: #b45309; font-size: 1.1rem;">logout</span> 
+            {{trans.t('DECONNEXION')}}
+          </a>
+        </li>
+      </div>
     </ul>
   </div>
   <div class="admin-content" [style.text-align]="trans.isRtl() ? 'right' : 'left'">

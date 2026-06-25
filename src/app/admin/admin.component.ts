@@ -16,6 +16,7 @@ export class AdminComponent implements OnInit {
   isSettings: boolean = false;
   isMessages: boolean = false;
   isStats: boolean = false;
+  showSettingsSubmenu: boolean = false;
 
   // FAB Quick Actions State
   showQuickActions: boolean = false;
@@ -56,6 +57,7 @@ export class AdminComponent implements OnInit {
         this.IsProduits();
       } else if (this.route.url == "/admin/settings") {
         this.IsSettings();
+        this.showSettingsSubmenu = true;
       } else if (this.route.url == "/admin/messages") {
         this.IsMessages();
       } else if (this.route.url == "/admin/stats") {
@@ -75,6 +77,10 @@ export class AdminComponent implements OnInit {
   IsSettings() { this.isDashboard = false; this.isCommands = false; this.isProduits = false; this.isCategories = false; this.isSettings = true; this.isMessages = false; this.isStats = false; }
   IsMessages() { this.isDashboard = false; this.isCommands = false; this.isProduits = false; this.isCategories = false; this.isSettings = false; this.isMessages = true; this.isStats = false; }
   IsStats() { this.isDashboard = false; this.isCommands = false; this.isProduits = false; this.isCategories = false; this.isSettings = false; this.isMessages = false; this.isStats = true; }
+
+  toggleSettingsSubmenu() {
+    this.showSettingsSubmenu = !this.showSettingsSubmenu;
+  }
 
   // Open global FAB manual command modal
   openAddModal() {
