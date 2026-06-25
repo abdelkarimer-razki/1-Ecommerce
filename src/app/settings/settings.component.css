@@ -262,3 +262,9 @@
     max-width: 100%;
   }
 }
+
+.logout-btn-settings:hover {
+  background-color: #b91c1c !important;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}

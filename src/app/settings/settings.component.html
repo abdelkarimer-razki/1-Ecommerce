@@ -286,5 +286,47 @@
         </div>
       </div>
     </div>
+
+    <!-- General Application Settings Section -->
+    <div class="form-section">
+      <div class="form-section-header" style="display: flex; align-items: center; gap: 8px; margin-bottom: 24px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+        <span class="material-symbols-outlined section-icon">settings_applications</span>
+        <h3 style="margin: 0;">{{trans.t('PARAMETRES_APP') || 'Paramètres Généraux'}}</h3>
+      </div>
+      
+      <div class="form-grid-side-by-side" style="gap: 24px; align-items: flex-start;">
+        <!-- Language Selector Box -->
+        <div style="background-color: var(--color-bg-main); padding: 20px; border-radius: var(--border-radius-md); border: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 10px;">
+          <label style="font-weight: 700; color: var(--color-text-main); font-size: 0.9rem; display: flex; align-items: center; gap: 6px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+            <span class="material-symbols-outlined" style="font-size: 1.15rem; color: var(--color-primary);">language</span>
+            {{trans.t('CHOISIR_LANGUE') || 'Langue de l’interface'}}
+          </label>
+          <select 
+            [ngModel]="trans.getLang()" 
+            (ngModelChange)="trans.setLang($event)" 
+            style="background: white; border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); font-family: var(--font-sans); font-weight: 700; font-size: 0.9rem; color: var(--color-text-main); outline: none; cursor: pointer; padding: 10px; width: 100%; box-sizing: border-box;"
+          >
+            <option value="FR">Français (FR)</option>
+            <option value="EN">English (EN)</option>
+            <option value="AR">العربية (AR)</option>
+          </select>
+        </div>
+
+        <!-- Session / Logout Box -->
+        <div style="background-color: var(--color-bg-main); padding: 20px; border-radius: var(--border-radius-md); border: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 12px;">
+          <label style="font-weight: 700; color: var(--color-text-main); font-size: 0.9rem; display: flex; align-items: center; gap: 6px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+            <span class="material-symbols-outlined" style="font-size: 1.15rem; color: var(--color-terracotta);">account_circle</span>
+            {{trans.t('SESSION_ADMIN') || 'Session Administrateur'}}
+          </label>
+          <p style="font-size: 0.8rem; color: var(--color-text-muted); margin: 0;">
+            {{trans.t('DISCONNECT_WARN') || 'Pour quitter le panneau d’administration en toute sécurité, cliquez sur le bouton de déconnexion.'}}
+          </p>
+          <button (click)="logout()" style="background-color: var(--color-terracotta); color: white; border: none; padding: 10px 18px; border-radius: var(--border-radius-sm); font-family: var(--font-sans); font-weight: 700; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 8px; width: fit-content; transition: var(--transition-smooth);" class="logout-btn-settings" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+            <span class="material-symbols-outlined">logout</span>
+            <span>{{trans.t('DECONNEXION')}}</span>
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

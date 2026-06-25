@@ -438,7 +438,12 @@ export class TranslationService {
     'ARTISANAL': { FR: 'Production Artisanale', EN: 'Artisanal Production', AR: 'إنتاج تقليدي' },
     'BOUTIQUE': { FR: 'Boutique', EN: 'Shop', AR: 'المتجر' },
     'GESTION': { FR: 'Gestion', EN: 'Management', AR: 'إدارة المتجر' },
-    'RAPPORTS_STATS': { FR: 'Analyses & Rapports', EN: 'Analytics & Reports', AR: 'التقارير والإحصائيات' }
+    'RAPPORTS_STATS': { FR: 'Analyses & Rapports', EN: 'Analytics & Reports', AR: 'التقارير والإحصائيات' },
+    'PARAMETRES_APP': { FR: 'Paramètres Généraux', EN: 'General Settings', AR: 'الإعدادات العامة' },
+    'SETTINGS': { FR: 'Paramètres', EN: 'Settings', AR: 'الإعدادات' },
+    'CHOISIR_LANGUE': { FR: 'Langue de l’interface', EN: 'Interface Language', AR: 'لغة الواجهة' },
+    'SESSION_ADMIN': { FR: 'Session Administrateur', EN: 'Administrator Session', AR: 'جلسة المسؤول' },
+    'DISCONNECT_WARN': { FR: 'Pour quitter le panneau d’administration en toute sécurité, cliquez sur le bouton de déconnexion.', EN: 'To securely log out of the administration panel, click the button below.', AR: 'لتسجيل الخروج بأمان من لوحة التحكم، انقر على زر تسجيل الخروج.' }
   };
 
 
