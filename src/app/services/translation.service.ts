@@ -412,7 +412,17 @@ export class TranslationService {
     'DEPUIS_DEBUT': { FR: 'Tout', EN: 'All-Time', AR: 'منذ البداية' },
     'PAGE_NON_TROUVEE': { FR: 'Oups ! Page non trouvée', EN: 'Oops! Page not found', AR: 'عذراً! الصفحة غير موجودة' },
     'PAGE_NON_TROUVEE_DESC': { FR: "La page que vous recherchez semble avoir été déplacée, supprimée ou n'existe pas.", EN: 'The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.', AR: 'الصفحة التي تبحث عنها قد تكون تمت إزالتها، أو تم تغيير اسمها، أو أنها غير متاحة مؤقتاً.' },
-    'RETOUR_BOUTIQUE_404': { FR: 'Retourner à la boutique', EN: 'Go back to Shop', AR: 'العودة إلى المتجر' }
+    'RETOUR_BOUTIQUE_404': { FR: 'Retourner à la boutique', EN: 'Go back to Shop', AR: 'العودة إلى المتجر' },
+    'DETAILS_TARIFS': { FR: 'Détails & Tarifs', EN: 'Details & Prices', AR: 'التفاصيل والأسعار' },
+    'STATISTIQUES_INDIVIDUELLES': { FR: 'Statistiques', EN: 'Statistics', AR: 'الإحصائيات' },
+    'DATE_AJOUT': { FR: "Date d'ajout", EN: 'Date Added', AR: 'تاريخ الإضافة' },
+    'TOTAL_VUES': { FR: 'Total des vues', EN: 'Total Views', AR: 'إجمالي المشاهدات' },
+    'TOTAL_VENTES': { FR: 'Total des ventes', EN: 'Total Units Sold', AR: 'إجمالي المبيعات' },
+    'REVENU_GENERE': { FR: 'Revenus générés', EN: 'Revenue Generated', AR: 'الإيرادات المحققة' },
+    'VENTES_PAR_TAILLE': { FR: 'Ventes par Déclinaison', EN: 'Sales by Size', AR: 'المبيعات حسب الحجم' },
+    'CONSULTATIONS_7J': { FR: 'Visites (7 derniers jours)', EN: 'Visits (Last 7 Days)', AR: 'الزيارات (آخر 7 أيام)' },
+    'VUES_TODAY': { FR: "Aujourd'hui", EN: 'Today', AR: 'اليوم' },
+    'VUES_MONTH': { FR: 'Ce mois', EN: 'This Month', AR: 'هذا الشهر' }
   };
 
   constructor(private appRef: ApplicationRef) {

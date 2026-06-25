@@ -35,6 +35,9 @@ export class ProductsComponent implements OnInit {
   
   viewModalActive: boolean = false;
   viewedProduct: products | null = null;
+  activeDetailTab: string = 'details'; // 'details' | 'stats'
+  viewedProductStats: any = null;
+  loadingStats: boolean = false;
   
   deleteModalActive: boolean = false;
   deletingProduct: products | null = null;
@@ -188,6 +191,7 @@ export class ProductsComponent implements OnInit {
 
   openViewModal(prod: any) {
     this.viewedProduct = JSON.parse(JSON.stringify(prod));
+    this.activeDetailTab = 'details';
     
     if (this.viewedProduct && (!this.viewedProduct.sizes || this.viewedProduct.sizes.length === 0)) {
       this.viewedProduct.sizes = [];
@@ -202,12 +206,31 @@ export class ProductsComponent implements OnInit {
       }
     }
     
+    if (prod.idproducts) {
+      this.loadProductStats(prod.idproducts);
+    }
     this.viewModalActive = true;
   }
 
   closeViewModal() {
     this.viewModalActive = false;
     this.viewedProduct = null;
+    this.viewedProductStats = null;
+  }
+
+  loadProductStats(id: number) {
+    this.loadingStats = true;
+    this.viewedProductStats = null;
+    this.dash.getProductDetailStats(id).subscribe(
+      (data) => {
+        this.viewedProductStats = data;
+        this.loadingStats = false;
+      },
+      (error) => {
+        console.error('Error fetching product stats:', error);
+        this.loadingStats = false;
+      }
+    );
   }
 
   activeProduct(): products {

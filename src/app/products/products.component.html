@@ -492,37 +492,154 @@
       </div>
     </div>
 
-    <hr style="border: 0; border-top: 1px dashed var(--border-color); margin: 0;">
-
-    <!-- Description -->
-    <div>
-      <span style="font-size: 0.8rem; font-weight: 700; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 6px;">{{trans.t('DESCRIPTION')}}</span>
-      <p style="font-size: 0.9rem; color: var(--color-text-main); line-height: 1.5; margin: 0; background-color: var(--color-bg-main); border-radius: var(--border-radius-md); padding: 12px; border: 1px solid var(--border-color);">
-        {{trans.pDesc(viewedProduct) || trans.t('AUCUNE_DESCRIPTION')}}
-      </p>
+    <!-- Tabs Header -->
+    <div style="display: flex; border-bottom: 1px solid var(--border-color); margin-top: 10px; gap: 24px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+      <button type="button" (click)="activeDetailTab = 'details'" 
+              [style.border-bottom]="activeDetailTab === 'details' ? '2px solid var(--color-primary)' : '2px solid transparent'" 
+              [style.color]="activeDetailTab === 'details' ? 'var(--color-primary)' : 'var(--color-text-muted)'" 
+              style="background: none; border: none; padding: 8px 4px; font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 6px;">
+        <span class="material-symbols-outlined" style="font-size: 1.15rem;">info</span>
+        {{trans.t('DETAILS_TARIFS') || 'Détails & Tarifs'}}
+      </button>
+      <button type="button" (click)="activeDetailTab = 'stats'" 
+              [style.border-bottom]="activeDetailTab === 'stats' ? '2px solid var(--color-primary)' : '2px solid transparent'" 
+              [style.color]="activeDetailTab === 'stats' ? 'var(--color-primary)' : 'var(--color-text-muted)'" 
+              style="background: none; border: none; padding: 8px 4px; font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 6px;">
+        <span class="material-symbols-outlined" style="font-size: 1.15rem;">monitoring</span>
+        {{trans.t('STATISTIQUES_INDIVIDUELLES') || 'Statistiques'}}
+      </button>
     </div>
 
-    <!-- Variations / Sizes & Prices -->
-    <div>
-      <span style="font-size: 0.8rem; font-weight: 700; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 8px;">{{trans.t('VARIATIONS_PRIX')}}</span>
-      <div style="border: 1px solid var(--border-color); border-radius: var(--border-radius-md); overflow: hidden;">
-        <table style="width: 100%; border-collapse: collapse; background-color: var(--color-bg-card);" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
-          <tr style="background-color: var(--color-bg-main); border-bottom: 1px solid var(--border-color);" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
-            <th style="padding: 10px 14px; font-family: var(--font-sans) !important; font-size: 0.8rem; font-weight: 700; color: var(--color-text-muted); text-transform: uppercase;">{{trans.t('TAILLE_ONLY')}}</th>
-            <th style="padding: 10px 14px; font-family: var(--font-sans) !important; font-size: 0.8rem; font-weight: 700; color: var(--color-text-muted); text-transform: uppercase;" [style.text-align]="trans.isRtl() ? 'left' : 'right'">{{trans.t('PRIX_HEADER')}}</th>
-          </tr>
-          <tr *ngFor="let size of viewedProduct.sizes" style="border-bottom: 1px solid var(--border-color);">
-            <td style="padding: 10px 14px; font-size: 0.9rem; font-weight: 600; color: var(--color-text-main);">{{trans.t(size.taille)}}</td>
-            <td style="padding: 10px 14px; font-size: 0.9rem; font-weight: 700; color: var(--color-primary);" [style.text-align]="trans.isRtl() ? 'left' : 'right'">{{size.prix}} {{trans.isRtl() ? 'د.م.' : 'DH'}}</td>
-          </tr>
-        </table>
+    <!-- Tab 1: Details & Prices -->
+    <div *ngIf="activeDetailTab === 'details'" style="display: flex; flex-direction: column; gap: 20px;">
+      <!-- Description -->
+      <div>
+        <span style="font-size: 0.8rem; font-weight: 700; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-top: 15px; margin-bottom: 6px;">{{trans.t('DESCRIPTION')}}</span>
+        <p style="font-size: 0.9rem; color: var(--color-text-main); line-height: 1.5; margin: 0; background-color: var(--color-bg-main); border-radius: var(--border-radius-md); padding: 12px; border: 1px solid var(--border-color);">
+          {{trans.pDesc(viewedProduct) || trans.t('AUCUNE_DESCRIPTION')}}
+        </p>
+      </div>
+
+      <!-- Variations / Sizes & Prices -->
+      <div>
+        <span style="font-size: 0.8rem; font-weight: 700; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 8px;">{{trans.t('VARIATIONS_PRIX')}}</span>
+        <div style="border: 1px solid var(--border-color); border-radius: var(--border-radius-md); overflow: hidden;">
+          <table style="width: 100%; border-collapse: collapse; background-color: var(--color-bg-card);" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+            <tr style="background-color: var(--color-bg-main); border-bottom: 1px solid var(--border-color);" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+              <th style="padding: 10px 14px; font-family: var(--font-sans) !important; font-size: 0.8rem; font-weight: 700; color: var(--color-text-muted); text-transform: uppercase;">{{trans.t('TAILLE_ONLY')}}</th>
+              <th style="padding: 10px 14px; font-family: var(--font-sans) !important; font-size: 0.8rem; font-weight: 700; color: var(--color-text-muted); text-transform: uppercase;" [style.text-align]="trans.isRtl() ? 'left' : 'right'">{{trans.t('PRIX_HEADER')}}</th>
+            </tr>
+            <tr *ngFor="let size of viewedProduct.sizes" style="border-bottom: 1px solid var(--border-color);">
+              <td style="padding: 10px 14px; font-size: 0.9rem; font-weight: 600; color: var(--color-text-main);">{{trans.t(size.taille)}}</td>
+              <td style="padding: 10px 14px; font-size: 0.9rem; font-weight: 700; color: var(--color-primary);" [style.text-align]="trans.isRtl() ? 'left' : 'right'">{{size.prix}} {{trans.isRtl() ? 'د.م.' : 'DH'}}</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- Original Price (discount context) -->
+      <div *ngIf="viewedProduct.prixf > 0" style="display: flex; justify-content: space-between; align-items: center; background-color: var(--color-terracotta-light); border: 1px solid rgba(194, 65, 12, 0.15); border-radius: var(--border-radius-md); padding: 12px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+        <span style="font-size: 0.85rem; font-weight: 700; color: var(--color-terracotta);">{{trans.t('PRIX_ORIGINAL_BARRE')}}</span>
+        <span style="font-size: 0.95rem; font-weight: 800; color: var(--color-terracotta); text-decoration: line-through;">{{viewedProduct.prixf}} {{trans.isRtl() ? 'د.م.' : 'DH'}}</span>
       </div>
     </div>
 
-    <!-- Original Price (discount context) -->
-    <div *ngIf="viewedProduct.prixf > 0" style="display: flex; justify-content: space-between; align-items: center; background-color: var(--color-terracotta-light); border: 1px solid rgba(194, 65, 12, 0.15); border-radius: var(--border-radius-md); padding: 12px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
-      <span style="font-size: 0.85rem; font-weight: 700; color: var(--color-terracotta);">{{trans.t('PRIX_ORIGINAL_BARRE')}}</span>
-      <span style="font-size: 0.95rem; font-weight: 800; color: var(--color-terracotta); text-decoration: line-through;">{{viewedProduct.prixf}} {{trans.isRtl() ? 'د.م.' : 'DH'}}</span>
+    <!-- Tab 2: Statistics -->
+    <div *ngIf="activeDetailTab === 'stats'" style="display: flex; flex-direction: column; gap: 15px; margin-top: 15px;">
+      <!-- Loading State -->
+      <div *ngIf="loadingStats" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 0; gap: 12px;">
+        <div class="spinner" style="width: 32px; height: 32px; border-width: 3px; border-color: var(--color-primary) var(--border-color) var(--border-color) var(--border-color);"></div>
+        <p style="font-size: 0.85rem; color: var(--color-text-muted);">{{trans.t('CHARGEMENT')}}</p>
+      </div>
+
+      <div *ngIf="!loadingStats && viewedProductStats" style="display: flex; flex-direction: column; gap: 16px;">
+        <!-- Date Added -->
+        <div style="display: flex; justify-content: space-between; align-items: center; background-color: var(--color-bg-main); border: 1px solid var(--border-color); border-radius: var(--border-radius-md); padding: 12px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+          <div style="display: flex; align-items: center; gap: 8px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+            <span class="material-symbols-outlined" style="color: var(--color-text-light); font-size: 1.25rem;">calendar_today</span>
+            <span style="font-size: 0.9rem; font-weight: 700; color: var(--color-text-muted);">{{trans.t('DATE_AJOUT')}}</span>
+          </div>
+          <span style="font-size: 0.9rem; font-weight: 800; color: var(--color-text-main);">{{viewedProductStats.created_at | date:'dd/MM/yyyy HH:mm'}}</span>
+        </div>
+
+        <!-- Summary cards grid -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <!-- Views Card -->
+          <div style="background-color: var(--color-bg-card); border: 1px solid var(--border-color); border-radius: var(--border-radius-md); padding: 12px; display: flex; flex-direction: column; gap: 4px;">
+            <div style="display: flex; align-items: center; gap: 6px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+              <span class="material-symbols-outlined" style="color: var(--color-primary); font-size: 1.2rem;">visibility</span>
+              <span style="font-size: 0.8rem; font-weight: 700; color: var(--color-text-muted);">{{trans.t('TOTAL_VUES')}}</span>
+            </div>
+            <span style="font-size: 1.25rem; font-weight: 800; color: var(--color-text-main); margin-top: 4px;">{{viewedProductStats.views.views_all}}</span>
+            <div style="display: flex; gap: 8px; font-size: 0.75rem; color: var(--color-text-light); margin-top: 2px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+              <span>{{trans.t('VUES_TODAY')}}: <strong>{{viewedProductStats.views.views_today}}</strong></span>
+              <span>{{trans.t('VUES_MONTH')}}: <strong>{{viewedProductStats.views.views_month}}</strong></span>
+            </div>
+          </div>
+
+          <!-- Sales Card -->
+          <div style="background-color: var(--color-bg-card); border: 1px solid var(--border-color); border-radius: var(--border-radius-md); padding: 12px; display: flex; flex-direction: column; gap: 4px;">
+            <div style="display: flex; align-items: center; gap: 6px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+              <span class="material-symbols-outlined" style="color: var(--color-secondary); font-size: 1.2rem;">local_mall</span>
+              <span style="font-size: 0.8rem; font-weight: 700; color: var(--color-text-muted);">{{trans.t('TOTAL_VENTES')}}</span>
+            </div>
+            <span style="font-size: 1.25rem; font-weight: 800; color: var(--color-text-main); margin-top: 4px;">{{viewedProductStats.sales.sales_all}}</span>
+            <div style="display: flex; gap: 8px; font-size: 0.75rem; color: var(--color-text-light); margin-top: 2px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+              <span>{{trans.t('VUES_TODAY')}}: <strong>{{viewedProductStats.sales.sales_today}}</strong></span>
+              <span>{{trans.t('VUES_MONTH')}}: <strong>{{viewedProductStats.sales.sales_month}}</strong></span>
+            </div>
+          </div>
+          
+          <!-- Revenue Card (Full span) -->
+          <div style="grid-column: span 2; background-color: var(--color-primary-light); border: 1px solid rgba(180, 83, 9, 0.15); border-radius: var(--border-radius-md); padding: 12px; display: flex; justify-content: space-between; align-items: center;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+            <div style="display: flex; align-items: center; gap: 6px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+              <span class="material-symbols-outlined" style="color: var(--color-primary); font-size: 1.2rem;">payments</span>
+              <span style="font-size: 0.85rem; font-weight: 700; color: var(--color-primary-hover);">{{trans.t('REVENU_GENERE')}}</span>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: flex-end;">
+              <span style="font-size: 1.15rem; font-weight: 800; color: var(--color-primary);">{{viewedProductStats.sales.revenue_all | number:'1.0-0'}} DH</span>
+              <span style="font-size: 0.75rem; color: var(--color-text-light);">{{trans.t('CE_MOIS')}}: {{viewedProductStats.sales.revenue_month | number:'1.0-0'}} DH</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Size breakdown table -->
+        <div>
+          <span style="font-size: 0.8rem; font-weight: 700; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 8px;">{{trans.t('VENTES_PAR_TAILLE')}}</span>
+          <div style="border: 1px solid var(--border-color); border-radius: var(--border-radius-md); overflow: hidden;">
+            <table style="width: 100%; border-collapse: collapse; background-color: var(--color-bg-card);" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+              <tr style="background-color: var(--color-bg-main); border-bottom: 1px solid var(--border-color);" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+                <th style="padding: 8px 12px; font-family: var(--font-sans) !important; font-size: 0.75rem; font-weight: 700; color: var(--color-text-muted); text-transform: uppercase;">{{trans.t('TAILLE_ONLY')}}</th>
+                <th style="padding: 8px 12px; font-family: var(--font-sans) !important; font-size: 0.75rem; font-weight: 700; color: var(--color-text-muted); text-transform: uppercase; text-align: center;">{{trans.t('QUANTITE')}}</th>
+                <th style="padding: 8px 12px; font-family: var(--font-sans) !important; font-size: 0.75rem; font-weight: 700; color: var(--color-text-muted); text-transform: uppercase;" [style.text-align]="trans.isRtl() ? 'left' : 'right'">{{trans.t('REVENUS')}}</th>
+              </tr>
+              <tr *ngFor="let s of viewedProductStats.sizesBreakdown" style="border-bottom: 1px solid var(--border-color);">
+                <td style="padding: 8px 12px; font-size: 0.85rem; font-weight: 600; color: var(--color-text-main);">{{trans.t(s.taille)}}</td>
+                <td style="padding: 8px 12px; font-size: 0.85rem; font-weight: 600; text-align: center; color: var(--color-text-main);">{{s.units_sold}}</td>
+                <td style="padding: 8px 12px; font-size: 0.85rem; font-weight: 700; color: #10b981;" [style.text-align]="trans.isRtl() ? 'left' : 'right'">{{s.revenue | number:'1.0-0'}} DH</td>
+              </tr>
+              <tr *ngIf="viewedProductStats.sizesBreakdown.length === 0">
+                <td colspan="3" style="padding: 12px; font-size: 0.85rem; text-align: center; color: var(--color-text-light);">{{trans.t('AUCUNE_DONNEE') || 'Aucune vente enregistrée.'}}</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <!-- 7-day Views History sparkline -->
+        <div>
+          <span style="font-size: 0.8rem; font-weight: 700; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 8px;">{{trans.t('CONSULTATIONS_7J')}}</span>
+          <div style="display: flex; justify-content: space-between; align-items: flex-end; height: 68px; background-color: var(--color-bg-main); border: 1px solid var(--border-color); border-radius: var(--border-radius-md); padding: 10px 16px; gap: 8px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+            <div *ngFor="let d of viewedProductStats.dailyViews" style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; justify-content: flex-end;">
+              <div style="width: 100%; background-color: var(--color-primary); border-radius: 2px; transition: height 0.3s;"
+                   [style.height.%]="viewedProductStats.views.views_all > 0 ? (d.count / (viewedProductStats.views.views_all || 1) * 200) : 0"
+                   [style.min-height.px]="d.count > 0 ? 3 : 0"
+                   [title]="d.label + ': ' + d.count + ' views'">
+              </div>
+              <span style="font-size: 0.65rem; color: var(--color-text-light); font-weight: 700;">{{d.label | date:'dd/MM'}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 

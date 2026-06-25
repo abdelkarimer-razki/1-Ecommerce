@@ -141,4 +141,8 @@ export class DashboardService {
     const url = period ? `${this.url1}api/product-stats?period=${period}` : `${this.url1}api/product-stats`;
     return this.http.get<any>(url);
   }
+
+  getProductDetailStats(id: number): Observable<any> {
+    return this.http.get<any>(`${this.url1}api/products/${id}/stats`);
+  }
 }

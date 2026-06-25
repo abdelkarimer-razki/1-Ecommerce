@@ -1291,6 +1291,83 @@ app.get('/api/product-stats', verifyToken, async (req, res) => {
   }
 });
 
+// Get individual product statistics (created_at, views, sales, size breakdown, views history)
+app.get('/api/products/:id/stats', verifyToken, async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    if (isNaN(id)) {
+      return res.status(400).send("Invalid product ID");
+    }
+
+    // 1. Get creation date
+    const prodRes = await p1.query("SELECT created_at, name, name_en, name_ar FROM products WHERE idproducts = $1", [id]);
+    if (prodRes.rows.length === 0) {
+      return res.status(404).send("Product not found");
+    }
+    const product = prodRes.rows[0];
+
+    // 2. Get views summary
+    const viewsRes = await p1.query(`
+      SELECT 
+        COUNT(idview)::integer as views_all,
+        COUNT(CASE WHEN view_date = CURRENT_DATE THEN 1 END)::integer as views_today,
+        COUNT(CASE WHEN EXTRACT(MONTH FROM view_date) = EXTRACT(MONTH FROM CURRENT_DATE) AND EXTRACT(YEAR FROM view_date) = EXTRACT(YEAR FROM CURRENT_DATE) THEN 1 END)::integer as views_month
+      FROM product_views
+      WHERE idproducts = $1
+    `, [id]);
+
+    // 3. Get sales summary
+    const salesRes = await p1.query(`
+      SELECT 
+        COALESCE(SUM(qte), 0)::integer as sales_all,
+        COALESCE(SUM(prix), 0)::numeric as revenue_all,
+        COALESCE(SUM(CASE WHEN datecommand = CURRENT_DATE THEN qte END), 0)::integer as sales_today,
+        COALESCE(SUM(CASE WHEN datecommand = CURRENT_DATE THEN prix END), 0)::numeric as revenue_today,
+        COALESCE(SUM(CASE WHEN EXTRACT(MONTH FROM datecommand) = EXTRACT(MONTH FROM CURRENT_DATE) AND EXTRACT(YEAR FROM datecommand) = EXTRACT(YEAR FROM CURRENT_DATE) THEN qte END), 0)::integer as sales_month,
+        COALESCE(SUM(CASE WHEN EXTRACT(MONTH FROM datecommand) = EXTRACT(MONTH FROM CURRENT_DATE) AND EXTRACT(YEAR FROM datecommand) = EXTRACT(YEAR FROM CURRENT_DATE) THEN prix END), 0)::numeric as revenue_month
+      FROM commande
+      WHERE idproducts = $1 AND cart = false AND etat = true
+    `, [id]);
+
+    // 4. Get size breakdown
+    const sizesRes = await p1.query(`
+      SELECT COALESCE(taille, 'Standard') as taille, 
+             SUM(qte)::integer as units_sold, 
+             SUM(prix)::numeric as revenue
+      FROM commande
+      WHERE idproducts = $1 AND cart = false AND etat = true
+      GROUP BY taille
+      ORDER BY units_sold DESC
+    `, [id]);
+
+    // 5. Get views over the last 7 days (daily list)
+    const dailyViewsRes = await p1.query(`
+      SELECT d.date_val::text as label, COUNT(v.idview)::integer as count
+      FROM (
+        SELECT (CURRENT_DATE - i * INTERVAL '1 day')::date as date_val
+        FROM generate_series(0, 6) i
+      ) d
+      LEFT JOIN product_views v ON v.idproducts = $1 AND v.view_date = d.date_val
+      GROUP BY d.date_val
+      ORDER BY d.date_val ASC
+    `, [id]);
+
+    res.json({
+      name: product.name,
+      name_en: product.name_en,
+      name_ar: product.name_ar,
+      created_at: product.created_at,
+      views: viewsRes.rows[0],
+      sales: salesRes.rows[0],
+      sizesBreakdown: sizesRes.rows,
+      dailyViews: dailyViewsRes.rows
+    });
+  } catch (err) {
+    console.error("Error fetching individual product stats:", err);
+    res.status(500).send("Error fetching individual product stats");
+  }
+});
+
 // dynamic site configuration
 app.get('/api/config', (req, res) => {
   const configPath = path.join(__dirname, 'assets', 'config.json');
