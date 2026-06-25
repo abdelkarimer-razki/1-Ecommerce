@@ -65,7 +65,7 @@ export class AdminComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.route.navigate(["/admin/dashboard"]);
+    this.route.navigate(["/admin/commands"]);
   }
 
   IsDashboard() { this.isDashboard = true; this.isCommands = false; this.isProduits = false; this.isCategories = false; this.isSettings = false; this.isMessages = false; this.isStats = false; }

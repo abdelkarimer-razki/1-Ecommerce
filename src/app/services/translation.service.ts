@@ -436,7 +436,9 @@ export class TranslationService {
     'LIVRAISON_TRUST': { FR: 'Livraison & Paiement', EN: 'Delivery & Payment', AR: 'التوصيل والدفع' },
     'LIVRAISON_TRUST_SUB': { FR: 'Paiement cash à la livraison', EN: 'Cash on delivery payment', AR: 'الدفع عند الاستلام' },
     'ARTISANAL': { FR: 'Production Artisanale', EN: 'Artisanal Production', AR: 'إنتاج تقليدي' },
-    'BOUTIQUE': { FR: 'Boutique', EN: 'Shop', AR: 'المتجر' }
+    'BOUTIQUE': { FR: 'Boutique', EN: 'Shop', AR: 'المتجر' },
+    'GESTION': { FR: 'Gestion', EN: 'Management', AR: 'إدارة المتجر' },
+    'RAPPORTS_STATS': { FR: 'Analyses & Rapports', EN: 'Analytics & Reports', AR: 'التقارير والإحصائيات' }
   };
 
 
