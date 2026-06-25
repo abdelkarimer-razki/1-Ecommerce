@@ -76,6 +76,9 @@ async function initCategoriesTable() {
       ALTER TABLE products ADD COLUMN IF NOT EXISTS description_ar TEXT
     `);
     await p1.query(`
+      ALTER TABLE products ADD COLUMN IF NOT EXISTS views INTEGER DEFAULT 0
+    `);
+    await p1.query(`
       ALTER TABLE categories ADD COLUMN IF NOT EXISTS name_en VARCHAR(100)
     `);
     await p1.query(`
@@ -198,7 +201,33 @@ async function initCategoriesTable() {
       )
     `);
 
-    console.log("Categories and Messages tables initialized successfully!");
+    // Create product_views table for tracking views by date
+    await p1.query(`
+      CREATE TABLE IF NOT EXISTS product_views (
+        idview SERIAL PRIMARY KEY,
+        idproducts INTEGER REFERENCES products(idproducts) ON DELETE CASCADE,
+        view_date DATE DEFAULT CURRENT_DATE
+      )
+    `);
+
+    // Migrate legacy views from products table
+    const viewsCheck = await p1.query("SELECT COUNT(*) FROM product_views");
+    if (parseInt(viewsCheck.rows[0].count) === 0) {
+      console.log("Seeding product_views from legacy products.views column...");
+      const productsRes = await p1.query("SELECT idproducts, COALESCE(views, 0) as views FROM products");
+      for (const row of productsRes.rows) {
+        const count = row.views;
+        if (count > 0) {
+          for (let idx = 0; idx < count; idx++) {
+            // Spreading views over the last 30 days to populate month/all filters
+            await p1.query("INSERT INTO product_views (idproducts, view_date) VALUES ($1, CURRENT_DATE - INTERVAL '1 day' * $2)", [row.idproducts, Math.floor(Math.random() * 30)]);
+          }
+        }
+      }
+      console.log("Legacy views migration complete!");
+    }
+
+    console.log("Categories, Messages, and Product Views tables initialized successfully!");
   } catch (err) {
     console.error("Failed to initialize categories table:", err);
   }
@@ -760,9 +789,34 @@ app.post('/categories/add', async(req, res) => {
 
 app.put('/categories/:name/update', async(req, res) => {
   const { name } = req.params;
-  const { picture, bg_color } = req.body;
+  const { newName, picture, bg_color } = req.body;
   try {
-    await p1.query("UPDATE categories SET picture=$1, bg_color=$2 WHERE name=$3", [picture || null, bg_color || null, name]);
+    const cleanOldName = name.trim().toUpperCase();
+    const cleanNewName = newName ? newName.trim().toUpperCase() : null;
+
+    if (cleanNewName && cleanNewName !== cleanOldName) {
+      if (cleanOldName === 'MIEL' || cleanOldName === 'HUILE') {
+        return res.status(400).send('Cannot rename default system categories');
+      }
+      
+      const catEn = await translateText(cleanNewName, 'en');
+      const catAr = await translateText(cleanNewName, 'ar');
+      
+      await p1.query(
+        "UPDATE categories SET name=$1, name_en=$2, name_ar=$3, picture=$4, bg_color=$5 WHERE name=$6",
+        [cleanNewName, catEn, catAr, picture || null, bg_color || null, cleanOldName]
+      );
+      
+      await p1.query(
+        "UPDATE products SET categorie=$1 WHERE categorie=$2",
+        [cleanNewName, cleanOldName]
+      );
+    } else {
+      await p1.query(
+        "UPDATE categories SET picture=$1, bg_color=$2 WHERE name=$3",
+        [picture || null, bg_color || null, cleanOldName]
+      );
+    }
     res.json({ success: true });
   } catch (err) {
     console.error(err);
@@ -822,6 +876,11 @@ app.get('/buyProduct/:id',async(req,res)=>{
   if (!id || id === 'null' || isNaN(parseInt(id))) {
     return res.json([]);
   }
+  
+  // Increment view counter and log view date
+  p1.query("UPDATE products SET views = COALESCE(views, 0) + 1 WHERE idproducts = $1", [id]).catch(err => console.error("Error incrementing views:", err));
+  p1.query("INSERT INTO product_views (idproducts) VALUES ($1)", [id]).catch(err => console.error("Error logging product view:", err));
+
   const query=await p1.query(`
     SELECT p.*, COALESCE(
       json_agg(
@@ -1081,6 +1140,154 @@ app.delete('/api/messages/:id', verifyToken, async (req, res) => {
   } catch (err) {
     console.error("Error deleting message:", err);
     res.status(500).send("Error deleting message");
+  }
+});
+
+// Get product stats for Admin (most sold, least sold, most visited)
+app.get('/api/product-stats', verifyToken, async (req, res) => {
+  try {
+    const period = req.query.period || 'all';
+    let dateFilter = "";
+    let subqueryDateFilter = "";
+    
+    if (period === 'today') {
+      dateFilter = "AND c.datecommand = CURRENT_DATE";
+      subqueryDateFilter = "AND datecommand = CURRENT_DATE";
+    } else if (period === 'month') {
+      dateFilter = "AND EXTRACT(MONTH FROM c.datecommand) = EXTRACT(MONTH FROM CURRENT_DATE) AND EXTRACT(YEAR FROM c.datecommand) = EXTRACT(YEAR FROM CURRENT_DATE)";
+      subqueryDateFilter = "AND EXTRACT(MONTH FROM datecommand) = EXTRACT(MONTH FROM CURRENT_DATE) AND EXTRACT(YEAR FROM datecommand) = EXTRACT(YEAR FROM CURRENT_DATE)";
+    }
+
+    // 1. Most sold products (top 5)
+    const mostSoldRes = await p1.query(`
+      SELECT p.idproducts, p.name, p.name_en, p.name_ar, p.picture, p.categorie, 
+             SUM(c.qte)::integer as total_sold, SUM(c.prix)::numeric as total_revenue
+      FROM products p
+      JOIN commande c ON p.idproducts = c.idproducts
+      WHERE c.cart = false AND c.etat = true ${dateFilter}
+      GROUP BY p.idproducts
+      ORDER BY total_sold DESC, total_revenue DESC
+      LIMIT 5
+    `);
+
+    // 2. Least sold products (top 5)
+    const leastSoldRes = await p1.query(`
+      SELECT p.idproducts, p.name, p.name_en, p.name_ar, p.picture, p.categorie, 
+             COALESCE(SUM(c.qte), 0)::integer as total_sold, COALESCE(SUM(c.prix), 0)::numeric as total_revenue
+      FROM products p
+      LEFT JOIN (
+        SELECT * FROM commande WHERE cart = false AND etat = true ${subqueryDateFilter}
+      ) c ON p.idproducts = c.idproducts
+      GROUP BY p.idproducts
+      ORDER BY total_sold ASC, total_revenue ASC, p.name ASC
+      LIMIT 5
+    `);
+
+    // 3. Most visited products (top 5, filtered by date via product_views table)
+    let viewJoinFilter = "";
+    if (period === 'today') {
+      viewJoinFilter = "AND v.view_date = CURRENT_DATE";
+    } else if (period === 'month') {
+      viewJoinFilter = "AND EXTRACT(MONTH FROM v.view_date) = EXTRACT(MONTH FROM CURRENT_DATE) AND EXTRACT(YEAR FROM v.view_date) = EXTRACT(YEAR FROM CURRENT_DATE)";
+    }
+
+    const mostVisitedRes = await p1.query(`
+      SELECT p.idproducts, p.name, p.name_en, p.name_ar, p.picture, p.categorie, 
+             COUNT(v.idview)::integer as views
+      FROM products p
+      LEFT JOIN product_views v ON p.idproducts = v.idproducts ${viewJoinFilter}
+      GROUP BY p.idproducts
+      ORDER BY views DESC, p.name ASC
+      LIMIT 5
+    `);
+
+    // 4. General Stats Summary
+    const prodCountRes = await p1.query("SELECT COUNT(*)::integer as count FROM products");
+    const catCountRes = await p1.query("SELECT COUNT(*)::integer as count FROM categories");
+    const salesSummaryRes = await p1.query(`
+      SELECT COALESCE(SUM(qte), 0)::integer as total_qty, COALESCE(SUM(prix), 0)::numeric as total_rev
+      FROM commande c
+      WHERE cart = false AND etat = true ${dateFilter}
+    `);
+
+    // 5. Category Revenue split (Doughnut Chart)
+    const categoryRevenueRes = await p1.query(`
+      SELECT COALESCE(p.categorie, 'DIVERS') as categorie, SUM(c.prix)::numeric as revenue
+      FROM commande c
+      JOIN products p ON c.idproducts = p.idproducts
+      WHERE c.cart = false AND c.etat = true ${dateFilter}
+      GROUP BY p.categorie
+      ORDER BY revenue DESC
+    `);
+
+    // 6. Seasonality & Trends Chart data
+    const currentYear = new Date().getFullYear();
+    let trends = [];
+    let trendType = 'monthly'; // 'daily' or 'monthly'
+
+    if (period === 'today') {
+      // Daily trends for the last 7 days
+      trendType = 'daily';
+      const trendsRes = await p1.query(`
+        SELECT COALESCE(p.categorie, 'DIVERS') as categorie, 
+               c.datecommand::text as label, 
+               SUM(c.qte)::integer as total_qty
+        FROM commande c
+        JOIN products p ON c.idproducts = p.idproducts
+        WHERE c.cart = false AND c.etat = true AND c.datecommand >= CURRENT_DATE - INTERVAL '6 days'
+        GROUP BY p.categorie, c.datecommand
+        ORDER BY c.datecommand ASC, p.categorie
+      `);
+      trends = trendsRes.rows;
+    } else if (period === 'month') {
+      // Daily trends for the current month
+      trendType = 'daily';
+      const trendsRes = await p1.query(`
+        SELECT COALESCE(p.categorie, 'DIVERS') as categorie, 
+               EXTRACT(DAY FROM c.datecommand)::integer as label, 
+               SUM(c.qte)::integer as total_qty
+        FROM commande c
+        JOIN products p ON c.idproducts = p.idproducts
+        WHERE c.cart = false AND c.etat = true 
+          AND EXTRACT(MONTH FROM c.datecommand) = EXTRACT(MONTH FROM CURRENT_DATE) 
+          AND EXTRACT(YEAR FROM c.datecommand) = EXTRACT(YEAR FROM CURRENT_DATE)
+        GROUP BY p.categorie, label
+        ORDER BY label ASC, p.categorie
+      `);
+      trends = trendsRes.rows;
+    } else {
+      // Monthly trends for the current year (all-time)
+      trendType = 'monthly';
+      const trendsRes = await p1.query(`
+        SELECT COALESCE(p.categorie, 'DIVERS') as categorie, 
+               EXTRACT(MONTH FROM c.datecommand)::integer as label, 
+               SUM(c.qte)::integer as total_qty
+        FROM commande c
+        JOIN products p ON c.idproducts = p.idproducts
+        WHERE c.cart = false AND c.etat = true AND EXTRACT(YEAR FROM c.datecommand) = $1
+        GROUP BY p.categorie, label
+        ORDER BY label ASC, p.categorie
+      `, [currentYear]);
+      trends = trendsRes.rows;
+    }
+
+    res.json({
+      mostSold: mostSoldRes.rows,
+      leastSold: leastSoldRes.rows,
+      mostVisited: mostVisitedRes.rows,
+      summary: {
+        totalProducts: prodCountRes.rows[0].count,
+        totalCategories: catCountRes.rows[0].count,
+        totalItemsSold: salesSummaryRes.rows[0].total_qty,
+        totalRevenue: salesSummaryRes.rows[0].total_rev
+      },
+      categoryRevenue: categoryRevenueRes.rows,
+      monthlyTrends: trends,
+      trendType: trendType
+    });
+  } catch (err) {
+    console.error("Error fetching product stats:", err);
+    res.status(500).send("Error fetching product stats");
   }
 });
 

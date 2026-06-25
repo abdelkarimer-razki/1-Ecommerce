@@ -30,6 +30,15 @@ Cette plateforme intègre une boutique en ligne haut de gamme pour les clients a
 *   **Détourage Intelligent des Photos (Background Remover)** : Un outil de détourage intégré basé sur le canvas HTML5. Supprimez instantanément les arrière-plans des images importées grâce à un curseur de sensibilité (tolérance) interactif.
 *   **Configuration du Site (Settings)** : Modification dynamique des textes statiques du site (titres, description de l'histoire) et des bannières/images directement depuis l'interface d'administration.
 *   **Suivi des Commandes** : Visualisation en temps réel des commandes clients passées avec le détail des produits achetés.
+*   **Section Statistiques** :
+    *   Tableau de bord complet affichant les métriques clés (Total Produits, Catégories, Articles vendus, Chiffre d'Affaires).
+    *   Filtres de période dynamiques (**Aujourd'hui**, **Ce mois-ci**, **Tout**) appliqués uniformément sur toutes les statistiques.
+    *   Graphiques interactifs (Chart.js) : Répartition des revenus par catégorie (Doughnut) et Tendances de ventes avec granularité dynamique (Linéaire).
+    *   Classement en temps réel : Produits les plus vendus (Top 5), les moins vendus (Top 5) et les plus consultés (Top 5).
+    *   Suivi précis des visites par date grâce à une table dédiée `product_views` avec script de migration automatique des données historiques.
+
+### 🗺️ Autres Pages & Expérience Utilisateur
+*   **Page d'Erreur 404 Revêtue** : Une page d'erreur 404 modernisée sous forme de carte moderne avec Flexbox, des animations d'entrée fluides, un effet de zoom sur l'illustration au survol, et une localisation intégrale (Français, Anglais, Arabe) gérant parfaitement la direction de lecture RTL/LTR.
 
 ---
 

@@ -3,6 +3,7 @@
     <div class="admin-title">{{trans.t('PANEL_ADMIN')}}</div>
     <ul class="listRoute" [style.padding]="'0'">
       <li routerLink="dashboard" [ngClass]="{clicked: isDashboard}"><a class="element" [ngClass]="{color: isDashboard}" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'"><span class="material-symbols-outlined">analytics</span> {{trans.t('DASHBOARD')}}</a></li>
+      <li routerLink="stats" [ngClass]="{clicked: isStats}"><a class="element" [ngClass]="{color: isStats}" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'"><span class="material-symbols-outlined">query_stats</span> {{trans.t('STATS_PRODUITS') || 'Statistiques'}}</a></li>
       <li routerLink="commands" [ngClass]="{clicked: isCommands}"><a class="element" [ngClass]="{color: isCommands}" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'"><span class="material-symbols-outlined">receipt_long</span> {{trans.t('MES_COMMANDES')}}</a></li>
       <li routerLink="products" [ngClass]="{clicked: isProduits}"><a class="element" [ngClass]="{color: isProduits}" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'"><span class="material-symbols-outlined">inventory_2</span> {{trans.t('PRODUITS')}}</a> </li>
       <li routerLink="categories" [ngClass]="{clicked: isCategories}"><a class="element" [ngClass]="{color: isCategories}" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'"><span class="material-symbols-outlined">category</span> {{trans.t('CATEGORIES')}}</a></li>

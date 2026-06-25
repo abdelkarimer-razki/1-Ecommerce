@@ -15,6 +15,7 @@ export class AdminComponent implements OnInit {
   isCategories: boolean = false;
   isSettings: boolean = false;
   isMessages: boolean = false;
+  isStats: boolean = false;
 
   // FAB Quick Actions State
   showQuickActions: boolean = false;
@@ -57,6 +58,8 @@ export class AdminComponent implements OnInit {
         this.IsSettings();
       } else if (this.route.url == "/admin/messages") {
         this.IsMessages();
+      } else if (this.route.url == "/admin/stats") {
+        this.IsStats();
       }
     })
   }
@@ -65,12 +68,13 @@ export class AdminComponent implements OnInit {
     this.route.navigate(["/admin/dashboard"]);
   }
 
-  IsDashboard() { this.isDashboard = true; this.isCommands = false; this.isProduits = false; this.isCategories = false; this.isSettings = false; this.isMessages = false; }
-  IsCommands() { this.isDashboard = false; this.isCommands = true; this.isProduits = false; this.isCategories = false; this.isSettings = false; this.isMessages = false; }
-  IsProduits() { this.isDashboard = false; this.isCommands = false; this.isProduits = true; this.isCategories = false; this.isSettings = false; this.isMessages = false; }
-  IsCategories() { this.isDashboard = false; this.isCommands = false; this.isProduits = false; this.isCategories = true; this.isSettings = false; this.isMessages = false; }
-  IsSettings() { this.isDashboard = false; this.isCommands = false; this.isProduits = false; this.isCategories = false; this.isSettings = true; this.isMessages = false; }
-  IsMessages() { this.isDashboard = false; this.isCommands = false; this.isProduits = false; this.isCategories = false; this.isSettings = false; this.isMessages = true; }
+  IsDashboard() { this.isDashboard = true; this.isCommands = false; this.isProduits = false; this.isCategories = false; this.isSettings = false; this.isMessages = false; this.isStats = false; }
+  IsCommands() { this.isDashboard = false; this.isCommands = true; this.isProduits = false; this.isCategories = false; this.isSettings = false; this.isMessages = false; this.isStats = false; }
+  IsProduits() { this.isDashboard = false; this.isCommands = false; this.isProduits = true; this.isCategories = false; this.isSettings = false; this.isMessages = false; this.isStats = false; }
+  IsCategories() { this.isDashboard = false; this.isCommands = false; this.isProduits = false; this.isCategories = true; this.isSettings = false; this.isMessages = false; this.isStats = false; }
+  IsSettings() { this.isDashboard = false; this.isCommands = false; this.isProduits = false; this.isCategories = false; this.isSettings = true; this.isMessages = false; this.isStats = false; }
+  IsMessages() { this.isDashboard = false; this.isCommands = false; this.isProduits = false; this.isCategories = false; this.isSettings = false; this.isMessages = true; this.isStats = false; }
+  IsStats() { this.isDashboard = false; this.isCommands = false; this.isProduits = false; this.isCategories = false; this.isSettings = false; this.isMessages = false; this.isStats = true; }
 
   // Open global FAB manual command modal
   openAddModal() {

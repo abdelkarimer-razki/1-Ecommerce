@@ -391,7 +391,28 @@ export class TranslationService {
 
     // Arabic specific styles
     'DIR_AR': { FR: 'ltr', EN: 'ltr', AR: 'rtl' },
-    'ALIGN_AR': { FR: 'left', EN: 'left', AR: 'right' }
+    'ALIGN_AR': { FR: 'left', EN: 'left', AR: 'right' },
+    'STATS_PRODUITS': { FR: 'Statistiques', EN: 'Statistics', AR: 'الإحصائيات' },
+    'ACTUALISER': { FR: 'Actualiser', EN: 'Refresh', AR: 'تحديث' },
+    'TOTAL_PRODUITS': { FR: 'Total Produits', EN: 'Total Products', AR: 'إجمالي المنتجات' },
+    'ARTICLES_VENDUS': { FR: 'Articles Vendus', EN: 'Articles Sold', AR: 'السلع المباعة' },
+    'TOTAL_REVENUS': { FR: "Chiffre d'Affaires", EN: 'Total Revenue', AR: 'إجمالي الإيرادات' },
+    'PRODUITS_LES_PLUS_VENDUS': { FR: 'Produits les plus vendus (Top 5)', EN: 'Most Sold Products (Top 5)', AR: 'المنتجات الأكثر مبيعاً (أعلى 5)' },
+    'PRODUITS_LES_PLUS_VISITES': { FR: 'Produits les plus populaires (Top 5)', EN: 'Most Visited Products (Top 5)', AR: 'المنتجات الأكثر زيارة (أعلى 5)' },
+    'PRODUITS_LES_MOINS_VENDUS': { FR: 'Produits les moins vendus (Top 5)', EN: 'Least Sold Products (Top 5)', AR: 'المنتجات الأقل مبيعاً (أعلى 5)' },
+    'QTE_VENDUE': { FR: 'Quantité vendue', EN: 'Quantity Sold', AR: 'الكمية المباعة' },
+    'VUES': { FR: 'Vues / Clics', EN: 'Views / Clicks', AR: 'المشاهدات / النقرات' },
+    'VUES_COUNT': { FR: 'vues', EN: 'views', AR: 'مشاهدة' },
+    'AUCUNE_DONNEE': { FR: 'Aucune donnée disponible', EN: 'No data available', AR: 'لا توجد بيانات متاحة' },
+    'PART_REVENUS_CATEGORIE': { FR: 'Répartition des Revenus par Catégorie', EN: 'Revenue Share by Category', AR: 'توزيع الإيرادات حسب الفئة' },
+    'TENDANCES_VENTES_SAISONNIERES': { FR: 'Saisonnalité & Ventes Mensuelles', EN: 'Seasonality & Monthly Sales Trends', AR: 'الموسمية واتجاهات المبيعات الشهرية' },
+    'TENDANCES_VENTES_7_JOURS': { FR: 'Tendances des 7 Derniers Jours', EN: 'Trends over Last 7 Days', AR: 'اتجاهات آخر 7 أيام' },
+    'TENDANCES_VENTES_MOIS': { FR: 'Tendances du Mois en Cours', EN: 'Current Month Trends', AR: 'اتجاهات الشهر الحالي' },
+    'CE_MOIS': { FR: 'Ce mois-ci', EN: 'This Month', AR: 'هذا الشهر' },
+    'DEPUIS_DEBUT': { FR: 'Tout', EN: 'All-Time', AR: 'منذ البداية' },
+    'PAGE_NON_TROUVEE': { FR: 'Oups ! Page non trouvée', EN: 'Oops! Page not found', AR: 'عذراً! الصفحة غير موجودة' },
+    'PAGE_NON_TROUVEE_DESC': { FR: "La page que vous recherchez semble avoir été déplacée, supprimée ou n'existe pas.", EN: 'The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.', AR: 'الصفحة التي تبحث عنها قد تكون تمت إزالتها، أو تم تغيير اسمها، أو أنها غير متاحة مؤقتاً.' },
+    'RETOUR_BOUTIQUE_404': { FR: 'Retourner à la boutique', EN: 'Go back to Shop', AR: 'العودة إلى المتجر' }
   };
 
   constructor(private appRef: ApplicationRef) {

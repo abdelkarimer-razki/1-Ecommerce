@@ -81,8 +81,8 @@ export class DashboardService {
   addCategory(name: string, picture?: string, bg_color?: string): Observable<any> {
     return this.http.post(this.url1 + "categories/add", { name, picture, bg_color });
   }
-  updateCategory(name: string, picture: string, bg_color: string): Observable<any> {
-    return this.http.put(this.url1 + "categories/" + name + "/update", { picture, bg_color });
+  updateCategory(name: string, newName: string, picture: string, bg_color: string): Observable<any> {
+    return this.http.put(this.url1 + "categories/" + name + "/update", { newName, picture, bg_color });
   }
   deleteCategory(name: string): Observable<any> {
     return this.http.delete(this.url1 + "categories/" + name);
@@ -135,5 +135,10 @@ export class DashboardService {
   }
   deleteMessage(id: number): Observable<any> {
     return this.http.delete(this.url1 + "api/messages/" + id);
+  }
+
+  getProductStats(period?: string): Observable<any> {
+    const url = period ? `${this.url1}api/product-stats?period=${period}` : `${this.url1}api/product-stats`;
+    return this.http.get<any>(url);
   }
 }

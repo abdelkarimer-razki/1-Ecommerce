@@ -1,11 +1,20 @@
-<head>
-    <title>Csfgsfg</title>
-</head>
-<div id="cont">
-    <img src="../../assets/crazybees.jpg" alt="">
-    <div>
-        <h1>Error 404</h1>
-        <p>Page non trouvée</p>
+<div class="error-page-container" [class.rtl-layout]="trans.isRtl()" [style.direction]="trans.isRtl() ? 'rtl' : 'ltr'">
+  <div class="error-card">
+    <div class="error-image-wrapper">
+      <img src="../../assets/crazybees.jpg" alt="404 - Page not found" class="error-image">
     </div>
-
+    <div class="error-content">
+      <span class="error-badge">404</span>
+      <h1 class="error-title">{{ trans.t('PAGE_NON_TROUVEE') || 'Oups ! Page non trouvée' }}</h1>
+      <p class="error-description">
+        {{ trans.t('PAGE_NON_TROUVEE_DESC') || "La page que vous recherchez semble avoir été déplacée, supprimée ou n'existe pas." }}
+      </p>
+      <div class="error-actions">
+        <a routerLink="/" class="btn-back-home">
+          <span class="material-symbols-outlined">storefront</span>
+          {{ trans.t('RETOUR_BOUTIQUE_404') || 'Retourner à la boutique' }}
+        </a>
+      </div>
+    </div>
+  </div>
 </div>

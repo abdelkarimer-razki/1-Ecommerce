@@ -308,6 +308,15 @@
       </div>
     </div>
 
+    <!-- Category Name Input -->
+    <div style="display: flex; flex-direction: column;">
+      <label style="display: flex; justify-content: space-between; margin-bottom: 6px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+        <span style="font-weight: 700; font-size: 0.85rem; color: var(--color-text-muted);">{{trans.t('NOM_CATEGORIE_HEADER')}} <span style="color: #dc2626;" *ngIf="editingCategory.name !== 'MIEL' && editingCategory.name !== 'HUILE'">*</span></span>
+        <span style="font-size: 0.75rem; color: var(--color-text-muted); font-weight: normal;" *ngIf="editingCategory.name === 'MIEL' || editingCategory.name === 'HUILE'">({{trans.t('SYSTEME') || 'Système'}})</span>
+      </label>
+      <input class="text" type="text" [(ngModel)]="editingCategoryName" placeholder="Ex: COSMETIQUES, AMLOU, SAVONS" style="width: 100%; box-sizing: border-box; margin: 0;" [disabled]="editingCategory.name === 'MIEL' || editingCategory.name === 'HUILE'" (keyup.enter)="saveCategoryEdit()">
+    </div>
+
   </div>
 
   <div class="modal-footer" style="background-color: var(--color-bg-main); border-top: 1px solid var(--border-color); display: flex; justify-content: flex-end; gap: 12px; padding: 16px 24px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">

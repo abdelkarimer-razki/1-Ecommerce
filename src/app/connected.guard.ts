@@ -12,9 +12,13 @@ export class ConnectedGuard implements CanActivate {
   {
     if(this.login.isToken()&&!this.login.isntAdmin()){
       return true;
-  }else{
-    this.router.navigate(['/']);
-    return false;
-  }
+    }else{
+      if (this.login.isntAdmin()) {
+        this.router.navigate(['/admin/dashboard']);
+      } else {
+        this.router.navigate(['/']);
+      }
+      return false;
+    }
   }
 }

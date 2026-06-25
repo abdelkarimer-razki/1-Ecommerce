@@ -1,0 +1,257 @@
+<div class="stats-container" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+  <!-- Header -->
+  <div class="header-section" style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+    <h1 class="title" style="margin: 0; display: flex; align-items: center; gap: 8px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+      <span class="material-symbols-outlined">query_stats</span>
+      {{trans.t('STATS_PRODUITS') || 'Statistiques'}}
+    </h1>
+    <div style="display: flex; align-items: center; gap: 16px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+      <!-- Period Selector Tabs -->
+      <div class="period-tabs" style="display: flex; background-color: var(--color-bg-card); border: 1px solid var(--border-color); padding: 4px; border-radius: 8px; box-shadow: var(--shadow-sm);" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+        <button 
+          (click)="setPeriod('today')" 
+          [style.background-color]="selectedPeriod === 'today' ? 'var(--color-primary)' : 'transparent'"
+          [style.color]="selectedPeriod === 'today' ? '#ffffff' : 'var(--color-text-muted)'"
+          style="border: none; padding: 6px 14px; border-radius: 6px; font-family: var(--font-sans); font-weight: 700; font-size: 0.8rem; cursor: pointer; transition: 0.2s;"
+        >
+          {{trans.t('AUJOURDHUI') || "Aujourd'hui"}}
+        </button>
+        <button 
+          (click)="setPeriod('month')" 
+          [style.background-color]="selectedPeriod === 'month' ? 'var(--color-primary)' : 'transparent'"
+          [style.color]="selectedPeriod === 'month' ? '#ffffff' : 'var(--color-text-muted)'"
+          style="border: none; padding: 6px 14px; border-radius: 6px; font-family: var(--font-sans); font-weight: 700; font-size: 0.8rem; cursor: pointer; transition: 0.2s;"
+        >
+          {{trans.t('CE_MOIS') || 'Ce mois-ci'}}
+        </button>
+        <button 
+          (click)="setPeriod('all')" 
+          [style.background-color]="selectedPeriod === 'all' ? 'var(--color-primary)' : 'transparent'"
+          [style.color]="selectedPeriod === 'all' ? '#ffffff' : 'var(--color-text-muted)'"
+          style="border: none; padding: 6px 14px; border-radius: 6px; font-family: var(--font-sans); font-weight: 700; font-size: 0.8rem; cursor: pointer; transition: 0.2s;"
+        >
+          {{trans.t('DEPUIS_DEBUT') || 'Tout'}}
+        </button>
+      </div>
+
+      <button (click)="loadStats()" class="btn-refresh" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'" style="margin: 0; height: 36px; box-sizing: border-box;">
+        <span class="material-symbols-outlined" style="font-size: 1.15rem;">sync</span>
+        {{trans.t('ACTUALISER') || 'Actualiser'}}
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-wrap">
+    <div class="spinner"></div>
+    <p>{{trans.t('CHARGEMENT') || 'Chargement des statistiques...'}}</p>
+  </div>
+
+  <div *ngIf="!loading && statsData">
+    <!-- Overview Grid -->
+    <div class="overview-grid" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+      <!-- Total Products -->
+      <div class="stat-card">
+        <div class="stat-icon" style="background-color: rgba(180, 83, 9, 0.1); color: var(--color-primary);">
+          <span class="material-symbols-outlined">inventory_2</span>
+        </div>
+        <div class="stat-details">
+          <span class="stat-label">{{trans.t('TOTAL_PRODUITS') || 'Total Produits'}}</span>
+          <span class="stat-value">{{statsData.summary.totalProducts}}</span>
+        </div>
+      </div>
+
+      <!-- Total Categories -->
+      <div class="stat-card">
+        <div class="stat-icon" style="background-color: rgba(77, 124, 15, 0.1); color: var(--color-secondary);">
+          <span class="material-symbols-outlined">category</span>
+        </div>
+        <div class="stat-details">
+          <span class="stat-label">{{trans.t('CATEGORIES') || 'Catégories'}}</span>
+          <span class="stat-value">{{statsData.summary.totalCategories}}</span>
+        </div>
+      </div>
+
+      <!-- Total Items Sold -->
+      <div class="stat-card">
+        <div class="stat-icon" style="background-color: rgba(194, 65, 12, 0.1); color: var(--color-terracotta);">
+          <span class="material-symbols-outlined">local_mall</span>
+        </div>
+        <div class="stat-details">
+          <span class="stat-label">{{trans.t('ARTICLES_VENDUS') || 'Articles Vendus'}}</span>
+          <span class="stat-value">{{statsData.summary.totalItemsSold}}</span>
+        </div>
+      </div>
+
+      <!-- Total Revenue -->
+      <div class="stat-card">
+        <div class="stat-icon" style="background-color: rgba(16, 185, 129, 0.1); color: #10b981;">
+          <span class="material-symbols-outlined">payments</span>
+        </div>
+        <div class="stat-details">
+          <span class="stat-label">{{trans.t('TOTAL_REVENUS') || 'Chiffre d\'Affaires'}}</span>
+          <span class="stat-value">{{statsData.summary.totalRevenue | number:'1.0-0'}} DH</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="charts-grid" style="display: grid; grid-template-columns: 1fr 2fr; gap: 24px; margin-bottom: 30px;">
+      <!-- Chart 1: Revenue by Category -->
+      <div class="table-card">
+        <div class="card-header" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+          <span class="material-symbols-outlined" style="color: var(--color-primary);">pie_chart</span>
+          <h3>{{trans.t('PART_REVENUS_CATEGORIE') || 'Répartition par Catégorie'}}</h3>
+        </div>
+        <div style="position: relative; height: 300px; width: 100%;">
+          <canvas id="categoryRevenueChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Chart 2: Seasonality & Trends -->
+      <div class="table-card">
+        <div class="card-header" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+          <span class="material-symbols-outlined" style="color: var(--color-secondary);">show_chart</span>
+          <h3>
+            {{selectedPeriod === 'today' ? (trans.t('TENDANCES_VENTES_7_JOURS') || 'Tendances des 7 Derniers Jours') : 
+              selectedPeriod === 'month' ? (trans.t('TENDANCES_VENTES_MOIS') || 'Tendances du Mois en Cours') : 
+              (trans.t('TENDANCES_VENTES_SAISONNIERES') || 'Saisonnalité & Ventes Mensuelles') + ' (' + currentYear + ')'}}
+          </h3>
+        </div>
+        <div style="position: relative; height: 300px; width: 100%;">
+          <canvas id="seasonalityChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Tables Layout -->
+    <div class="tables-layout">
+      <!-- Most Sold Card -->
+      <div class="table-card">
+        <div class="card-header" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+          <span class="material-symbols-outlined" style="color: var(--color-primary);">military_tech</span>
+          <h3>{{trans.t('PRODUITS_LES_PLUS_VENDUS') || 'Produits les Plus Vendus (Top 5)'}}</h3>
+        </div>
+        <div class="table-wrapper">
+          <table class="stats-table">
+            <thead>
+              <tr [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+                <th>{{trans.t('PRODUIT')}}</th>
+                <th>{{trans.t('CATEGORIE_ONLY') || 'Catégorie'}}</th>
+                <th style="text-align: center;">{{trans.t('QUANTITE') || 'Quantité'}}</th>
+                <th style="text-align: right;" [style.text-align]="trans.isRtl() ? 'left' : 'right'">{{trans.t('REVENUS') || 'Revenus'}}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of statsData.mostSold">
+                <td>
+                  <div class="product-cell" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+                    <div class="product-img-circle">
+                      <img *ngIf="item.picture" [src]="transformImage(item.picture)" alt="Product">
+                      <span *ngIf="!item.picture" class="material-symbols-outlined">inventory_2</span>
+                    </div>
+                    <span class="product-name">{{getProductName(item)}}</span>
+                  </div>
+                </td>
+                <td>
+                  <span class="category-badge">{{trans.t(item.categorie)}}</span>
+                </td>
+                <td style="text-align: center; font-weight: 700;">{{item.total_sold}}</td>
+                <td style="text-align: right; font-weight: 700; color: #10b981;" [style.text-align]="trans.isRtl() ? 'left' : 'right'">
+                  {{item.total_revenue | number:'1.0-0'}} DH
+                </td>
+              </tr>
+              <tr *ngIf="statsData.mostSold.length === 0">
+                <td colspan="4" class="empty-cell">{{trans.t('AUCUNE_DONNEE') || 'Aucune donnée de vente pour le moment.'}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Most Visited Card -->
+      <div class="table-card">
+        <div class="card-header" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+          <span class="material-symbols-outlined" style="color: var(--color-secondary);">visibility</span>
+          <h3>{{trans.t('PRODUITS_LES_PLUS_VISITES') || 'Produits les Plus Populaires (Top 5)'}}</h3>
+        </div>
+        <div class="table-wrapper">
+          <table class="stats-table">
+            <thead>
+              <tr [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+                <th>{{trans.t('PRODUIT')}}</th>
+                <th>{{trans.t('CATEGORIE_ONLY') || 'Catégorie'}}</th>
+                <th style="text-align: right;" [style.text-align]="trans.isRtl() ? 'left' : 'right'">{{trans.t('VUES') || 'Vues / Clics'}}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of statsData.mostVisited">
+                <td>
+                  <div class="product-cell" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+                    <div class="product-img-circle">
+                      <img *ngIf="item.picture" [src]="transformImage(item.picture)" alt="Product">
+                      <span *ngIf="!item.picture" class="material-symbols-outlined">inventory_2</span>
+                    </div>
+                    <span class="product-name">{{getProductName(item)}}</span>
+                  </div>
+                </td>
+                <td>
+                  <span class="category-badge">{{trans.t(item.categorie)}}</span>
+                </td>
+                <td style="text-align: right; font-weight: 700; color: var(--color-primary);" [style.text-align]="trans.isRtl() ? 'left' : 'right'">
+                  {{item.views}} {{trans.t('VUES_COUNT') || 'vues'}}
+                </td>
+              </tr>
+              <tr *ngIf="statsData.mostVisited.length === 0">
+                <td colspan="3" class="empty-cell">{{trans.t('AUCUNE_DONNEE') || 'Aucune vue enregistrée.'}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Least Sold Card -->
+      <div class="table-card" style="grid-column: span 2;">
+        <div class="card-header" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+          <span class="material-symbols-outlined" style="color: var(--color-terracotta);">trending_down</span>
+          <h3>{{trans.t('PRODUITS_LES_MOINS_VENDUS') || 'Produits les Moins Vendus (Top 5)'}}</h3>
+        </div>
+        <div class="table-wrapper">
+          <table class="stats-table">
+            <thead>
+              <tr [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+                <th>{{trans.t('PRODUIT')}}</th>
+                <th>{{trans.t('CATEGORIE_ONLY') || 'Catégorie'}}</th>
+                <th style="text-align: center;">{{trans.t('QUANTITE') || 'Quantité'}}</th>
+                <th style="text-align: right;" [style.text-align]="trans.isRtl() ? 'left' : 'right'">{{trans.t('REVENUS') || 'Revenus'}}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of statsData.leastSold">
+                <td>
+                  <div class="product-cell" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+                    <div class="product-img-circle">
+                      <img *ngIf="item.picture" [src]="transformImage(item.picture)" alt="Product">
+                      <span *ngIf="!item.picture" class="material-symbols-outlined">inventory_2</span>
+                    </div>
+                    <span class="product-name">{{getProductName(item)}}</span>
+                  </div>
+                </td>
+                <td>
+                  <span class="category-badge">{{trans.t(item.categorie)}}</span>
+                </td>
+                <td style="text-align: center; font-weight: 700; color: var(--color-terracotta);">{{item.total_sold}}</td>
+                <td style="text-align: right; font-weight: 700; color: var(--color-text-muted);" [style.text-align]="trans.isRtl() ? 'left' : 'right'">
+                  {{item.total_revenue | number:'1.0-0'}} DH
+                </td>
+              </tr>
+              <tr *ngIf="statsData.leastSold.length === 0">
+                <td colspan="4" class="empty-cell">{{trans.t('AUCUNE_DONNEE') || 'Aucun produit enregistré.'}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

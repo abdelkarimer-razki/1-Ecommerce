@@ -45,6 +45,7 @@ export class CategoriesComponent implements OnInit {
   // Edit category modal states
   editModalActive: boolean = false;
   editingCategory: any = null;
+  editingCategoryName: string = '';
   myimage: string = '';
   originalImage: string = '';
   toleranceThresholdEdit: number = 35;
@@ -297,6 +298,7 @@ export class CategoriesComponent implements OnInit {
 
   openEditModal(cat: any) {
     this.editingCategory = JSON.parse(JSON.stringify(cat));
+    this.editingCategoryName = this.editingCategory.name;
     var re = /kigmfhhh/gi;
     this.myimage = this.editingCategory.picture ? this.editingCategory.picture.replace(re, "/") : '';
     this.originalImage = this.myimage;
@@ -308,16 +310,24 @@ export class CategoriesComponent implements OnInit {
   closeEditModal() {
     this.editModalActive = false;
     this.editingCategory = null;
+    this.editingCategoryName = '';
     this.myimage = '';
     this.originalImage = '';
   }
 
   saveCategoryEdit() {
     if (!this.editingCategory) return;
+    if (!this.editingCategoryName || this.editingCategoryName.trim() === '') {
+      alert(this.trans.t('CHAMP_REQUIS') || 'Category name is required');
+      return;
+    }
     // replace '/' in base64 string for index.js compatibility
     const formattedPic = this.myimage ? this.myimage.replace(/\//g, 'kigmfhhh') : '';
     
-    this.dash.updateCategory(this.editingCategory.name, formattedPic, this.editCategoryBgColor).subscribe(() => {
+    const oldName = this.editingCategory.name;
+    const newName = this.editingCategoryName.trim().toUpperCase();
+
+    this.dash.updateCategory(oldName, newName, formattedPic, this.editCategoryBgColor).subscribe(() => {
       this.closeEditModal();
       this.loadData();
     }, err => {
