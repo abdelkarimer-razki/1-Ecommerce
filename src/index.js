@@ -14,6 +14,11 @@ const JWT_SECRET = process.env.JWT_SECRET || 'wJ%Y24fH9UtVzYO';
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '24h';
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:4200';
 
+// OpenWA integration
+const OPENWA_URL = process.env.OPENWA_URL || 'http://localhost:2785';
+const OPENWA_SESSION = process.env.OPENWA_SESSION || 'default';
+const OPENWA_API_KEY = process.env.OPENWA_API_KEY || '';
+
 // Rate limiter for login: max 10 attempts per 15 minutes per IP
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -367,6 +372,12 @@ app.get('/productshow',async(req,res)=>{
 
 app.get('/visits',verifyToken,async(req,res)=>{
   res.json(i);
+})
+
+// List users for WhatsApp client selector (no password)
+app.get('/users-list', verifyToken, async(req, res) => {
+  const query = await p1.query("SELECT iduser, fname, lname, tel, email FROM public.users WHERE tel IS NOT NULL AND tel != '' ORDER BY fname");
+  res.json(query.rows);
 })
 
 app.get('/revenu',async(req,res)=>{
@@ -1454,3 +1465,91 @@ app.post('/api/config', verifyToken, (req, res) => {
     res.json({ success: true });
   });
 });
+
+// ============================================================
+// WHATSAPP INTEGRATION (via OpenWA)
+// ============================================================
+
+// Check OpenWA session status
+app.get('/api/whatsapp/status', verifyToken, async (req, res) => {
+  try {
+    const headers = { 'Content-Type': 'application/json' };
+    if (OPENWA_API_KEY) headers['x-api-key'] = OPENWA_API_KEY;
+    const response = await fetch(`${OPENWA_URL}/api/sessions/${OPENWA_SESSION}`, { headers });
+    if (!response.ok) {
+      return res.json({ connected: false, error: 'Session not found or OpenWA not running' });
+    }
+    const data = await response.json();
+    res.json({ connected: data.status === 'CONNECTED', session: data });
+  } catch (err) {
+    res.json({ connected: false, error: 'OpenWA server is not reachable' });
+  }
+});
+
+// Send a WhatsApp message to a single phone number
+app.post('/api/whatsapp/send', verifyToken, async (req, res) => {
+  try {
+    const { phone, message } = req.body;
+    if (!phone || !message) {
+      return res.status(400).json({ success: false, error: 'phone and message are required' });
+    }
+    // WhatsApp chatId format: phone number + @c.us (strip leading + or 00, keep digits only)
+    const digits = phone.replace(/[^0-9]/g, '');
+    const chatId = `${digits}@c.us`;
+    const headers = { 'Content-Type': 'application/json' };
+    if (OPENWA_API_KEY) headers['x-api-key'] = OPENWA_API_KEY;
+    const response = await fetch(`${OPENWA_URL}/api/sessions/${OPENWA_SESSION}/messages/send-text`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ chatId, text: message }),
+    });
+    if (!response.ok) {
+      const errText = await response.text();
+      return res.status(502).json({ success: false, error: 'Failed to send via OpenWA', detail: errText });
+    }
+    const data = await response.json();
+    res.json({ success: true, messageId: data.id });
+  } catch (err) {
+    console.error('WhatsApp send error:', err);
+    res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+});
+
+// Send WhatsApp message to multiple phones (bulk)
+app.post('/api/whatsapp/send-bulk', verifyToken, async (req, res) => {
+  try {
+    const { phones, message } = req.body;
+    if (!phones || !Array.isArray(phones) || phones.length === 0 || !message) {
+      return res.status(400).json({ success: false, error: 'phones (array) and message are required' });
+    }
+    const headers = { 'Content-Type': 'application/json' };
+    if (OPENWA_API_KEY) headers['x-api-key'] = OPENWA_API_KEY;
+    const results = [];
+    for (const phone of phones) {
+      const digits = phone.replace(/[^0-9]/g, '');
+      const chatId = `${digits}@c.us`;
+      try {
+        const response = await fetch(`${OPENWA_URL}/api/sessions/${OPENWA_SESSION}/messages/send-text`, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({ chatId, text: message }),
+        });
+        if (response.ok) {
+          const data = await response.json();
+          results.push({ phone, success: true, messageId: data.id });
+        } else {
+          results.push({ phone, success: false, error: 'Failed to send' });
+        }
+      } catch (e) {
+        results.push({ phone, success: false, error: 'Network error' });
+      }
+      // Small delay between sends to avoid rate limiting
+      await new Promise(r => setTimeout(r, 500));
+    }
+    res.json({ success: true, results });
+  } catch (err) {
+    console.error('WhatsApp bulk send error:', err);
+    res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+});
+

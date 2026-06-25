@@ -16,6 +16,7 @@ export class AdminComponent implements OnInit {
   isSettings: boolean = false;
   isMessages: boolean = false;
   isStats: boolean = false;
+  isWhatsapp: boolean = false;
   showSettingsSubmenu: boolean = false;
 
   // FAB Quick Actions State
@@ -62,6 +63,8 @@ export class AdminComponent implements OnInit {
         this.IsMessages();
       } else if (this.route.url == "/admin/stats") {
         this.IsStats();
+      } else if (this.route.url == "/admin/whatsapp") {
+        this.IsWhatsapp();
       }
     })
   }
@@ -70,13 +73,14 @@ export class AdminComponent implements OnInit {
     this.route.navigate(["/admin/commands"]);
   }
 
-  IsDashboard() { this.isDashboard = true; this.isCommands = false; this.isProduits = false; this.isCategories = false; this.isSettings = false; this.isMessages = false; this.isStats = false; }
-  IsCommands() { this.isDashboard = false; this.isCommands = true; this.isProduits = false; this.isCategories = false; this.isSettings = false; this.isMessages = false; this.isStats = false; }
-  IsProduits() { this.isDashboard = false; this.isCommands = false; this.isProduits = true; this.isCategories = false; this.isSettings = false; this.isMessages = false; this.isStats = false; }
-  IsCategories() { this.isDashboard = false; this.isCommands = false; this.isProduits = false; this.isCategories = true; this.isSettings = false; this.isMessages = false; this.isStats = false; }
-  IsSettings() { this.isDashboard = false; this.isCommands = false; this.isProduits = false; this.isCategories = false; this.isSettings = true; this.isMessages = false; this.isStats = false; }
-  IsMessages() { this.isDashboard = false; this.isCommands = false; this.isProduits = false; this.isCategories = false; this.isSettings = false; this.isMessages = true; this.isStats = false; }
-  IsStats() { this.isDashboard = false; this.isCommands = false; this.isProduits = false; this.isCategories = false; this.isSettings = false; this.isMessages = false; this.isStats = true; }
+  IsDashboard() { this.isDashboard = true; this.isCommands = false; this.isProduits = false; this.isCategories = false; this.isSettings = false; this.isMessages = false; this.isStats = false; this.isWhatsapp = false; }
+  IsCommands() { this.isDashboard = false; this.isCommands = true; this.isProduits = false; this.isCategories = false; this.isSettings = false; this.isMessages = false; this.isStats = false; this.isWhatsapp = false; }
+  IsProduits() { this.isDashboard = false; this.isCommands = false; this.isProduits = true; this.isCategories = false; this.isSettings = false; this.isMessages = false; this.isStats = false; this.isWhatsapp = false; }
+  IsCategories() { this.isDashboard = false; this.isCommands = false; this.isProduits = false; this.isCategories = true; this.isSettings = false; this.isMessages = false; this.isStats = false; this.isWhatsapp = false; }
+  IsSettings() { this.isDashboard = false; this.isCommands = false; this.isProduits = false; this.isCategories = false; this.isSettings = true; this.isMessages = false; this.isStats = false; this.isWhatsapp = false; }
+  IsMessages() { this.isDashboard = false; this.isCommands = false; this.isProduits = false; this.isCategories = false; this.isSettings = false; this.isMessages = true; this.isStats = false; this.isWhatsapp = false; }
+  IsStats() { this.isDashboard = false; this.isCommands = false; this.isProduits = false; this.isCategories = false; this.isSettings = false; this.isMessages = false; this.isStats = true; this.isWhatsapp = false; }
+  IsWhatsapp() { this.isDashboard = false; this.isCommands = false; this.isProduits = false; this.isCategories = false; this.isSettings = false; this.isMessages = false; this.isStats = false; this.isWhatsapp = true; }
 
   toggleSettingsSubmenu(event: Event) {
     event.stopPropagation();

@@ -20,6 +20,7 @@ import { CheckoutComponent } from './checkout/checkout.component';
 import { MessagesComponent } from './messages/messages.component';
 import { NonAdminGuard } from './non-admin.guard';
 import { StatsComponent } from './stats/stats.component';
+import { WhatsappComponent } from './whatsapp/whatsapp.component';
 
 const routes: Routes = [
   {path:'shopping',component:ShoppingComponent,canActivate:[NonAdminGuard]},
@@ -38,6 +39,7 @@ const routes: Routes = [
     {path:'categories',component:CategoriesComponent,canActivate:[AuthGuard]},
     {path:'products',component:ProductsComponent,canActivate:[AuthGuard]},
     {path:'messages',component:MessagesComponent,canActivate:[AuthGuard]},
+    {path:'whatsapp',component:WhatsappComponent,canActivate:[AuthGuard]},
     {path:'settings',component:SettingsComponent,canActivate:[AuthGuard]}
   ]},
   {path:'**',component:PagenotfoundComponent}
