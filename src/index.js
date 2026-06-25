@@ -1,10 +1,26 @@
+require('dotenv').config();
 const express=require("express");
-var cors = require('cors')
+var cors = require('cors');
 const jwt=require('jsonwebtoken');
 const path = require("path");
 const fs = require('fs');
 const p1=require('./app/backend/db');
+const rateLimit = require('express-rate-limit');
 const app=express();
+
+// Security constants from environment
+const JWT_SECRET = process.env.JWT_SECRET || 'wJ%Y24fH9UtVzYO';
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '24h';
+const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:4200';
+
+// Rate limiter for login: max 10 attempts per 15 minutes per IP
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  message: { error: 'Too many login attempts, please try again in 15 minutes.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 function formatProductRows(rows) {
   return rows.map(row => {
@@ -20,13 +36,14 @@ function formatProductRows(rows) {
   });
 }
 
-app.use(function(req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  if (req.method === 'OPTIONS') return res.sendStatus(200);
-  next();
-});
+// Restrict CORS to the frontend origin only
+app.use(cors({
+  origin: FRONTEND_URL,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
+  credentials: true,
+}));
+app.options('*', cors());
 
 var bodyParser = require('body-parser');
 app.use(bodyParser.json({limit: "50mb"}));
@@ -249,30 +266,45 @@ app.post('/toggle-highlight', verifyToken, async (req, res) => {
 
 function verifyToken(req, res, next) {
   if(!req.headers.authorization) {
-    return res.status(401).send('Unauthorized request')
+    return res.status(401).send('Unauthorized request');
   }
-  var K2hM$4PAWCeFV8 = req.headers.authorization.split(' ')[1];
-  if(K2hM$4PAWCeFV8 === 'null') {
-    return res.status(401).send('Unauthorized request')
+  var token = req.headers.authorization.split(' ')[1];
+  if(!token || token === 'null') {
+    return res.status(401).send('Unauthorized request');
   }
-  let payload = jwt.verify(K2hM$4PAWCeFV8, 'wJ%Y24fH9UtVzYO')
-  if(!payload) {
-    return res.status(401).send('Unauthorized request')
+  try {
+    let payload = jwt.verify(token, JWT_SECRET);
+    if(!payload) return res.status(401).send('Unauthorized request');
+    req.user = payload;
+    next();
+  } catch(err) {
+    return res.status(401).send('Token expired or invalid');
   }
-  next()
 }
 function verifyToken2(req, res, next) {
   if(req.headers.authorization) {
-    var K2hM$4PAWCeFV8 = req.headers.authorization.split(' ')[1];
-    if(K2hM$4PAWCeFV8 === 'null') {
-      return res.status(401).send('Unauthorized request')
+    var token = req.headers.authorization.split(' ')[1];
+    if(!token || token === 'null') {
+      return res.status(401).send('Unauthorized request');
     }
-    let payload = jwt.verify(K2hM$4PAWCeFV8, 'wJ%Y24fH9UtVzYO')
-    if(!payload) {
-      return res.status(401).send('Unauthorized request')
+    try {
+      let payload = jwt.verify(token, JWT_SECRET);
+      if(!payload) return res.status(401).send('Unauthorized request');
+      req.user = payload;
+    } catch(err) {
+      return res.status(401).send('Token expired or invalid');
     }
   }
-  next()
+  next();
+}
+// Verify token AND that user has admin role embedded in JWT
+function verifyAdmin(req, res, next) {
+  verifyToken(req, res, () => {
+    if (!req.user || !req.user.isAdmin) {
+      return res.status(403).send('Forbidden: Admin access required');
+    }
+    next();
+  });
 }
 
 app.get('/',async(req,res)=>{
@@ -904,16 +936,27 @@ app.get('/buyProduct/:id',async(req,res)=>{
 })
 
 //login authentification
-app.post('/login',async(req,res)=>{
+app.post('/login', loginLimiter, async(req,res)=>{
    const email= req.body.email;
    const password=req.body.password;
+   if(!email || !password) {
+     return res.status(400).send('Email and password are required');
+   }
    const query=await p1.query("SELECT * FROM users WHERE (email=$1 OR tel=$1) AND password=$2",[email,password]);
    if(query.rows.length<1){
-    return res.status(401).send('Unauthorized request')
+    return res.status(401).send('Unauthorized request');
    }else{
-    let payload={userId:query.rows[0].iduser};
-    let K2hM$4PAWCeFV8=jwt.sign(payload,'wJ%Y24fH9UtVzYO');
-    res.status(200).send({K2hM$4PAWCeFV8,"iduser":query.rows[0].iduser,"name":query.rows[0].fname+" "+query.rows[0].lname,"email":query.rows[0].email,"admin":query.rows[0].admin},);
+    const user = query.rows[0];
+    // Embed admin role inside the JWT so it's server-validated
+    let payload = { userId: user.iduser, isAdmin: user.admin === true };
+    let K2hM$4PAWCeFV8 = jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+    res.status(200).send({
+      K2hM$4PAWCeFV8,
+      "iduser": user.iduser,
+      "name": user.fname + " " + user.lname,
+      "email": user.email,
+      "admin": user.admin
+    });
    }
 })
 

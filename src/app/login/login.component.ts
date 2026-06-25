@@ -47,15 +47,6 @@ export class LoginComponent implements OnInit {
         console.error('Error loading config in LoginComponent:', error);
       }
     );
-
-    if(this.user.email==''||this.password=='')
-    {
-      this.emailinv=true;
-    }
-    setInterval(()=>{if(this.user.email==''||this.password=='')
-    {
-      this.emailinv=true;
-    }},500);
   }
 
   connect(){
@@ -63,7 +54,6 @@ export class LoginComponent implements OnInit {
     if (!this.user.email || !this.password) {
       return;
     }
-    console.log(this.EncrDecr.set('p&aNDm6&whRD#HdL',this.password));
     if(this.emailinv==false)
     {
       this.user.password=this.EncrDecr.set('p&aNDm6&whRD#HdL',this.password);
@@ -75,10 +65,10 @@ export class LoginComponent implements OnInit {
         localStorage.setItem('userE',data.email);
         localStorage.setItem('userId',data.iduser);
         if(data.admin==true){
+          localStorage.setItem("#bsXpEcIouiz","UF7wcFy9rl&wv$adaLGkkJ@0KX$wWKTt*")
           this.router.navigate(['/admin/dashboard']).then(()=>{
             window.location.reload();
           });
-          localStorage.setItem("#bsXpEcIouiz","UF7wcFy9rl&wv$adaLGkkJ@0KX$wWKTt*")
         }else{
           this.router.navigate(['/']).then(()=>{
             window.location.reload();
@@ -90,6 +80,9 @@ export class LoginComponent implements OnInit {
         if( err instanceof HttpErrorResponse ) {
           if (err.status === 401) {
             this.incorect=true;
+          }
+          if (err.status === 429) {
+            this.incorect=true; // show error for rate limit
           }
         }
         this.loading=false;
