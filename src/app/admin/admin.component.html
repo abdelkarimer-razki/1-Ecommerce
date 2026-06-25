@@ -37,34 +37,36 @@
       </li>
       
       <!-- Embedded Sub-list -->
-      <div *ngIf="showSettingsSubmenu" style="margin-top: 4px; display: flex; flex-direction: column; gap: 4px; border-left: 1px dashed var(--border-color); padding-left: 14px; margin-left: 18px;" [style.border-left]="trans.isRtl() ? 'none' : '1px dashed var(--border-color)'" [style.border-right]="trans.isRtl() ? '1px dashed var(--border-color)' : 'none'" [style.padding-left]="trans.isRtl() ? '0' : '14px'" [style.padding-right]="trans.isRtl() ? '14px' : '0'" [style.margin-left]="trans.isRtl() ? '0' : '18px'" [style.margin-right]="trans.isRtl() ? '18px' : '0'">
+      <div *ngIf="showSettingsSubmenu" class="submenu-container">
         <!-- Customize Site (Personnaliser) -->
-        <li routerLink="settings" [ngClass]="{clicked: isSettings}" style="margin-bottom: 2px;">
-          <a class="element" [ngClass]="{color: isSettings}" style="font-size: 0.85rem; padding: 6px 12px;">
-            <span class="material-symbols-outlined" style="font-size: 1.1rem;">tune</span> 
-            {{trans.t('PERSONNALISER')}}
+        <li routerLink="settings" class="submenu-item" [ngClass]="{clicked: isSettings}">
+          <a class="submenu-link">
+            <span class="material-symbols-outlined">tune</span> 
+            <span>{{trans.t('PERSONNALISER')}}</span>
           </a>
         </li>
         
         <!-- Language Selector -->
-        <li style="padding: 6px 12px; margin-bottom: 2px; border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); background-color: var(--color-bg-card); display: flex; align-items: center; gap: 8px; justify-content: center; box-sizing: border-box; width: 100%;">
-          <span class="material-symbols-outlined" style="font-size: 1.1rem; color: var(--color-text-muted);">language</span>
-          <select 
-            [ngModel]="trans.getLang()" 
-            (ngModelChange)="trans.setLang($event)" 
-            style="background: transparent; border: none; font-family: var(--font-sans); font-weight: 700; font-size: 0.8rem; color: var(--color-text-muted); outline: none; cursor: pointer; padding-left: 2px; flex-grow: 1;"
-          >
-            <option value="FR">Français (FR)</option>
-            <option value="EN">English (EN)</option>
-            <option value="AR">العربية (AR)</option>
-          </select>
+        <li class="submenu-item">
+          <div class="submenu-link">
+            <span class="material-symbols-outlined">language</span>
+            <select 
+              [ngModel]="trans.getLang()" 
+              (ngModelChange)="trans.setLang($event)" 
+              class="submenu-lang-select"
+            >
+              <option value="FR">Français (FR)</option>
+              <option value="EN">English (EN)</option>
+              <option value="AR">العربية (AR)</option>
+            </select>
+          </div>
         </li>
 
         <!-- Disconnect -->
-        <li (click)="logout()" style="margin-bottom: 2px;">
-          <a class="element" style="color: #b45309; cursor: pointer; font-size: 0.85rem; padding: 6px 12px;">
-            <span class="material-symbols-outlined" style="color: #b45309; font-size: 1.1rem;">logout</span> 
-            {{trans.t('DECONNEXION')}}
+        <li (click)="logout()" class="submenu-item">
+          <a class="submenu-link" style="color: #b45309;">
+            <span class="material-symbols-outlined" style="color: #b45309;">logout</span> 
+            <span>{{trans.t('DECONNEXION')}}</span>
           </a>
         </li>
       </div>
