@@ -422,7 +422,11 @@ export class TranslationService {
     'VENTES_PAR_TAILLE': { FR: 'Ventes par Déclinaison', EN: 'Sales by Size', AR: 'المبيعات حسب الحجم' },
     'CONSULTATIONS_7J': { FR: 'Visites (7 derniers jours)', EN: 'Visits (Last 7 Days)', AR: 'الزيارات (آخر 7 أيام)' },
     'VUES_TODAY': { FR: "Aujourd'hui", EN: 'Today', AR: 'اليوم' },
-    'VUES_MONTH': { FR: 'Ce mois', EN: 'This Month', AR: 'هذا الشهر' }
+    'VUES_MONTH': { FR: 'Ce mois', EN: 'This Month', AR: 'هذا الشهر' },
+    'ONSSA_CERTIFIED': { FR: 'Certifié ONSSA', EN: 'ONSSA Certified', AR: 'مرخص من طرف أونسا' },
+    'ONSSA_NUMBER': { FR: "Numéro d'autorisation ONSSA", EN: 'ONSSA Authorization Number', AR: 'رقم ترخيص أونسا' },
+    'ONSSA_LABEL': { FR: 'Agrément / Autorisation ONSSA', EN: 'ONSSA Approval / Authorization', AR: 'ترخيص أونسا' },
+    'ONSSA_CERTIFICATE': { FR: 'Agrément ONSSA', EN: 'ONSSA Approval', AR: 'ترخيص أونسا' }
   };
 
   constructor(private appRef: ApplicationRef) {

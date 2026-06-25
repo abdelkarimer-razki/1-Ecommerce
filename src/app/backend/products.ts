@@ -25,6 +25,8 @@ export interface products{
   description_ar?: string;
   sizes?: ProductSize[];
   highlighted?: boolean;
+  onssa?: boolean;
+  onssa_number?: string;
 }
 export interface count{
   count:Number;

@@ -395,9 +395,12 @@ app.post('/p12',verifyToken,async(req,res)=>{
     desc_ar = await translateText(desc, 'ar');
   }
 
+  const onssa=req.body.onssa || false;
+  const onssa_number=req.body.onssa_number || '';
+
   const query = await p1.query(
-    "UPDATE products SET name=$1,description=$2,categorie=$3,mangable=$4,prixf=$5,picture=$7,name_en=$8,name_ar=$9,description_en=$10,description_ar=$11 WHERE idproducts=$6",
-    [name,desc,cat,mange,prixf,id,pic,name_en,name_ar,desc_en,desc_ar]
+    "UPDATE products SET name=$1,description=$2,categorie=$3,mangable=$4,prixf=$5,picture=$7,name_en=$8,name_ar=$9,description_en=$10,description_ar=$11,onssa=$12,onssa_number=$13 WHERE idproducts=$6",
+    [name,desc,cat,mange,prixf,id,pic,name_en,name_ar,desc_en,desc_ar,onssa,onssa_number]
   );
 
   await p1.query("DELETE FROM product_sizes WHERE idproducts = $1", [id]);
@@ -459,9 +462,12 @@ app.post('/addpro',verifyToken,async(req,res)=>
     desc_ar = await translateText(desc, 'ar');
   }
 
+  const onssa=req.body.onssa || false;
+  const onssa_number=req.body.onssa_number || '';
+
   const query = await p1.query(
-    "INSERT INTO products (name,picture,description,categorie,mangable,prixf,name_en,name_ar,description_en,description_ar) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING idproducts",
-    [name,pic,desc,cat,mange,prixf,name_en,name_ar,desc_en,desc_ar]
+    "INSERT INTO products (name,picture,description,categorie,mangable,prixf,name_en,name_ar,description_en,description_ar,onssa,onssa_number) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING idproducts",
+    [name,pic,desc,cat,mange,prixf,name_en,name_ar,desc_en,desc_ar,onssa,onssa_number]
   );
   
   const idproducts = query.rows[0].idproducts;

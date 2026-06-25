@@ -199,6 +199,17 @@
     <a *ngFor='let item of products' class="Products" [routerLink]="['/produit', item.idproducts]" style="text-decoration: none; color: inherit; display: flex;">
       <div class="productImageWrapper">
         <img [src]="transform(item.picture)" alt="{{trans.pName(item)}}">
+        <!-- ONSSA trust stamp -->
+        <span 
+          *ngIf="item.onssa" 
+          style="position: absolute; top: 8px; background-color: #10b981; color: white; padding: 3px 6px; border-radius: 4px; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; display: inline-flex; align-items: center; gap: 3px; z-index: 2; box-shadow: var(--shadow-sm); cursor: pointer;"
+          [style.left]="trans.isRtl() ? 'auto' : '8px'"
+          [style.right]="trans.isRtl() ? '8px' : 'auto'"
+          [title]="item.onssa_number ? (trans.t('ONSSA_NUMBER') + ': ' + item.onssa_number) : trans.t('ONSSA_CERTIFIED')"
+        >
+          <span class="material-symbols-outlined" style="font-size: 0.85rem; font-weight: 800;">verified</span>
+          ONSSA
+        </span>
       </div>
       <span class="productBadge" *ngIf="item.categorie">{{trans.t(item.categorie)}}</span>
       <p class="titleProduit">{{trans.pName(item)}}</p>

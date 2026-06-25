@@ -30,6 +30,18 @@
     
     <div class="info" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
       <p class="proname">{{trans.pName(item)}}</p>
+      
+      <!-- ONSSA Trust Stamp -->
+      <div *ngIf="item.onssa" style="display: flex; align-items: center; gap: 8px; margin-top: -10px; margin-bottom: 15px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+        <div style="display: inline-flex; align-items: center; gap: 6px; background-color: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.25); padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; font-weight: 700; cursor: default;">
+          <span class="material-symbols-outlined" style="font-size: 1.15rem; font-weight: 800;">verified</span>
+          <span>{{trans.t('ONSSA_CERTIFIED') || 'Certifié ONSSA'}}</span>
+        </div>
+        <span *ngIf="item.onssa_number" style="font-size: 0.8rem; color: var(--color-text-muted);">
+          {{trans.t('ONSSA_NUMBER') || 'N°'}}: <strong>{{item.onssa_number}}</strong>
+        </span>
+      </div>
+
       <p id="description">{{trans.pDesc(item)}}</p>
       
       <div class="inputGroup" *ngIf="item.sizes && item.sizes.length > 0">

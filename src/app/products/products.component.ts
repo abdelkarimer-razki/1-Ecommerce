@@ -25,8 +25,8 @@ export class ProductsComponent implements OnInit {
   productFormSubmitted: boolean = false;
   activeTab: string = 'basic';
   
-  product: products = {idproducts:0,name:"",picture:"",description:"",prix:0,categorie:"null",mangable:false,prixf:0,taille:"0",taille2:"0",taille3:"0",prix2:0,prix3:0,sizes:[]};
-  editingProduct: products = {idproducts:0,name:"",picture:"",description:"",prix:0,categorie:"null",mangable:false,prixf:0,taille:"0",taille2:"0",taille3:"0",prix2:0,prix3:0,sizes:[]};
+  product: products = {idproducts:0,name:"",picture:"",description:"",prix:0,categorie:"null",mangable:false,prixf:0,taille:"0",taille2:"0",taille3:"0",prix2:0,prix3:0,sizes:[],onssa:false,onssa_number:""};
+  editingProduct: products = {idproducts:0,name:"",picture:"",description:"",prix:0,categorie:"null",mangable:false,prixf:0,taille:"0",taille2:"0",taille3:"0",prix2:0,prix3:0,sizes:[],onssa:false,onssa_number:""};
   
   showNewCategoryInput: boolean = false;
   newCategoryName: string = '';
