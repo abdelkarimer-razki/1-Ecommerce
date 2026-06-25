@@ -200,16 +200,26 @@
       <div class="productImageWrapper">
         <img [src]="transform(item.picture)" alt="{{trans.pName(item)}}">
         <!-- ONSSA trust stamp -->
-        <span 
+        <div 
           *ngIf="item.onssa" 
-          style="position: absolute; top: 8px; background-color: #10b981; color: white; padding: 3px 6px; border-radius: 4px; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; display: inline-flex; align-items: center; gap: 3px; z-index: 2; box-shadow: var(--shadow-sm); cursor: pointer;"
+          style="position: absolute; top: 8px; display: inline-flex; align-items: center; justify-content: center; z-index: 2; cursor: pointer;"
           [style.left]="trans.isRtl() ? 'auto' : '8px'"
           [style.right]="trans.isRtl() ? '8px' : 'auto'"
           [title]="item.onssa_number ? (trans.t('ONSSA_NUMBER') + ': ' + item.onssa_number) : trans.t('ONSSA_CERTIFIED')"
         >
-          <span class="material-symbols-outlined" style="font-size: 0.85rem; font-weight: 800;">verified</span>
-          ONSSA
-        </span>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="38" height="38" style="display: block; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.25));">
+            <circle cx="50" cy="50" r="48" fill="#0b5e32" />
+            <circle cx="50" cy="50" r="44" fill="none" stroke="#e1a100" stroke-width="2" />
+            <path d="M 50,14 C 47,19 47,25 50,27 C 53,25 53,19 50,14 Z" fill="#ffffff" />
+            <path d="M 50,23 C 44,21 40,23 38,27 C 43,29 48,27 50,23 Z" fill="#ffffff" />
+            <path d="M 50,23 C 56,21 60,23 62,27 C 57,29 52,27 50,23 Z" fill="#ffffff" />
+            <line x1="50" y1="27" x2="50" y2="33" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" />
+            <rect x="12" y="33" width="76" height="28" rx="6" fill="#ffffff" stroke="#e1a100" stroke-width="1.5" />
+            <text x="50" y="52" font-family="'Plus Jakarta Sans', -apple-system, sans-serif" font-size="13" font-weight="900" fill="#0b5e32" text-anchor="middle" letter-spacing="1">ONSSA</text>
+            <path d="M 30,68 Q 50,78 70,68" fill="none" stroke="#e1a100" stroke-width="2" stroke-linecap="round" />
+            <text x="50" y="87" font-family="'Plus Jakarta Sans', -apple-system, sans-serif" font-size="7" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="2">MAROC</text>
+          </svg>
+        </div>
       </div>
       <span class="productBadge" *ngIf="item.categorie">{{trans.t(item.categorie)}}</span>
       <p class="titleProduit">{{trans.pName(item)}}</p>

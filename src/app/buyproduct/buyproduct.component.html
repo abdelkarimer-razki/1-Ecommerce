@@ -1,4 +1,4 @@
-<div id="pagecont" style="flex-direction: column; gap: 40px; justify-content: flex-start; align-items: center; min-height: calc(100vh - 80px); padding: 40px 20px;">
+<div id="pagecont">
   <!-- Detail Page Shimmer Skeleton -->
   <div *ngIf="loading" id="produit-skeleton" class="skeleton-container">
     <div class="picture-skeleton skeleton-item"></div>
@@ -24,46 +24,117 @@
   </div>
   
   <div *ngFor="let item of product" id="produit" [style.display]="loading ? 'none' : 'flex'">
+    <!-- Left Column: Image Card -->
     <div class="picture">
-      <img [src]="transform(item.picture)" alt="">
+      <div class="image-gallery-container">
+        <span class="category-floating-badge" *ngIf="item.categorie">{{trans.t(item.categorie)}}</span>
+        <img [src]="transform(item.picture)" alt="{{trans.pName(item)}}">
+      </div>
     </div>
     
+    <!-- Right Column: Product Info -->
     <div class="info" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
-      <p class="proname">{{trans.pName(item)}}</p>
-      
-      <!-- ONSSA Trust Stamp -->
-      <div *ngIf="item.onssa" style="display: flex; align-items: center; gap: 8px; margin-top: -10px; margin-bottom: 15px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
-        <div style="display: inline-flex; align-items: center; gap: 6px; background-color: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.25); padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; font-weight: 700; cursor: default;">
-          <span class="material-symbols-outlined" style="font-size: 1.15rem; font-weight: 800;">verified</span>
-          <span>{{trans.t('ONSSA_CERTIFIED') || 'Certifié ONSSA'}}</span>
-        </div>
-        <span *ngIf="item.onssa_number" style="font-size: 0.8rem; color: var(--color-text-muted);">
-          {{trans.t('ONSSA_NUMBER') || 'N°'}}: <strong>{{item.onssa_number}}</strong>
-        </span>
+      <!-- Breadcrumbs -->
+      <div class="breadcrumbs-row" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+        <a routerLink="/shopping">{{trans.t('BOUTIQUE')}}</a>
+        <span class="material-symbols-outlined chevron">{{trans.isRtl() ? 'chevron_left' : 'chevron_right'}}</span>
+        <span class="current" *ngIf="item.categorie">{{trans.t(item.categorie)}}</span>
       </div>
 
-      <p id="description">{{trans.pDesc(item)}}</p>
+      <p class="proname">{{trans.pName(item)}}</p>
       
+      <!-- Trust Badges Row -->
+      <div class="badges-row" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+        <!-- ONSSA Badge -->
+        <div *ngIf="item.onssa" class="badge-pill onssa-certified" [title]="trans.t('ONSSA_NUMBER') + ': ' + (item.onssa_number || '')" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="16" height="16" style="display: block;">
+            <circle cx="50" cy="50" r="48" fill="#0b5e32" />
+            <circle cx="50" cy="50" r="44" fill="none" stroke="#e1a100" stroke-width="2" />
+            <path d="M 50,14 C 47,19 47,25 50,27 C 53,25 53,19 50,14 Z" fill="#ffffff" />
+            <path d="M 50,23 C 44,21 40,23 38,27 C 43,29 48,27 50,23 Z" fill="#ffffff" />
+            <path d="M 50,23 C 56,21 60,23 62,27 C 57,29 52,27 50,23 Z" fill="#ffffff" />
+            <line x1="50" y1="27" x2="50" y2="33" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" />
+            <rect x="12" y="33" width="76" height="28" rx="6" fill="#ffffff" stroke="#e1a100" stroke-width="1.5" />
+            <text x="50" y="52" font-family="'Plus Jakarta Sans', -apple-system, sans-serif" font-size="13" font-weight="900" fill="#0b5e32" text-anchor="middle" letter-spacing="1">ONSSA</text>
+            <path d="M 30,68 Q 50,78 70,68" fill="none" stroke="#e1a100" stroke-width="2" stroke-linecap="round" />
+            <text x="50" y="87" font-family="'Plus Jakarta Sans', -apple-system, sans-serif" font-size="7" font-weight="800" fill="#ffffff" text-anchor="middle" letter-spacing="2">MAROC</text>
+          </svg>
+          <span>{{trans.t('ONSSA_CERTIFIED')}}</span>
+          <span class="badge-subtext" *ngIf="item.onssa_number">({{item.onssa_number}})</span>
+        </div>
+        <!-- 100% Naturel Badge -->
+        <div class="badge-pill natural-badge" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+          <span class="material-symbols-outlined icon">eco</span>
+          <span>{{trans.t('PURETE_100')}}</span>
+        </div>
+        <!-- Artisanal Badge -->
+        <div class="badge-pill artisanal-badge" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+          <span class="material-symbols-outlined icon">workspace_premium</span>
+          <span>{{trans.t('ARTISANAL')}}</span>
+        </div>
+        <!-- Secure Purchase Badge -->
+        <div class="badge-pill" style="background-color: rgba(2, 132, 199, 0.05); color: #0284c7; border-color: rgba(2, 132, 199, 0.15);" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+          <span class="material-symbols-outlined icon">verified_user</span>
+          <span>{{trans.t('SECURISE')}}</span>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Description Section -->
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <span class="section-subtitle">{{trans.t('DESCRIPTION')}}</span>
+        <p id="description">{{trans.pDesc(item)}}</p>
+      </div>
+      
+      <!-- Variations/Sizes Selection -->
       <div class="inputGroup" *ngIf="item.sizes && item.sizes.length > 0">
-        <label>{{trans.t('TAILLE')}}</label>
-        <div class="sizesContainer">
+        <span class="section-subtitle">{{trans.t('VARIATIONS')}}</span>
+        <div class="sizesContainer" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
           <div *ngFor="let sizeOpt of item.sizes" class="taille" (click)="selectSize(sizeOpt)" [class.kl]="selectedSize === sizeOpt">
-            {{trans.t(sizeOpt.taille)}}
+            <span class="size-label">{{trans.t(sizeOpt.taille)}}</span>
+            <span class="size-price">{{sizeOpt.prix}} DH</span>
           </div>
         </div>
       </div>
       
+      <!-- Quantity Counter Stepper -->
       <div class="quantityWrapper">
-        <label>{{trans.t('QUANTITE')}}</label>
-        <input type="number" name="" [(ngModel)]="qte" id="Quantite" min="1" required>
+        <span class="section-subtitle">{{trans.t('QUANTITE')}}</span>
+        <div class="qty-stepper-container" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+          <button class="stepper-btn" (click)="decrementQty()" [disabled]="qte <= 1">
+            <span class="material-symbols-outlined">remove</span>
+          </button>
+          <input type="number" class="qty-input" [(ngModel)]="qte" min="1" readonly>
+          <button class="stepper-btn" (click)="incrementQty()">
+            <span class="material-symbols-outlined">add</span>
+          </button>
+        </div>
       </div>
 
-      <div class="price">
-        <p *ngIf="selectedSize">{{selectedSize.prix}} DH</p>
-        <span>{{trans.t('LIVRAISON_GRATUITE')}}</span>
+      <!-- Highlighted Price Card -->
+      <div class="price-box-card">
+        <div class="price-row" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+          <div class="price-value-container" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+            <span class="price-value" *ngIf="selectedSize">{{selectedSize.prix}}</span>
+            <span class="price-currency">DH</span>
+          </div>
+          
+          <!-- Old price / discount (if any) -->
+          <div class="old-price-container" *ngIf="item.prixf > 0 && selectedSize && selectedSize.prix === item.prix" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+            <span class="old-price">{{item.prixf}} DH</span>
+            <span class="discount-tag">−{{((+item.prixf - +item.prix) / +item.prixf * 100) | number:'1.0-0'}}%</span>
+          </div>
+        </div>
+        
+        <div class="shipping-info-row" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+          <span class="material-symbols-outlined shipping-icon">local_shipping</span>
+          <span>{{trans.t('LIVRAISON_GRATUITE')}}</span>
+        </div>
       </div>
 
-      <div class="actionButtons" *ngIf="!admin">
+      <!-- Add to Cart / Buy Now Action Buttons -->
+      <div class="actionButtons" *ngIf="!admin" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
         <!-- Buy Now (add to cart + go to checkout) -->
         <button class="acheter" (click)="goToCheckout(item)">
           <span class="material-symbols-outlined">flash_on</span>
@@ -71,12 +142,46 @@
         </button>
 
         <!-- Add to cart -->
-        <button *ngIf="!addedToCart" class="cart" (click)="addToCart(item)" [title]="trans.t('AJOUTER_PANIER')">
+        <button *ngIf="!addedToCart" class="cart add-btn" (click)="addToCart(item)" [title]="trans.t('AJOUTER_PANIER')" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
           <span class="material-symbols-outlined">add_shopping_cart</span>
+          <span>{{trans.t('AJOUTER_PANIER')}}</span>
         </button>
-        <button *ngIf="addedToCart" class="cart" routerLink="/checkout" [title]="trans.t('VOIR_PANIER')">
-          <span class="material-symbols-outlined" style="color: var(--color-secondary);">check_circle</span>
+        <button *ngIf="addedToCart" class="cart added-btn" routerLink="/checkout" [title]="trans.t('VOIR_PANIER')" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+          <span class="material-symbols-outlined">check_circle</span>
+          <span>{{trans.t('AJOUTE_PANIER_BADGE')}}</span>
         </button>
+      </div>
+
+      <!-- Terroir Trust Grid -->
+      <div class="terroir-trust-grid">
+        <div class="trust-item" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+          <span class="material-symbols-outlined">verified</span>
+          <div class="trust-text" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+            <strong>{{trans.t('ORIGINE_GARANTIE')}}</strong>
+            <span>{{trans.t('ORIGINE_GARANTIE_SUB')}}</span>
+          </div>
+        </div>
+        <div class="trust-item" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+          <span class="material-symbols-outlined">eco</span>
+          <div class="trust-text" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+            <strong>{{trans.t('PURETE_100')}}</strong>
+            <span>{{trans.t('PURETE_100_SUB')}}</span>
+          </div>
+        </div>
+        <div class="trust-item" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+          <span class="material-symbols-outlined">diversity_3</span>
+          <div class="trust-text" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+            <strong>{{trans.t('IMPACT_SOLIDAIRE')}}</strong>
+            <span>{{trans.t('IMPACT_SOLIDAIRE_SUB')}}</span>
+          </div>
+        </div>
+        <div class="trust-item" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+          <span class="material-symbols-outlined">payments</span>
+          <div class="trust-text" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+            <strong>{{trans.t('LIVRAISON_TRUST')}}</strong>
+            <span>{{trans.t('LIVRAISON_TRUST_SUB')}}</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>

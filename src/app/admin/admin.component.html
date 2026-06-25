@@ -1,21 +1,21 @@
-<div class="admin-container" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+<div class="admin-container">
   <div class="admin-sidebar" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
     <div class="admin-title">{{trans.t('PANEL_ADMIN')}}</div>
     <ul class="listRoute" [style.padding]="'0'">
-      <li routerLink="dashboard" [ngClass]="{clicked: isDashboard}"><a class="element" [ngClass]="{color: isDashboard}" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'"><span class="material-symbols-outlined">analytics</span> {{trans.t('DASHBOARD')}}</a></li>
-      <li routerLink="stats" [ngClass]="{clicked: isStats}"><a class="element" [ngClass]="{color: isStats}" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'"><span class="material-symbols-outlined">query_stats</span> {{trans.t('STATS_PRODUITS') || 'Statistiques'}}</a></li>
-      <li routerLink="commands" [ngClass]="{clicked: isCommands}"><a class="element" [ngClass]="{color: isCommands}" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'"><span class="material-symbols-outlined">receipt_long</span> {{trans.t('MES_COMMANDES')}}</a></li>
-      <li routerLink="products" [ngClass]="{clicked: isProduits}"><a class="element" [ngClass]="{color: isProduits}" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'"><span class="material-symbols-outlined">inventory_2</span> {{trans.t('PRODUITS')}}</a> </li>
-      <li routerLink="categories" [ngClass]="{clicked: isCategories}"><a class="element" [ngClass]="{color: isCategories}" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'"><span class="material-symbols-outlined">category</span> {{trans.t('CATEGORIES')}}</a></li>
-      <li routerLink="messages" [ngClass]="{clicked: isMessages}"><a class="element" [ngClass]="{color: isMessages}" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'"><span class="material-symbols-outlined">forum</span> {{trans.t('MESSAGES')}}</a></li>
-      <li routerLink="settings" [ngClass]="{clicked: isSettings}"><a class="element" [ngClass]="{color: isSettings}" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'"><span class="material-symbols-outlined">tune</span> {{trans.t('PERSONNALISER')}}</a></li>
+      <li routerLink="dashboard" [ngClass]="{clicked: isDashboard}"><a class="element" [ngClass]="{color: isDashboard}"><span class="material-symbols-outlined">analytics</span> {{trans.t('DASHBOARD')}}</a></li>
+      <li routerLink="stats" [ngClass]="{clicked: isStats}"><a class="element" [ngClass]="{color: isStats}"><span class="material-symbols-outlined">query_stats</span> {{trans.t('STATS_PRODUITS') || 'Statistiques'}}</a></li>
+      <li routerLink="commands" [ngClass]="{clicked: isCommands}"><a class="element" [ngClass]="{color: isCommands}"><span class="material-symbols-outlined">receipt_long</span> {{trans.t('MES_COMMANDES')}}</a></li>
+      <li routerLink="products" [ngClass]="{clicked: isProduits}"><a class="element" [ngClass]="{color: isProduits}"><span class="material-symbols-outlined">inventory_2</span> {{trans.t('PRODUITS')}}</a> </li>
+      <li routerLink="categories" [ngClass]="{clicked: isCategories}"><a class="element" [ngClass]="{color: isCategories}"><span class="material-symbols-outlined">category</span> {{trans.t('CATEGORIES')}}</a></li>
+      <li routerLink="messages" [ngClass]="{clicked: isMessages}"><a class="element" [ngClass]="{color: isMessages}"><span class="material-symbols-outlined">forum</span> {{trans.t('MESSAGES')}}</a></li>
+      <li routerLink="settings" [ngClass]="{clicked: isSettings}"><a class="element" [ngClass]="{color: isSettings}"><span class="material-symbols-outlined">tune</span> {{trans.t('PERSONNALISER')}}</a></li>
     </ul>
     
     <div style="flex-grow: 1;"></div>
     
     <ul class="listRoute" style="border-top: 1px dashed var(--border-color); padding-top: 15px; margin-top: 15px; padding-left: 0; padding-right: 0;">
       <!-- Language Selector -->
-      <li style="padding: 8px 12px; margin-bottom: 8px; border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); background-color: var(--color-bg-card); display: flex; align-items: center; gap: 8px; justify-content: center; width: calc(100% - 24px); box-sizing: border-box; margin-left: auto; margin-right: auto;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+      <li style="padding: 8px 12px; margin-bottom: 8px; border: 1px solid var(--border-color); border-radius: var(--border-radius-sm); background-color: var(--color-bg-card); display: flex; align-items: center; gap: 8px; justify-content: center; width: calc(100% - 24px); box-sizing: border-box; margin-left: auto; margin-right: auto;">
         <span class="material-symbols-outlined" style="font-size: 1.15rem; color: var(--color-text-muted);">language</span>
         <select 
           [ngModel]="trans.getLang()" 
@@ -27,7 +27,7 @@
           <option value="AR">العربية (AR)</option>
         </select>
       </li>
-      <li (click)="logout()"><a class="element" style="color: #b45309; cursor: pointer;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'"><span class="material-symbols-outlined" style="color: #b45309;">logout</span> {{trans.t('DECONNEXION')}}</a></li>
+      <li (click)="logout()"><a class="element" style="color: #b45309; cursor: pointer;"><span class="material-symbols-outlined" style="color: #b45309;">logout</span> {{trans.t('DECONNEXION')}}</a></li>
     </ul>
   </div>
   <div class="admin-content" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
@@ -51,7 +51,7 @@
       (click)="$event.stopPropagation()"
     >
       <!-- Action 1: Add Order -->
-      <div style="display: flex; align-items: center; gap: 10px;" [style.flex-direction]="trans.isRtl() ? 'row' : 'row-reverse'">
+      <div style="display: flex; align-items: center; gap: 10px;">
         <span style="background-color: var(--color-bg-card); padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; color: var(--color-text-main); border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); white-space: nowrap;">
           {{trans.t('NOUVELLE_COMMANDE') || 'Nouvelle commande'}}
         </span>
@@ -67,7 +67,7 @@
       </div>
 
       <!-- Action 2: Add Product -->
-      <div style="display: flex; align-items: center; gap: 10px;" [style.flex-direction]="trans.isRtl() ? 'row' : 'row-reverse'">
+      <div style="display: flex; align-items: center; gap: 10px;">
         <span style="background-color: var(--color-bg-card); padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; color: var(--color-text-main); border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); white-space: nowrap;">
           {{trans.t('AJOUTER_PRODUIT') || 'Ajouter un produit'}}
         </span>
@@ -83,7 +83,7 @@
       </div>
 
       <!-- Action 3: Add Category -->
-      <div style="display: flex; align-items: center; gap: 10px;" [style.flex-direction]="trans.isRtl() ? 'row' : 'row-reverse'">
+      <div style="display: flex; align-items: center; gap: 10px;">
         <span style="background-color: var(--color-bg-card); padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; color: var(--color-text-main); border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); white-space: nowrap;">
           {{trans.t('CREER_CATEGORIE') || 'Créer une catégorie'}}
         </span>
@@ -116,45 +116,45 @@
  <div class="modal-backdrop" *ngIf="addModalActive" (click)="closeAddModal()"></div>
  
  <!-- Manual Command Modal (multi-product) -->
- <div class="modal-window" *ngIf="addModalActive" style="max-width: 600px;" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
-   <div class="modal-header" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+ <div class="modal-window" *ngIf="addModalActive" style="max-width: 600px;" [style.direction]="trans.isRtl() ? 'rtl' : 'ltr'">
+   <div class="modal-header">
      <h3>{{trans.t('NOUVELLE_COMMANDE_MANUELLE')}}</h3>
      <button class="modal-close-btn" (click)="closeAddModal()"><span class="material-symbols-outlined">close</span></button>
    </div>
  
    <div class="modal-body">
      <!-- Customer Info -->
-     <div class="section-label" [style.display]="'flex'" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'" [style.align-items]="'center'" [style.gap]="'6px'"><span class="material-symbols-outlined">person</span> {{trans.t('INFORMATIONS_CLIENT')}}</div>
+     <div class="section-label" [style.display]="'flex'" [style.align-items]="'center'" [style.gap]="'6px'"><span class="material-symbols-outlined">person</span> {{trans.t('INFORMATIONS_CLIENT')}}</div>
      <div class="modal-form-grid">
        <div class="input-group full">
-         <label style="display: flex; justify-content: space-between;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+         <label style="display: flex; justify-content: space-between;">
            <span>{{trans.t('NOM_COMPLET')}} <span style="color: #dc2626;">*</span></span>
            <span style="font-size: 0.75rem; color: #dc2626; font-weight: normal;">({{trans.t('REQUIS')}})</span>
          </label>
-         <input class="text" type="text" [(ngModel)]="manualCustomer.fullname" placeholder="Ex: Karim Bensouda" [style.border-color]="manualCommandSubmitted && !manualCustomer.fullname ? '#dc2626' : ''">
+         <input class="text" type="text" [(ngModel)]="manualCustomer.fullname" placeholder="Ex: Karim Bensouda" [style.border-color]="manualCommandSubmitted && !manualCustomer.fullname ? '#dc2626' : ''" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
          <span *ngIf="manualCommandSubmitted && !manualCustomer.fullname" style="color: #dc2626; font-size: 0.75rem; display: block; margin-top: 4px; font-weight: 600;">{{trans.t('CHAMP_REQUIS')}}</span>
        </div>
        <div class="input-group">
-         <label style="display: flex; justify-content: space-between;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+         <label style="display: flex; justify-content: space-between;">
            <span>{{trans.t('TELEPHONE')}} <span style="color: #dc2626;">*</span></span>
            <span style="font-size: 0.75rem; color: #dc2626; font-weight: normal;">({{trans.t('REQUIS')}})</span>
          </label>
-         <input class="text" type="tel" [(ngModel)]="manualCustomer.tel" placeholder="Ex: 0612345678" [style.border-color]="manualCommandSubmitted && !manualCustomer.tel ? '#dc2626' : ''">
+         <input class="text" type="tel" [(ngModel)]="manualCustomer.tel" placeholder="Ex: 0612345678" [style.border-color]="manualCommandSubmitted && !manualCustomer.tel ? '#dc2626' : ''" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
          <span *ngIf="manualCommandSubmitted && !manualCustomer.tel" style="color: #dc2626; font-size: 0.75rem; display: block; margin-top: 4px; font-weight: 600;">{{trans.t('CHAMP_REQUIS')}}</span>
        </div>
        <div class="input-group">
-         <label style="display: flex; justify-content: space-between;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+         <label style="display: flex; justify-content: space-between;">
            <span>E-mail</span>
            <span style="font-size: 0.75rem; color: #9ca3af; font-weight: normal;">({{trans.t('OPTIONNEL')}})</span>
          </label>
-         <input class="text" type="email" [(ngModel)]="manualCustomer.email" placeholder="Ex: client@gmail.com">
+         <input class="text" type="email" [(ngModel)]="manualCustomer.email" placeholder="Ex: client@gmail.com" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
        </div>
        <div class="input-group full">
-         <label style="display: flex; justify-content: space-between;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+         <label style="display: flex; justify-content: space-between;">
            <span>{{trans.t('ADRESSE')}}</span>
            <span style="font-size: 0.75rem; color: #9ca3af; font-weight: normal;">({{trans.t('OPTIONNEL')}})</span>
          </label>
-         <input class="text" type="text" [(ngModel)]="manualCustomer.adress" placeholder="Ex: Riad El Mansour, Meknès">
+         <input class="text" type="text" [(ngModel)]="manualCustomer.adress" placeholder="Ex: Riad El Mansour, Meknès" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
        </div>
        <div class="input-group full">
          <label>{{trans.t('STATUT_INITIAL')}}</label>
@@ -168,7 +168,7 @@
      <hr style="border:0; border-top: 1px dashed var(--border-color); margin: 16px 0;">
  
      <!-- Product Adder -->
-     <div class="section-label" [style.display]="'flex'" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'" [style.align-items]="'center'" [style.gap]="'6px'"><span class="material-symbols-outlined">add_shopping_cart</span> {{trans.t('AJOUTER_UN_PRODUIT')}}</div>
+     <div class="section-label" [style.display]="'flex'" [style.align-items]="'center'" [style.gap]="'6px'"><span class="material-symbols-outlined">add_shopping_cart</span> {{trans.t('AJOUTER_UN_PRODUIT')}}</div>
      <div class="modal-form-grid">
        <div class="input-group full">
          <label>{{trans.t('PRODUIT')}}</label>
@@ -197,28 +197,28 @@
  
      <!-- Manual Cart Preview -->
      <div *ngIf="manualCartItems.length > 0" style="margin-top: 16px;">
-       <div class="section-label" [style.display]="'flex'" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'" [style.align-items]="'center'" [style.gap]="'6px'"><span class="material-symbols-outlined">shopping_cart</span> {{trans.t('PANIER')}} ({{manualCartItems.length}} {{trans.t('ARTICLES')}})</div>
+       <div class="section-label" [style.display]="'flex'" [style.align-items]="'center'" [style.gap]="'6px'"><span class="material-symbols-outlined">shopping_cart</span> {{trans.t('PANIER')}} ({{manualCartItems.length}} {{trans.t('ARTICLES')}})</div>
        <div class="manual-items">
-         <div class="manual-item" *ngFor="let it of manualCartItems; let i = index" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+         <div class="manual-item" *ngFor="let it of manualCartItems; let i = index">
            <div class="mi-info" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
              <span class="mi-name">{{trans.t(it.name)}}</span>
              <span class="mi-taille" *ngIf="it.taille">{{trans.t(it.taille)}}</span>
            </div>
-           <div class="mi-right" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+           <div class="mi-right">
              <span class="mi-qte">×{{it.qte}}</span>
              <span class="mi-prix">{{(it.prix * it.qte) | number:'1.0-0'}} DH</span>
              <button class="mi-del" (click)="removeManualItem(i)"><span class="material-symbols-outlined">close</span></button>
            </div>
          </div>
        </div>
-       <div class="cart-total-row" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+       <div class="cart-total-row">
          <span>{{trans.t('TOTAL_ESTIME')}}</span>
          <strong>{{getManualTotal() | number:'1.0-0'}} DH</strong>
        </div>
      </div>
    </div>
  
-   <div class="modal-footer" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+   <div class="modal-footer">
      <button class="btn-cancel" (click)="closeAddModal()">{{trans.t('ANNULER')}}</button>
      <button class="btn-save" (click)="submitManualCommand()" [disabled]="manualCartItems.length === 0">
        <span class="material-symbols-outlined">save</span>

@@ -43,6 +43,7 @@ export class BuyproductComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
       this.id = params.get('idproducts') || '';
+      console.log('BuyproductComponent - Route idproducts param:', this.id);
       this.loading = true;
       this.product = [];
       this.similarProducts = [];
@@ -62,7 +63,9 @@ export class BuyproductComponent implements OnInit, OnDestroy {
   }
 
   loadProductDetails() {
+    console.log('BuyproductComponent - Requesting product details for ID:', this.id);
     this.buyService.getProducts(this.id).subscribe(data => {
+      console.log('BuyproductComponent - Received API data:', data);
       this.product = data;
       this.loading = false;
       if (this.product && this.product[0]) {
@@ -155,6 +158,16 @@ export class BuyproductComponent implements OnInit, OnDestroy {
     this.addedToCart = cartItems.some(i =>
       i.idproducts === Number(this.id) && i.taille === size.taille
     );
+  }
+
+  incrementQty() {
+    this.qte = (Number(this.qte) || 1) + 1;
+  }
+
+  decrementQty() {
+    if (this.qte > 1) {
+      this.qte = (Number(this.qte) || 1) - 1;
+    }
   }
 
   addToCart(item: any) {

@@ -426,8 +426,19 @@ export class TranslationService {
     'ONSSA_CERTIFIED': { FR: 'Certifié ONSSA', EN: 'ONSSA Certified', AR: 'مرخص من طرف أونسا' },
     'ONSSA_NUMBER': { FR: "Numéro d'autorisation ONSSA", EN: 'ONSSA Authorization Number', AR: 'رقم ترخيص أونسا' },
     'ONSSA_LABEL': { FR: 'Agrément / Autorisation ONSSA', EN: 'ONSSA Approval / Authorization', AR: 'ترخيص أونسا' },
-    'ONSSA_CERTIFICATE': { FR: 'Agrément ONSSA', EN: 'ONSSA Approval', AR: 'ترخيص أونسا' }
+    'ONSSA_CERTIFICATE': { FR: 'Agrément ONSSA', EN: 'ONSSA Approval', AR: 'ترخيص أونسا' },
+    'ORIGINE_GARANTIE': { FR: 'Origine Garantie', EN: 'Guaranteed Origin', AR: 'أصل مضمون' },
+    'ORIGINE_GARANTIE_SUB': { FR: 'Terroirs de Taroudant, Maroc', EN: 'Lands of Taroudant, Morocco', AR: 'أراضي تارودانت، المغرب' },
+    'PURETE_100': { FR: '100% Naturel', EN: '100% Natural', AR: 'طبيعي 100%' },
+    'PURETE_100_SUB': { FR: 'Sans aucun additif chimique', EN: 'No chemical additives', AR: 'بدون إضافات كيميائية' },
+    'IMPACT_SOLIDAIRE': { FR: 'Impact Solidaire', EN: 'Social Impact', AR: 'أثر تضامني' },
+    'IMPACT_SOLIDAIRE_SUB': { FR: 'Soutient les femmes rurales', EN: 'Supports rural women artisans', AR: 'يدعم النساء في العالم القروي' },
+    'LIVRAISON_TRUST': { FR: 'Livraison & Paiement', EN: 'Delivery & Payment', AR: 'التوصيل والدفع' },
+    'LIVRAISON_TRUST_SUB': { FR: 'Paiement cash à la livraison', EN: 'Cash on delivery payment', AR: 'الدفع عند الاستلام' },
+    'ARTISANAL': { FR: 'Production Artisanale', EN: 'Artisanal Production', AR: 'إنتاج تقليدي' },
+    'BOUTIQUE': { FR: 'Boutique', EN: 'Shop', AR: 'المتجر' }
   };
+
 
   constructor(private appRef: ApplicationRef) {
     const saved = localStorage.getItem('active_lang');
