@@ -10,7 +10,7 @@
       </div>
       <div>
         <h2 class="wa-title">WhatsApp</h2>
-        <p class="wa-subtitle">Contacter vos clients via WhatsApp</p>
+        <p class="wa-subtitle">{{trans.t('WA_SUBTITLE') || 'Contacter vos clients via WhatsApp'}}</p>
       </div>
     </div>
 
@@ -18,17 +18,17 @@
     <div class="wa-status-badge" [class.connected]="connected" [class.disconnected]="!connected && !statusLoading">
       <ng-container *ngIf="statusLoading">
         <div class="status-dot pulsing"></div>
-        <span>Vérification...</span>
+        <span>{{trans.t('VERIFICATION') || 'Vérification...'}}</span>
       </ng-container>
       <ng-container *ngIf="!statusLoading && connected">
         <div class="status-dot online"></div>
-        <span>Connecté</span>
+        <span>{{trans.t('CONNECTE') || 'Connecté'}}</span>
       </ng-container>
       <ng-container *ngIf="!statusLoading && !connected">
         <div class="status-dot offline"></div>
-        <span>Déconnecté</span>
+        <span>{{trans.t('DECONNECTE') || 'Déconnecté'}}</span>
       </ng-container>
-      <button class="refresh-btn" (click)="checkStatus()" title="Rafraîchir">
+      <button class="refresh-btn" (click)="checkStatus()" title="{{trans.t('RAFRAICHIR') || 'Rafraîchir'}}">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
           <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
         </svg>
@@ -40,9 +40,9 @@
   <div class="wa-warning" *ngIf="!statusLoading && !connected">
     <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
     <div>
-      <strong>OpenWA non connecté</strong>
+      <strong>{{trans.t('OPENWA_NOT_CONNECTED') || 'OpenWA non connecté'}}</strong>
       <p>{{ statusError }}</p>
-      <small>Lancez OpenWA avec <code>npm run dev</code> dans le dossier <code>/home/pc/lab/OpenWA</code>, puis scannez le QR code pour connecter votre compte WhatsApp.</small>
+      <small>{{trans.t('OPENWA_START_HINT') || 'Lancez OpenWA avec npm run dev dans le dossier OpenWA, puis scannez le QR code pour connecter votre compte.'}}</small>
     </div>
   </div>
 
@@ -50,15 +50,15 @@
   <div class="wa-tabs">
     <button class="wa-tab" [class.active]="activeTab === 'single'" (click)="setTab('single')">
       <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
-      Message individuel
+      {{trans.t('MESSAGE_INDIVIDUEL') || 'Message individuel'}}
     </button>
     <button class="wa-tab" [class.active]="activeTab === 'bulk'" (click)="setTab('bulk')">
       <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
-      Envoi groupé
+      {{trans.t('ENVOI_GROUPE') || 'Envoi groupé'}}
     </button>
     <button class="wa-tab" [class.active]="activeTab === 'clients'" (click)="setTab('clients')">
       <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
-      Clients ({{ clients.length }})
+      {{trans.t('MES_CLIENTS') || 'Contacts'}} ({{ clients.length }})
     </button>
   </div>
 
@@ -66,35 +66,46 @@
   <div class="wa-content" *ngIf="activeTab === 'single'">
     <div class="wa-form">
       <div class="form-group">
-        <label>Numéro WhatsApp</label>
+        <label>{{trans.t('NUMERO_WHATSAPP') || 'Numéro WhatsApp'}}</label>
         <div class="phone-input-wrap">
           <span class="phone-prefix">+</span>
           <input type="tel" class="wa-input" [(ngModel)]="singlePhone"
             placeholder="212612345678" maxlength="20">
         </div>
-        <small class="hint">Format international sans espaces ni tirets (ex: 212612345678)</small>
+        <small class="hint">{{trans.t('FORMAT_TEL_HINT') || 'Format international sans espaces ni tirets (ex: 212612345678)'}}</small>
+      </div>
+
+      <!-- Template Selector -->
+      <div class="form-group">
+        <label>{{trans.t('MODELE_MESSAGE') || 'Modèle de message'}}</label>
+        <select class="optionP" [(ngModel)]="selectedTemplateIndex" (change)="onTemplateChange()">
+          <option value="">-- {{trans.t('CHOISIR_MODELE') || 'Choisir un modèle (Optionnel)'}} --</option>
+          <option *ngFor="let t of templates; let i = index" [value]="i">
+            {{ trans.getLang() === 'EN' ? t.nameEn : (trans.getLang() === 'AR' ? t.nameAr : t.name) }}
+          </option>
+        </select>
       </div>
 
       <div class="form-group">
-        <label>Message</label>
+        <label>{{trans.t('MESSAGE') || 'Message'}}</label>
         <textarea class="wa-textarea" [(ngModel)]="singleMessage"
-          placeholder="Bonjour ! Votre commande est prête..." rows="5" maxlength="4096"></textarea>
+          placeholder="{{trans.t('ECRIRE_MESSAGE_HINT') || 'Bonjour ! Votre commande est prête...'}}" rows="5" maxlength="4096"></textarea>
         <div class="char-count">{{ singleMessage.length }}/4096</div>
       </div>
 
       <button class="wa-send-btn" (click)="sendOne()"
         [disabled]="sendingOne || !singlePhone || !singleMessage || !connected">
         <ng-container *ngIf="sendingOne">
-          <span class="spinner"></span> Envoi en cours...
+          <span class="spinner"></span> {{trans.t('ENVOI_EN_COURS') || 'Envoi en cours...'}}
         </ng-container>
         <ng-container *ngIf="!sendingOne">
           <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-          Envoyer
+          {{trans.t('ENVOYER') || 'Envoyer'}}
         </ng-container>
       </button>
 
       <div class="result-banner success" *ngIf="sendOneResult?.success">
-        ✅ Message envoyé avec succès !
+        ✅ {{trans.t('MESSAGE_ENVOYE_SUCCES') || 'Message envoyé avec succès !'}}
       </div>
       <div class="result-banner error" *ngIf="sendOneResult && !sendOneResult.success">
         ❌ {{ sendOneResult.error }}
@@ -106,57 +117,95 @@
   <div class="wa-content" *ngIf="activeTab === 'bulk'">
     <div class="wa-form">
 
+      <!-- Search & Filters -->
+      <div class="filter-bar">
+        <div class="search-input-wrap">
+          <span class="material-symbols-outlined search-icon">search</span>
+          <input type="text" class="text search-text-input" [(ngModel)]="searchTerm" (ngModelChange)="onFilterChange()"
+            placeholder="{{trans.t('RECHERCHER_CLIENT') || 'Rechercher un client...'}}">
+        </div>
+        <div class="segment-select-wrap">
+          <select class="optionP" [(ngModel)]="clientFilter" (change)="onFilterChange()">
+            <option value="all">👥 {{trans.t('TOUS_CONTACTS') || 'Tous les contacts'}}</option>
+            <option value="pending">⏳ {{trans.t('AVEC_COMMANDE_ATTENTE') || 'Commandes en attente'}}</option>
+            <option value="completed">✅ {{trans.t('AVEC_COMMANDE_LIVREE') || 'Commandes livrées'}}</option>
+          </select>
+        </div>
+      </div>
+
       <!-- Client Selector -->
       <div class="form-group">
-        <label>Sélectionner les destinataires</label>
+        <label>{{trans.t('SELECTIONNER_DESTINATAIRES') || 'Sélectionner les destinataires'}}</label>
         <div class="client-select-box">
           <div class="client-select-header">
             <label class="checkbox-wrap">
               <input type="checkbox" [checked]="selectAll" (change)="toggleSelectAll()">
-              <span>Tous ({{ clients.length }} clients)</span>
+              <span>{{trans.t('SELECTIONNER_TOUS') || 'Tous'}} ({{ filteredClients.length }} {{trans.t('FILTRES') || 'filtrés'}})</span>
             </label>
-            <span class="selected-count">{{ selectedPhones.size }} sélectionné(s)</span>
+            <span class="selected-count">{{ selectedPhones.size }} {{trans.t('SELECTIONNES') || 'sélectionné(s)'}}</span>
           </div>
           <div class="client-list-scroll" *ngIf="!clientsLoading">
-            <label class="client-item" *ngFor="let c of clients">
+            <label class="client-item" *ngFor="let c of filteredClients">
               <input type="checkbox" [checked]="isSelected(c.tel)" (change)="togglePhone(c.tel)">
               <div class="client-info">
-                <span class="client-name">{{ c.fname }} {{ c.lname }}</span>
+                <span class="client-name">
+                  {{ c.fname }} {{ c.lname }}
+                  <span class="pending-badge" *ngIf="c.pending_orders_count > 0">{{ getPendingOrdersText(c) }}</span>
+                </span>
                 <span class="client-phone">{{ c.tel }}</span>
               </div>
             </label>
+            <div *ngIf="filteredClients.length === 0" class="no-clients-found">
+              {{trans.t('AUCUN_CLIENT_TROUVE') || 'Aucun client ne correspond aux critères.'}}
+            </div>
           </div>
-          <div class="loading-clients" *ngIf="clientsLoading">Chargement des clients...</div>
+          <div class="loading-clients" *ngIf="clientsLoading">{{trans.t('CHARGEMENT_CLIENTS') || 'Chargement des clients...'}}</div>
         </div>
       </div>
 
+      <!-- Template Selector -->
       <div class="form-group">
-        <label>Message</label>
+        <label>{{trans.t('MODELE_MESSAGE') || 'Modèle de message'}}</label>
+        <select class="optionP" [(ngModel)]="selectedTemplateIndex" (change)="onTemplateChange()">
+          <option value="">-- {{trans.t('CHOISIR_MODELE') || 'Choisir un modèle (Optionnel)'}} --</option>
+          <option *ngFor="let t of templates; let i = index" [value]="i">
+            {{ trans.getLang() === 'EN' ? t.nameEn : (trans.getLang() === 'AR' ? t.nameAr : t.name) }}
+          </option>
+        </select>
+        <small class="hint" style="color: var(--color-primary);">
+          💡 {{trans.t('TEMPLATE_PLACEHOLDER_HINT') || 'Utilisez {name} pour insérer automatiquement le nom du client.'}}
+        </small>
+      </div>
+
+      <div class="form-group">
+        <label>{{trans.t('MESSAGE') || 'Message'}}</label>
         <textarea class="wa-textarea" [(ngModel)]="bulkMessage"
-          placeholder="Chers clients, nous avons une nouvelle promotion..." rows="5" maxlength="4096"></textarea>
+          placeholder="{{trans.t('ECRIRE_MESSAGE_HINT') || 'Bonjour ! Votre commande est prête...'}}" rows="5" maxlength="4096"></textarea>
         <div class="char-count">{{ bulkMessage.length }}/4096</div>
       </div>
 
       <button class="wa-send-btn bulk" (click)="sendBulk()"
         [disabled]="sendingBulk || selectedPhones.size === 0 || !bulkMessage || !connected">
         <ng-container *ngIf="sendingBulk">
-          <span class="spinner"></span> Envoi en cours ({{ successCount }}/{{ selectedPhones.size }})...
+          <span class="spinner"></span> {{trans.t('ENVOI_EN_COURS') || 'Envoi en cours'}} ({{ successCount }}/{{ selectedPhones.size }})...
         </ng-container>
         <ng-container *ngIf="!sendingBulk">
           <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-          Envoyer à {{ selectedPhones.size }} client(s)
+          {{trans.t('ENVOYER_A') || 'Envoyer à'}} {{ selectedPhones.size }} {{trans.t('DESTINATAIRES') || 'destinataire(s)'}}
         </ng-container>
       </button>
 
       <!-- Bulk Results -->
       <div class="bulk-results" *ngIf="bulkResults.length > 0">
         <div class="results-summary">
-          <span class="success-count">✅ {{ successCount }} envoyés</span>
-          <span class="fail-count" *ngIf="failCount > 0">❌ {{ failCount }} échoués</span>
+          <span class="success-count">✅ {{ successCount }} {{trans.t('ENVOYES') || 'envoyés'}}</span>
+          <span class="fail-count" *ngIf="failCount > 0">❌ {{ failCount }} {{trans.t('ECHOUE') || 'échoués'}}</span>
         </div>
-        <div class="result-row" *ngFor="let r of bulkResults" [class.success]="r.success" [class.fail]="!r.success">
-          <span>{{ r.phone }}</span>
-          <span>{{ r.success ? '✅' : '❌ ' + r.error }}</span>
+        <div class="result-list-scroll">
+          <div class="result-row" *ngFor="let r of bulkResults" [class.success]="r.success" [class.fail]="!r.success">
+            <span>{{ r.phone }}</span>
+            <span>{{ r.success ? '✅' : '❌ ' + r.error }}</span>
+          </div>
         </div>
       </div>
     </div>
@@ -164,35 +213,65 @@
 
   <!-- TAB: Clients List -->
   <div class="wa-content" *ngIf="activeTab === 'clients'">
+    <!-- Search & Filters -->
+    <div class="filter-bar" style="margin-bottom: 20px;">
+      <div class="search-input-wrap">
+        <span class="material-symbols-outlined search-icon">search</span>
+        <input type="text" class="text search-text-input" [(ngModel)]="searchTerm"
+          placeholder="{{trans.t('RECHERCHER_CLIENT') || 'Rechercher un client...'}}">
+      </div>
+      <div class="segment-select-wrap">
+        <select class="optionP" [(ngModel)]="clientFilter">
+          <option value="all">👥 {{trans.t('TOUS_CONTACTS') || 'Tous les contacts'}}</option>
+          <option value="pending">⏳ {{trans.t('AVEC_COMMANDE_ATTENTE') || 'Commandes en attente'}}</option>
+          <option value="completed">✅ {{trans.t('AVEC_COMMANDE_LIVREE') || 'Commandes livrées'}}</option>
+        </select>
+      </div>
+    </div>
+
     <div class="clients-table-wrap">
-      <div class="loading-clients" *ngIf="clientsLoading">Chargement des clients...</div>
+      <div class="loading-clients" *ngIf="clientsLoading">{{trans.t('CHARGEMENT_CLIENTS') || 'Chargement des clients...'}}</div>
+      
       <table class="clients-table" *ngIf="!clientsLoading">
         <thead>
           <tr>
-            <th>Nom</th>
-            <th>Téléphone</th>
+            <th>{{trans.t('NOM') || 'Nom'}}</th>
+            <th>{{trans.t('TELEPHONE') || 'Téléphone'}}</th>
             <th>Email</th>
-            <th>Action</th>
+            <th>{{trans.t('COMMANDES') || 'Commandes'}}</th>
+            <th style="text-align: right;">Action</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let c of clients">
-            <td>{{ c.fname }} {{ c.lname }}</td>
+          <tr *ngFor="let c of filteredClients">
+            <td>
+              <div style="font-weight: 600; color: var(--color-text-main);">{{ c.fname }} {{ c.lname }}</div>
+            </td>
             <td>
               <span class="phone-tag">{{ c.tel }}</span>
             </td>
-            <td>{{ c.email || '—' }}</td>
             <td>
-              <button class="msg-btn" (click)="prefillPhone(c.tel)" title="Envoyer un message">
-                <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+              <span style="color: var(--color-text-muted);">{{ c.email || '—' }}</span>
+            </td>
+            <td>
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <span class="stats-badge total" title="Total commandes">{{ c.orders_count || 0 }} {{trans.t('COMMANDES_MIN') || 'cmd'}}</span>
+                <span class="stats-badge pending" *ngIf="c.pending_orders_count > 0" title="Commandes en attente">{{ c.pending_orders_count }} {{trans.t('EN_ATTENTE_MIN') || 'att'}}</span>
+              </div>
+            </td>
+            <td style="text-align: right;">
+              <button class="msg-btn" (click)="prefillPhone(c.tel)" title="{{trans.t('ENVOYER_MESSAGE') || 'Envoyer un message'}}">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
                   <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
                 </svg>
-                Envoyer
+                <span>{{trans.t('CONTACTER') || 'Contacter'}}</span>
               </button>
             </td>
           </tr>
-          <tr *ngIf="clients.length === 0">
-            <td colspan="4" style="text-align:center; padding: 2rem; color: var(--wa-muted);">Aucun client avec un numéro de téléphone</td>
+          <tr *ngIf="filteredClients.length === 0">
+            <td colspan="5" style="text-align:center; padding: 3rem; color: var(--color-text-muted);">
+              {{trans.t('AUCUN_CLIENT') || 'Aucun client à afficher'}}
+            </td>
           </tr>
         </tbody>
       </table>

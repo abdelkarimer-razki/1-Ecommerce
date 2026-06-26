@@ -376,7 +376,23 @@ app.get('/visits',verifyToken,async(req,res)=>{
 
 // List users for WhatsApp client selector (no password)
 app.get('/users-list', verifyToken, async(req, res) => {
-  const query = await p1.query("SELECT iduser, fname, lname, tel, email FROM public.users WHERE tel IS NOT NULL AND tel != '' ORDER BY fname");
+  const query = await p1.query(`
+    SELECT 
+      tel,
+      COALESCE(MAX(fname), '') as fname,
+      COALESCE(MAX(lname), '') as lname,
+      COALESCE(MAX(email), '') as email,
+      CAST(COUNT(idgroup) AS integer) as orders_count,
+      CAST(COUNT(CASE WHEN etat = false THEN 1 END) AS integer) as pending_orders_count
+    FROM (
+      SELECT tel, fname, lname, email, NULL::integer as idgroup, NULL::boolean as etat FROM public.users
+      UNION ALL
+      SELECT tel, fullname as fname, '' as lname, email, idgroup, etat FROM public.order_group
+    ) combined
+    WHERE tel IS NOT NULL AND tel != ''
+    GROUP BY tel
+    ORDER BY fname
+  `);
   res.json(query.rows);
 })
 
@@ -1518,33 +1534,60 @@ app.post('/api/whatsapp/send', verifyToken, async (req, res) => {
 // Send WhatsApp message to multiple phones (bulk)
 app.post('/api/whatsapp/send-bulk', verifyToken, async (req, res) => {
   try {
-    const { phones, message } = req.body;
-    if (!phones || !Array.isArray(phones) || phones.length === 0 || !message) {
-      return res.status(400).json({ success: false, error: 'phones (array) and message are required' });
+    const { phones, message, recipients } = req.body;
+    if ((!phones || !Array.isArray(phones) || phones.length === 0) && (!recipients || !Array.isArray(recipients) || recipients.length === 0)) {
+      return res.status(400).json({ success: false, error: 'phones or recipients are required' });
     }
     const headers = { 'Content-Type': 'application/json' };
     if (OPENWA_API_KEY) headers['x-api-key'] = OPENWA_API_KEY;
     const results = [];
-    for (const phone of phones) {
-      const digits = phone.replace(/[^0-9]/g, '');
-      const chatId = `${digits}@c.us`;
-      try {
-        const response = await fetch(`${OPENWA_URL}/api/sessions/${OPENWA_SESSION}/messages/send-text`, {
-          method: 'POST',
-          headers,
-          body: JSON.stringify({ chatId, text: message }),
-        });
-        if (response.ok) {
-          const data = await response.json();
-          results.push({ phone, success: true, messageId: data.id });
-        } else {
-          results.push({ phone, success: false, error: 'Failed to send' });
+    
+    if (recipients && Array.isArray(recipients) && recipients.length > 0) {
+      for (const item of recipients) {
+        const { phone, message: personalMessage } = item;
+        if (!phone || !personalMessage) continue;
+        const digits = phone.replace(/[^0-9]/g, '');
+        const chatId = `${digits}@c.us`;
+        try {
+          const response = await fetch(`${OPENWA_URL}/api/sessions/${OPENWA_SESSION}/messages/send-text`, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({ chatId, text: personalMessage }),
+          });
+          if (response.ok) {
+            const data = await response.json();
+            results.push({ phone, success: true, messageId: data.id });
+          } else {
+            results.push({ phone, success: false, error: 'Failed to send' });
+          }
+        } catch (e) {
+          results.push({ phone, success: false, error: 'Network error' });
         }
-      } catch (e) {
-        results.push({ phone, success: false, error: 'Network error' });
+        // Small delay between sends to avoid rate limiting
+        await new Promise(r => setTimeout(r, 500));
       }
-      // Small delay between sends to avoid rate limiting
-      await new Promise(r => setTimeout(r, 500));
+    } else {
+      for (const phone of phones) {
+        const digits = phone.replace(/[^0-9]/g, '');
+        const chatId = `${digits}@c.us`;
+        try {
+          const response = await fetch(`${OPENWA_URL}/api/sessions/${OPENWA_SESSION}/messages/send-text`, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({ chatId, text: message }),
+          });
+          if (response.ok) {
+            const data = await response.json();
+            results.push({ phone, success: true, messageId: data.id });
+          } else {
+            results.push({ phone, success: false, error: 'Failed to send' });
+          }
+        } catch (e) {
+          results.push({ phone, success: false, error: 'Network error' });
+        }
+        // Small delay between sends to avoid rate limiting
+        await new Promise(r => setTimeout(r, 500));
+      }
     }
     res.json({ success: true, results });
   } catch (err) {

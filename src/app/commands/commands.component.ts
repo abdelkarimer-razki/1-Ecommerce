@@ -1,6 +1,6 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { DashboardService } from '../services/dashboard.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslationService } from '../services/translation.service';
 
 @Component({
@@ -59,8 +59,14 @@ export class CommandsComponent implements OnInit {
   constructor(
     private dash: DashboardService,
     private route: ActivatedRoute,
-    public trans: TranslationService
+    public trans: TranslationService,
+    private router: Router
   ) {}
+
+  contactWhatsApp(order: any) {
+    if (!order || !order.tel) return;
+    this.router.navigate(['/admin/whatsapp'], { queryParams: { tel: order.tel, name: order.fullname || '' } });
+  }
 
   getCurrentMonth(): string {
     const d = new Date();

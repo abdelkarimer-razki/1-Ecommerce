@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
 import { environment } from '../../environments/environment';
 import { TranslationService } from '../services/translation.service';
 
@@ -20,6 +21,39 @@ export class WhatsappComponent implements OnInit {
   clients: any[] = [];
   clientsLoading: boolean = false;
 
+  // Filters & search
+  searchTerm: string = '';
+  clientFilter: 'all' | 'pending' | 'completed' = 'all';
+
+  // Templates
+  templates = [
+    {
+      name: 'Confirmation de commande',
+      nameEn: 'Order Confirmation',
+      nameAr: 'تأكيد الطلب',
+      text: 'Bonjour {name},\n\nNous vous remercions pour votre commande sur Coopérative Bab Mansour. Votre commande est bien confirmée.\n\nCordialement.'
+    },
+    {
+      name: 'Commande expédiée',
+      nameEn: 'Order Shipped',
+      nameAr: 'تم شحن الطلب',
+      text: 'Bonjour {name},\n\nVotre commande de la Coopérative Bab Mansour a été expédiée et est en cours de livraison.\n\nCordialement.'
+    },
+    {
+      name: 'Commande prête',
+      nameEn: 'Order Ready',
+      nameAr: 'الطلب جاهز',
+      text: 'Bonjour {name},\n\nVotre commande est prête à être récupérée.\n\nCordialement.'
+    },
+    {
+      name: 'Message d\'accueil',
+      nameEn: 'Greeting Message',
+      nameAr: 'رسالة ترحيبية',
+      text: 'Bonjour {name},\n\nComment pouvons-nous vous aider aujourd\'hui ?\n\nCoopérative Bab Mansour.'
+    }
+  ];
+  selectedTemplateIndex: string = '';
+
   // Single send
   singlePhone: string = '';
   singleMessage: string = '';
@@ -36,11 +70,29 @@ export class WhatsappComponent implements OnInit {
   // UI tabs
   activeTab: string = 'single'; // 'single' | 'bulk' | 'clients'
 
-  constructor(private http: HttpClient, public trans: TranslationService) {}
+  constructor(
+    private http: HttpClient, 
+    private route: ActivatedRoute,
+    public trans: TranslationService
+  ) {}
 
   ngOnInit(): void {
     this.checkStatus();
     this.loadClients();
+    
+    // Subscribe to query params for quick action navigation
+    this.route.queryParams.subscribe(params => {
+      if (params['tel']) {
+        this.singlePhone = params['tel'].replace(/[^0-9]/g, '');
+        this.activeTab = 'single';
+        
+        const name = params['name'] || '';
+        if (name) {
+          // Default to greeting template with client name
+          this.singleMessage = `Bonjour ${name},\n\n`;
+        }
+      }
+    });
   }
 
   checkStatus() {
@@ -73,6 +125,59 @@ export class WhatsappComponent implements OnInit {
     );
   }
 
+  // Get filtered clients list based on search and segment filter
+  get filteredClients(): any[] {
+    let list = this.clients || [];
+
+    // 1. Status segment filter
+    if (this.clientFilter === 'pending') {
+      list = list.filter(c => c.pending_orders_count > 0);
+    } else if (this.clientFilter === 'completed') {
+      list = list.filter(c => c.orders_count > 0 && c.pending_orders_count === 0);
+    }
+
+    // 2. Search term filter
+    if (this.searchTerm) {
+      const term = this.searchTerm.toLowerCase();
+      list = list.filter(c => 
+        (c.fname && c.fname.toLowerCase().includes(term)) ||
+        (c.lname && c.lname.toLowerCase().includes(term)) ||
+        (c.tel && c.tel.toLowerCase().includes(term)) ||
+        (c.email && c.email.toLowerCase().includes(term))
+      );
+    }
+
+    return list;
+  }
+
+  onFilterChange() {
+    this.updateSelectAllState();
+  }
+
+  onTemplateChange() {
+    if (this.selectedTemplateIndex === '') {
+      return;
+    }
+    const idx = parseInt(this.selectedTemplateIndex, 10);
+    if (isNaN(idx) || !this.templates[idx]) return;
+
+    const tpl = this.templates[idx];
+
+    if (this.activeTab === 'single') {
+      let clientName = '';
+      if (this.singlePhone) {
+        const client = this.clients.find(c => c.tel.replace(/[^0-9]/g, '') === this.singlePhone.replace(/[^0-9]/g, ''));
+        if (client) {
+          clientName = `${client.fname} ${client.lname}`.trim();
+        }
+      }
+      this.singleMessage = tpl.text.replace(/{name}/g, clientName || 'Client');
+    } else if (this.activeTab === 'bulk') {
+      // Bulk templates keep placeholder {name} to resolve during sending
+      this.bulkMessage = tpl.text;
+    }
+  }
+
   sendOne() {
     if (!this.singlePhone || !this.singleMessage) return;
     this.sendingOne = true;
@@ -98,15 +203,29 @@ export class WhatsappComponent implements OnInit {
     } else {
       this.selectedPhones.add(phone);
     }
-    this.selectAll = this.selectedPhones.size === this.clients.length;
+    this.updateSelectAllState();
   }
 
   toggleSelectAll() {
-    this.selectAll = !this.selectAll;
-    if (this.selectAll) {
-      this.clients.forEach(c => this.selectedPhones.add(c.tel));
+    const currentFiltered = this.filteredClients;
+    const allFilteredSelected = currentFiltered.every(c => this.selectedPhones.has(c.tel));
+
+    if (allFilteredSelected) {
+      // Deselect all currently filtered
+      currentFiltered.forEach(c => this.selectedPhones.delete(c.tel));
     } else {
-      this.selectedPhones.clear();
+      // Select all currently filtered
+      currentFiltered.forEach(c => this.selectedPhones.add(c.tel));
+    }
+    this.updateSelectAllState();
+  }
+
+  updateSelectAllState() {
+    const currentFiltered = this.filteredClients;
+    if (currentFiltered.length === 0) {
+      this.selectAll = false;
+    } else {
+      this.selectAll = currentFiltered.every(c => this.selectedPhones.has(c.tel));
     }
   }
 
@@ -118,9 +237,17 @@ export class WhatsappComponent implements OnInit {
     if (this.selectedPhones.size === 0 || !this.bulkMessage) return;
     this.sendingBulk = true;
     this.bulkResults = [];
+
+    // Personalize message for each recipient using updated API
+    const recipients = Array.from(this.selectedPhones).map(phone => {
+      const client = this.clients.find(c => c.tel === phone);
+      const clientName = client ? `${client.fname} ${client.lname}`.trim() : '';
+      const personalizedMessage = this.bulkMessage.replace(/{name}/g, clientName || 'Client');
+      return { phone, message: personalizedMessage };
+    });
+
     this.http.post<any>(this.apiUrl + 'api/whatsapp/send-bulk', {
-      phones: Array.from(this.selectedPhones),
-      message: this.bulkMessage
+      recipients
     }).subscribe(
       (data) => {
         this.bulkResults = data.results || [];
@@ -128,7 +255,7 @@ export class WhatsappComponent implements OnInit {
       },
       (err) => {
         this.sendingBulk = false;
-        this.bulkResults = [{ phone: 'All', success: false, error: 'Request failed' }];
+        this.bulkResults = [{ phone: 'All', success: false, error: err.error?.error || 'Request failed' }];
       }
     );
   }
@@ -137,10 +264,22 @@ export class WhatsappComponent implements OnInit {
     this.activeTab = tab;
     this.sendOneResult = null;
     this.bulkResults = [];
+    this.selectedTemplateIndex = '';
+    this.updateSelectAllState();
   }
 
   prefillPhone(tel: string) {
-    this.singlePhone = tel;
+    this.singlePhone = tel.replace(/[^0-9]/g, '');
+    
+    // Attempt to pre-fill client name in greeting
+    const client = this.clients.find(c => c.tel.replace(/[^0-9]/g, '') === this.singlePhone);
+    const clientName = client ? `${client.fname} ${client.lname}`.trim() : '';
+    if (clientName) {
+      this.singleMessage = `Bonjour ${clientName},\n\n`;
+    } else {
+      this.singleMessage = '';
+    }
+    
     this.activeTab = 'single';
   }
 
@@ -150,5 +289,14 @@ export class WhatsappComponent implements OnInit {
 
   get failCount(): number {
     return this.bulkResults.filter(r => !r.success).length;
+  }
+
+  getPendingOrdersText(c: any): string {
+    if (c.pending_orders_count > 0) {
+      return this.trans.getLang() === 'AR' 
+        ? `(${c.pending_orders_count} في الانتظار)` 
+        : `(${c.pending_orders_count} en attente)`;
+    }
+    return '';
   }
 }
