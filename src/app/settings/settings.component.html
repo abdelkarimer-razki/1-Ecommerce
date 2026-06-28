@@ -285,6 +285,58 @@
           </div>
         </div>
       </div>
+    <!-- Email Notifications Section Content -->
+    <div class="form-section">
+      <div class="form-section-header" style="display: flex; align-items: center; gap: 8px; margin-bottom: 24px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+        <span class="material-symbols-outlined section-icon" style="color: var(--color-primary);">mail</span>
+        <h3 style="margin: 0;">{{trans.t('NOTIFICATIONS_EMAIL_COMMANDES') || 'Notifications par email pour les commandes'}}</h3>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 20px;">
+        <div style="background-color: var(--color-bg-main); padding: 16px; border-radius: var(--border-radius-md); border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+          <div>
+            <h4 style="margin: 0 0 4px 0; font-weight: 700; color: var(--color-text-main);">{{trans.t('ACTIVER_NOTIFICATIONS') || 'Activer les alertes de nouvelle commande'}}</h4>
+            <p style="margin: 0; font-size: 0.85rem; color: var(--color-text-muted);">{{trans.t('ACTIVER_NOTIFICATIONS_DESC') || 'Recevez un e-mail instantané dès qu’un client passe une commande sur le site.'}}</p>
+          </div>
+          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 700; color: var(--color-primary);">
+            <input type="checkbox" [(ngModel)]="config.emailNotificationsEnabled" style="width: 20px; height: 20px; accent-color: var(--color-primary);">
+            <span>{{trans.t('ACTIVER') || 'Activer'}}</span>
+          </label>
+        </div>
+
+        <div *ngIf="config.emailNotificationsEnabled" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+          <div class="input-group" style="grid-column: 1 / -1;">
+            <label>{{trans.t('EMAIL_DESTINATAIRE_ADMIN') || 'Email du destinataire (Admin)'}} <span style="color: var(--color-terracotta);">*</span></label>
+            <input class="text" type="email" [(ngModel)]="config.adminNotificationEmail" placeholder="ex: admin@cooperativebabmansour.ma">
+            <small style="font-size: 0.75rem; color: var(--color-text-light); margin-top: 4px;">{{trans.t('EMAIL_DESTINATAIRE_HINT') || 'C\'est à cette adresse que le résumé de chaque commande sera envoyé.'}}</small>
+          </div>
+
+          <!-- Advanced SMTP Settings -->
+          <div style="grid-column: 1 / -1; margin-top: 10px; border-top: 1px dashed var(--border-color); padding-top: 16px;">
+            <h4 style="font-size: 0.9rem; font-weight: 700; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 14px;">
+              ⚙️ {{trans.t('CONFIGURATION_SERVEUR_SMTP') || 'Configuration du serveur d\'envoi (SMTP Optionnel)'}}
+            </h4>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+              <div class="input-group">
+                <label>Serveur SMTP (Host)</label>
+                <input class="text" type="text" [(ngModel)]="config.smtpHost" placeholder="ex: smtp.gmail.com">
+              </div>
+              <div class="input-group">
+                <label>Port SMTP</label>
+                <input class="text" type="number" [(ngModel)]="config.smtpPort" placeholder="ex: 587 ou 465">
+              </div>
+              <div class="input-group">
+                <label>Utilisateur SMTP / Email d'envoi</label>
+                <input class="text" type="text" [(ngModel)]="config.smtpUser" placeholder="ex: contact@cooperativebabmansour.ma">
+              </div>
+              <div class="input-group">
+                <label>Mot de passe SMTP / App Password</label>
+                <input class="text" type="password" [(ngModel)]="config.smtpPass" placeholder="••••••••••••">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

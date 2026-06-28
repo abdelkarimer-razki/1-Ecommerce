@@ -19,6 +19,120 @@ const OPENWA_URL = process.env.OPENWA_URL || 'http://localhost:2785';
 const OPENWA_SESSION = process.env.OPENWA_SESSION || 'default';
 const OPENWA_API_KEY = process.env.OPENWA_API_KEY || '';
 
+const nodemailer = require('nodemailer');
+
+async function sendOrderNotificationEmail(orderData, items) {
+  try {
+    const configPath = path.join(__dirname, 'assets', 'config.json');
+    if (!fs.existsSync(configPath)) return;
+    
+    const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+    
+    const enabled = config.emailNotificationsEnabled || process.env.NOTIFICATION_ENABLED === 'true';
+    const recipient = config.adminNotificationEmail || process.env.NOTIFICATION_EMAIL;
+    
+    if (!enabled || !recipient) return;
+
+    const host = config.smtpHost || process.env.SMTP_HOST || 'smtp.gmail.com';
+    const port = parseInt(config.smtpPort || process.env.SMTP_PORT || '587');
+    const user = config.smtpUser || process.env.SMTP_USER;
+    const pass = config.smtpPass || process.env.SMTP_PASS;
+
+    if (!user || !pass) {
+      console.log('Email Notification skipped: SMTP user or password not configured.');
+      return;
+    }
+
+    const transporter = nodemailer.createTransport({
+      host,
+      port,
+      secure: port === 465,
+      auth: { user, pass }
+    });
+
+    const itemsListHtml = (items || []).map(item => `
+      <tr style="border-bottom: 1px solid #e7e5e4;">
+        <td style="padding: 10px; font-weight: 600;">${item.name || 'Produit'} ${item.taille ? '(' + item.taille + ')' : ''}</td>
+        <td style="padding: 10px; text-align: center;">×${item.qte}</td>
+        <td style="padding: 10px; text-align: right; font-weight: 700; color: #b45309;">${Number(item.prix || 0)} DH</td>
+      </tr>
+    `).join('');
+
+    const mailOptions = {
+      from: `"Coopérative Bab Mansour" <${user}>`,
+      to: recipient,
+      subject: `🔔 Nouvelle commande #${orderData.idgroup} - ${orderData.fullname || 'Client'}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; border: 1px solid #e7e5e4; border-radius: 10px; overflow: hidden;">
+          <div style="background-color: #f4f6f0; padding: 24px; border-bottom: 1px solid #e7e5e4; text-align: center;">
+            <h2 style="color: #3f6212; margin: 0; font-size: 1.4rem;">🎉 Nouvelle commande reçue !</h2>
+            <p style="color: #57534e; margin: 6px 0 0 0; font-size: 0.9rem;">Commande #${orderData.idgroup} sur Coopérative Bab Mansour</p>
+          </div>
+          
+          <div style="padding: 24px;">
+            <h3 style="color: #292524; font-size: 1.1rem; border-bottom: 2px solid #b45309; padding-bottom: 6px; margin-top: 0;">👤 Informations Client</h3>
+            <table style="width: 100%; font-size: 0.9rem; margin-bottom: 20px; border-collapse: collapse;">
+              <tr><td style="padding: 4px 0; color: #57534e; width: 130px;"><strong>Nom complet :</strong></td><td>${orderData.fullname || 'Non renseigné'}</td></tr>
+              <tr><td style="padding: 4px 0; color: #57534e;"><strong>Téléphone :</strong></td><td><a href="tel:${orderData.tel}" style="color: #3f6212; font-weight: 700; text-decoration: none;">${orderData.tel || 'Non renseigné'}</a></td></tr>
+              <tr><td style="padding: 4px 0; color: #57534e;"><strong>E-mail :</strong></td><td>${orderData.email || 'Non renseigné'}</td></tr>
+              <tr><td style="padding: 4px 0; color: #57534e;"><strong>Adresse :</strong></td><td>${orderData.adress || 'Non renseignée'}</td></tr>
+              <tr><td style="padding: 4px 0; color: #57534e;"><strong>Source :</strong></td><td><span style="background: #fdf6e2; color: #b45309; padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: 0.8rem;">${orderData.source || 'site'}</span></td></tr>
+            </table>
+
+            <h3 style="color: #292524; font-size: 1.1rem; border-bottom: 2px solid #b45309; padding-bottom: 6px;">🛒 Contenu de la commande</h3>
+            <table style="width: 100%; font-size: 0.9rem; border-collapse: collapse; margin-bottom: 20px;">
+              <thead>
+                <tr style="background: #fbf9f6; text-align: left; color: #57534e;">
+                  <th style="padding: 10px;">Article</th>
+                  <th style="padding: 10px; text-align: center;">Qté</th>
+                  <th style="padding: 10px; text-align: right;">Prix</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${itemsListHtml}
+              </tbody>
+            </table>
+
+            <div style="background-color: #fdf6e2; padding: 16px; border-radius: 8px; border: 1px solid #fef3c7; display: flex; justify-content: space-between; align-items: center;">
+              <span style="font-size: 1.1rem; font-weight: 700; color: #78350f;">Total de la commande :</span>
+              <strong style="font-size: 1.4rem; color: #b45309;">${Number(orderData.prix_total || 0)} DH</strong>
+            </div>
+          </div>
+          
+          <div style="background-color: #292524; color: #a8a29e; padding: 16px; text-align: center; font-size: 0.8rem;">
+            Coopérative Bab Mansour — System Notification
+          </div>
+        </div>
+      `
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log(`Email notification sent successfully for order #${orderData.idgroup}`);
+  } catch (err) {
+    console.error('Failed to send order notification email:', err);
+  }
+}
+
+async function triggerOrderNotification(idgroup) {
+  try {
+    const grpRes = await p1.query("SELECT * FROM order_group WHERE idgroup=$1", [idgroup]);
+    if (grpRes.rows.length === 0) return;
+    const orderData = grpRes.rows[0];
+
+    const itemsRes = await p1.query(`
+      SELECT c.qte, c.prix, c.taille, p.name 
+      FROM commande c 
+      LEFT JOIN products p ON c.idproducts = p.idproducts 
+      WHERE c.idgroup = $1
+    `, [idgroup]);
+    const items = itemsRes.rows;
+
+    sendOrderNotificationEmail(orderData, items);
+  } catch (e) {
+    console.error('Error triggering order notification:', e);
+  }
+}
+
 // Rate limiter for login: max 10 attempts per 15 minutes per IP
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -764,6 +878,7 @@ app.post('/checkout',async(req,res)=>{
       );
     }
 
+    triggerOrderNotification(idgroup);
     res.status(201).json({ success: true, idgroup });
   } catch (err) {
     console.error("Checkout error:", err);
@@ -813,6 +928,7 @@ app.post('/addManualCommand',verifyToken,async(req,res)=>{
       );
     }
 
+    triggerOrderNotification(idgroup);
     res.status(201).json({ success: true, idgroup });
   } catch (err) {
     console.error("Error adding manual command:", err);
@@ -1135,6 +1251,7 @@ app.get('/cartotachat/:idcommande',async(req,res)=>{
     const idgroup = grpResult.rows[0].idgroup;
 
     await p1.query("UPDATE commande SET cart=false, idgroup=$1 WHERE idcommande=$2", [idgroup, id]);
+    triggerOrderNotification(idgroup);
     res.json({ success: true, idgroup });
   } catch (err) {
     console.error("cartotachat error:", err);
@@ -1177,6 +1294,7 @@ app.get('/cartotachatall/:iduser',async(req,res)=>{
     const idgroup = grpResult.rows[0].idgroup;
 
     await p1.query("UPDATE commande SET cart=false, idgroup=$1 WHERE iduser=$2 AND cart=true", [idgroup, iduser]);
+    triggerOrderNotification(idgroup);
     res.json({ success: true, idgroup });
   } catch (err) {
     console.error("cartotachatall error:", err);
