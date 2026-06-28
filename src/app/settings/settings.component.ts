@@ -39,6 +39,14 @@ export class SettingsComponent implements OnInit {
     this.loadConfig();
   }
 
+  isTab(tab: string): boolean {
+    return this.activeTab === tab;
+  }
+
+  setTab(tab: string): void {
+    this.activeTab = tab;
+  }
+
   loadConfig() {
     this.loading = true;
     this.homepageService.getConfig().subscribe(

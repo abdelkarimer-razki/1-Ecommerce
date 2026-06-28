@@ -1,8 +1,8 @@
 <div class="admin-settings-container" [style.direction]="trans.isRtl() ? 'rtl' : 'ltr'">
   <div class="settings-header" style="display: flex; justify-content: space-between; align-items: center;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
     <h1 class="title" style="display: flex; align-items: center; gap: 8px; margin: 0;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
-      <span class="material-symbols-outlined">{{ activeTab === 'customization' ? 'palette' : 'mark_email_unread' }}</span> 
-      {{ activeTab === 'customization' ? (trans.t('PERSONNALISATION_SITE') || 'Personnalisation du site') : (trans.t('NOTIFICATIONS_EMAIL_COMMANDES') || 'Notifications & Paramètres') }}
+      <span class="material-symbols-outlined">{{ isTab('customization') ? 'palette' : 'mark_email_unread' }}</span> 
+      {{ isTab('customization') ? (trans.t('PERSONNALISATION_SITE') || 'Personnalisation du site') : (trans.t('NOTIFICATIONS_EMAIL_COMMANDES') || 'Notifications & Paramètres') }}
     </h1>
     <button class="save-btn" (click)="saveConfig()" style="display: inline-flex; align-items: center; gap: 8px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
       <span class="material-symbols-outlined">save</span> {{trans.t('ENREGISTRER_MODIFICATIONS')}}
@@ -13,10 +13,10 @@
   <div style="display: flex; gap: 12px; margin: 20px 0; border-bottom: 2px solid var(--border-color); padding-bottom: 2px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
     <button 
       type="button" 
-      (click)="activeTab = 'customization'" 
+      (click)="setTab('customization')" 
       style="display: flex; align-items: center; gap: 8px; padding: 10px 20px; font-weight: 700; font-size: 0.95rem; border: none; background: none; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s;"
-      [style.border-bottom-color]="activeTab === 'customization' ? 'var(--color-primary)' : 'transparent'"
-      [style.color]="activeTab === 'customization' ? 'var(--color-primary)' : 'var(--color-text-muted)'"
+      [style.border-bottom-color]="isTab('customization') ? 'var(--color-primary)' : 'transparent'"
+      [style.color]="isTab('customization') ? 'var(--color-primary)' : 'var(--color-text-muted)'"
     >
       <span class="material-symbols-outlined">palette</span>
       <span>{{trans.t('PERSONNALISATION_SITE') || 'Personnalisation du site'}}</span>
@@ -24,10 +24,10 @@
 
     <button 
       type="button" 
-      (click)="activeTab = 'notifications'" 
+      (click)="setTab('notifications')" 
       style="display: flex; align-items: center; gap: 8px; padding: 10px 20px; font-weight: 700; font-size: 0.95rem; border: none; background: none; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s;"
-      [style.border-bottom-color]="activeTab === 'notifications' ? 'var(--color-primary)' : 'transparent'"
-      [style.color]="activeTab === 'notifications' ? 'var(--color-primary)' : 'var(--color-text-muted)'"
+      [style.border-bottom-color]="isTab('notifications') ? 'var(--color-primary)' : 'transparent'"
+      [style.color]="isTab('notifications') ? 'var(--color-primary)' : 'var(--color-text-muted)'"
     >
       <span class="material-symbols-outlined">mark_email_unread</span>
       <span>{{trans.t('NOTIFICATIONS_EMAIL_COMMANDES') || 'Notifications & System'}}</span>
@@ -61,7 +61,7 @@
 
   <div *ngIf="!loading" class="settings-form" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
     <!-- SECTION 1: SITE CUSTOMIZATION -->
-    <div *ngIf="activeTab === 'customization'">
+    <div *ngIf="isTab('customization')">
       <!-- Brand Info Section -->
     <div class="form-section">
       <div class="form-section-header" style="display: flex; align-items: center; gap: 8px; margin-bottom: 24px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
@@ -316,7 +316,7 @@
     </div>
 
     <!-- SECTION 2: NOTIFICATIONS & SYSTEM PARAMETERS -->
-    <div *ngIf="activeTab === 'notifications'" class="form-section">
+    <div *ngIf="isTab('notifications')" class="form-section">
       <div class="form-section-header" style="display: flex; align-items: center; gap: 8px; margin-bottom: 24px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
         <span class="material-symbols-outlined section-icon" style="color: var(--color-primary);">mail</span>
         <h3 style="margin: 0;">{{trans.t('NOTIFICATIONS_EMAIL_COMMANDES') || 'Notifications par email pour les commandes'}}</h3>
