@@ -16,6 +16,20 @@
   flex-direction: column;
   flex-shrink: 0;
   box-sizing: border-box;
+  overflow-y: auto;
+}
+
+.admin-sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.admin-sidebar::-webkit-scrollbar-thumb {
+  background-color: var(--border-color);
+  border-radius: 10px;
+}
+
+.admin-sidebar::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-text-light);
 }
 
 .admin-title {
