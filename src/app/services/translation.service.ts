@@ -257,7 +257,7 @@ export class TranslationService {
     'DECEMBRE': { FR: 'Décembre', EN: 'December', AR: 'ديسمبر' },
 
     // Settings Customization Section
-    'PERSONNALISATION_SITE': { FR: 'Personnalisation du site', EN: 'Site Customization', AR: 'تخصيص الموقع' },
+    'PERSONNALISATION_SITE': { FR: 'Personnalisation', EN: 'Customization', AR: 'التخصيص' },
     'ENREGISTRER_MODIFICATIONS': { FR: 'Enregistrer les modifications', EN: 'Save Changes', AR: 'حفظ التغييرات' },
     'SECTION_ACCUEIL_HERO': { FR: 'Section Accueil (Hero Banner)', EN: 'Home Section (Hero Banner)', AR: 'قسم الصفحة الرئيسية (لافتة رئيسية)' },
     'TITRE_PRINCIPAL': { FR: 'Titre principal', EN: 'Main Title', AR: 'العنوان الرئيسي' },

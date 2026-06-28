@@ -39,11 +39,11 @@
       
       <!-- Embedded Sub-list -->
       <div *ngIf="showSettingsSubmenu" class="submenu-container" (click)="$event.stopPropagation()">
-        <!-- Customize Site (PersonnalISER) -->
+        <!-- Customize Site (Personnalisation) -->
         <li routerLink="settings" [queryParams]="{tab: 'customization'}" class="submenu-item" [ngClass]="{clicked: isSettings}">
           <a class="submenu-link">
             <span class="material-symbols-outlined">palette</span> 
-            <span>{{trans.t('PERSONNALISATION_SITE') || 'Personnaliser le site'}}</span>
+            <span>{{trans.t('PERSONNALISATION_SITE') || 'Personnalisation'}}</span>
           </a>
         </li>
         
