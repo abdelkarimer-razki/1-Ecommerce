@@ -443,7 +443,18 @@ export class TranslationService {
     'SETTINGS': { FR: 'Paramètres', EN: 'Settings', AR: 'الإعدادات' },
     'CHOISIR_LANGUE': { FR: 'Langue de l’interface', EN: 'Interface Language', AR: 'لغة الواجهة' },
     'SESSION_ADMIN': { FR: 'Session Administrateur', EN: 'Administrator Session', AR: 'جلسة المسؤول' },
-    'DISCONNECT_WARN': { FR: 'Pour quitter le panneau d’administration en toute sécurité, cliquez sur le bouton de déconnexion.', EN: 'To securely log out of the administration panel, click the button below.', AR: 'لتسجيل الخروج بأمان من لوحة التحكم، انقر على زر تسجيل الخروج.' }
+    'DISCONNECT_WARN': { FR: 'Pour quitter le panneau d’administration en toute sécurité, cliquez sur le bouton de déconnexion.', EN: 'To securely log out of the administration panel, click the button below.', AR: 'لتسجيل الخروج بأمان من لوحة التحكم، انقر على زر تسجيل الخروج.' },
+    'NOTIFICATIONS_EMAIL_COMMANDES': { FR: 'Notifications par email pour les commandes', EN: 'Email Notifications for Orders', AR: 'إشعارات البريد الإلكتروني للطلبات' },
+    'ACTIVER_NOTIFICATIONS': { FR: 'Activer les alertes de nouvelle commande', EN: 'Enable New Order Alerts', AR: 'تفعيل تنبيهات الطلبات الجديدة' },
+    'ACTIVER_NOTIFICATIONS_DESC': { FR: 'Recevez un e-mail instantané dès qu’un client passe une commande sur le site.', EN: 'Receive an instant email as soon as a customer places an order on the site.', AR: 'تلقي بريد إلكتروني فوري بمجرد أن يضع الزبون طلباً في الموقع.' },
+    'ACTIVER': { FR: 'Activer', EN: 'Enable', AR: 'تفعيل' },
+    'EMAIL_DESTINATAIRE_ADMIN': { FR: 'Email du destinataire (Admin)', EN: 'Recipient Email (Admin)', AR: 'البريد الإلكتروني للمستلم (المسؤول)' },
+    'EMAIL_DESTINATAIRE_HINT': { FR: "C'est à cette adresse que le résumé de chaque commande sera envoyé.", EN: 'This is the address where each order summary will be sent.', AR: 'سيتم إرسال ملخص كل طلب إلى هذا العنوان.' },
+    'CONFIGURATION_SERVEUR_SMTP': { FR: "Configuration du serveur d'envoi (SMTP Optionnel)", EN: 'Sending Server Configuration (Optional SMTP)', AR: 'إعدادات خادم الإرسال (SMTP اختياري)' },
+    'INFOS_GENERALES_COOP': { FR: 'Informations Générales', EN: 'General Information', AR: 'معلومات عامة' },
+    'NOM_COOPERATIVE': { FR: 'Nom de la Coopérative', EN: 'Cooperative Name', AR: 'اسم التعاونية' },
+    'REMPLACER_LOGO': { FR: 'Remplacer le Logo', EN: 'Replace Logo', AR: 'استبدال الشعار' },
+    'LOGO_COOPERATIVE': { FR: 'Logo de la Coopérative', EN: 'Cooperative Logo', AR: 'شعار التعاونية' }
   };
 
 
@@ -476,6 +487,11 @@ export class TranslationService {
     const upperKey = key.trim().toUpperCase();
     if (this.dictionary[upperKey] && this.dictionary[upperKey][lang]) {
       return this.dictionary[upperKey][lang];
+    }
+
+    // If key is an uppercase flag, return empty string so template fallbacks (|| 'Default') work cleanly
+    if (/^[A-Z0-9_]+$/.test(key.trim())) {
+      return '';
     }
 
     return key;
