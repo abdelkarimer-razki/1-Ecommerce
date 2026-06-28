@@ -15,7 +15,7 @@ import { ActivatedRoute } from '@angular/router';
 export class SettingsComponent implements OnInit {
   config: any = {};
   loading: boolean = true;
-  activeTab: 'customization' | 'notifications' = 'customization';
+  activeTab: string = 'customization';
   private readonly notifier: NotifierService;
 
   constructor(
