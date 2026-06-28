@@ -39,11 +39,19 @@
       
       <!-- Embedded Sub-list -->
       <div *ngIf="showSettingsSubmenu" class="submenu-container" (click)="$event.stopPropagation()">
-        <!-- Customize Site (Personnaliser) -->
-        <li routerLink="settings" class="submenu-item" [ngClass]="{clicked: isSettings}">
+        <!-- Customize Site (PersonnalISER) -->
+        <li routerLink="settings" [queryParams]="{tab: 'customization'}" class="submenu-item" [ngClass]="{clicked: isSettings}">
           <a class="submenu-link">
-            <span class="material-symbols-outlined">tune</span> 
-            <span>{{trans.t('PERSONNALISER')}}</span>
+            <span class="material-symbols-outlined">palette</span> 
+            <span>{{trans.t('PERSONNALISATION_SITE') || 'Personnaliser le site'}}</span>
+          </a>
+        </li>
+        
+        <!-- Notifications & Email -->
+        <li routerLink="settings" [queryParams]="{tab: 'notifications'}" class="submenu-item" [ngClass]="{clicked: isSettings}">
+          <a class="submenu-link">
+            <span class="material-symbols-outlined">mark_email_unread</span> 
+            <span>{{trans.t('NOTIFICATIONS_EMAIL_COMMANDES') || 'Notifications & Email'}}</span>
           </a>
         </li>
         

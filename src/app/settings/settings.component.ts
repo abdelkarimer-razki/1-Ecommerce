@@ -5,6 +5,8 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Subscriber, Observable } from 'rxjs';
 import { TranslationService } from '../services/translation.service';
 
+import { ActivatedRoute } from '@angular/router';
+
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.component.html',
@@ -13,15 +15,24 @@ import { TranslationService } from '../services/translation.service';
 export class SettingsComponent implements OnInit {
   config: any = {};
   loading: boolean = true;
+  activeTab: 'customization' | 'notifications' = 'customization';
   private readonly notifier: NotifierService;
 
   constructor(
     private homepageService: HomepageService,
     notifierService: NotifierService,
     private sanitizer: DomSanitizer,
-    public trans: TranslationService
+    public trans: TranslationService,
+    private route: ActivatedRoute
   ) {
     this.notifier = notifierService;
+    this.route.queryParams.subscribe(params => {
+      if (params['tab'] === 'notifications') {
+        this.activeTab = 'notifications';
+      } else if (params['tab'] === 'customization') {
+        this.activeTab = 'customization';
+      }
+    });
   }
 
   ngOnInit(): void {
