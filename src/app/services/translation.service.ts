@@ -444,7 +444,7 @@ export class TranslationService {
     'CHOISIR_LANGUE': { FR: 'Langue de l’interface', EN: 'Interface Language', AR: 'لغة الواجهة' },
     'SESSION_ADMIN': { FR: 'Session Administrateur', EN: 'Administrator Session', AR: 'جلسة المسؤول' },
     'DISCONNECT_WARN': { FR: 'Pour quitter le panneau d’administration en toute sécurité, cliquez sur le bouton de déconnexion.', EN: 'To securely log out of the administration panel, click the button below.', AR: 'لتسجيل الخروج بأمان من لوحة التحكم، انقر على زر تسجيل الخروج.' },
-    'NOTIFICATIONS_EMAIL_COMMANDES': { FR: 'Notifications par email pour les commandes', EN: 'Email Notifications for Orders', AR: 'إشعارات البريد الإلكتروني للطلبات' },
+    'NOTIFICATIONS_EMAIL_COMMANDES': { FR: 'Notifications', EN: 'Notifications', AR: 'الإشعارات' },
     'ACTIVER_NOTIFICATIONS': { FR: 'Activer les alertes de nouvelle commande', EN: 'Enable New Order Alerts', AR: 'تفعيل تنبيهات الطلبات الجديدة' },
     'ACTIVER_NOTIFICATIONS_DESC': { FR: 'Recevez un e-mail instantané dès qu’un client passe une commande sur le site.', EN: 'Receive an instant email as soon as a customer places an order on the site.', AR: 'تلقي بريد إلكتروني فوري بمجرد أن يضع الزبون طلباً في الموقع.' },
     'ACTIVER': { FR: 'Activer', EN: 'Enable', AR: 'تفعيل' },

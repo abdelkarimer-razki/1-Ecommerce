@@ -2,7 +2,7 @@
   <div class="settings-header" style="display: flex; justify-content: space-between; align-items: center;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
     <h1 class="title" style="display: flex; align-items: center; gap: 8px; margin: 0;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
       <span class="material-symbols-outlined">{{ isTab('customization') ? 'palette' : 'mark_email_unread' }}</span> 
-      {{ isTab('customization') ? (trans.t('PERSONNALISATION_SITE') || 'Personnalisation du site') : (trans.t('NOTIFICATIONS_EMAIL_COMMANDES') || 'Notifications & Paramètres') }}
+      {{ isTab('customization') ? (trans.t('PERSONNALISATION_SITE') || 'Personnalisation du site') : (trans.t('NOTIFICATIONS_EMAIL_COMMANDES') || 'Notifications') }}
     </h1>
     <button class="save-btn" (click)="saveConfig()" style="display: inline-flex; align-items: center; gap: 8px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
       <span class="material-symbols-outlined">save</span> {{trans.t('ENREGISTRER_MODIFICATIONS')}}
@@ -30,7 +30,7 @@
       [style.color]="isTab('notifications') ? 'var(--color-primary)' : 'var(--color-text-muted)'"
     >
       <span class="material-symbols-outlined">mark_email_unread</span>
-      <span>{{trans.t('NOTIFICATIONS_EMAIL_COMMANDES') || 'Notifications & System'}}</span>
+      <span>{{trans.t('NOTIFICATIONS_EMAIL_COMMANDES') || 'Notifications'}}</span>
     </button>
   </div>
 
@@ -320,7 +320,7 @@
     <div *ngIf="isTab('notifications')" class="form-section">
       <div class="form-section-header" style="display: flex; align-items: center; gap: 8px; margin-bottom: 24px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
         <span class="material-symbols-outlined section-icon" style="color: var(--color-primary);">mail</span>
-        <h3 style="margin: 0;">{{trans.t('NOTIFICATIONS_EMAIL_COMMANDES') || 'Notifications par email pour les commandes'}}</h3>
+        <h3 style="margin: 0;">{{trans.t('NOTIFICATIONS_EMAIL_COMMANDES') || 'Notifications'}}</h3>
       </div>
 
       <div style="display: flex; flex-direction: column; gap: 20px;">
