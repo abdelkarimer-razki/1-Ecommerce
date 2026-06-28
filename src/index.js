@@ -1491,12 +1491,60 @@ app.get('/api/whatsapp/status', verifyToken, async (req, res) => {
   try {
     const headers = { 'Content-Type': 'application/json' };
     if (OPENWA_API_KEY) headers['x-api-key'] = OPENWA_API_KEY;
-    const response = await fetch(`${OPENWA_URL}/api/sessions/${OPENWA_SESSION}`, { headers });
+    
+    // 1. Check if session exists/status in OpenWA
+    let response = await fetch(`${OPENWA_URL}/api/sessions/${OPENWA_SESSION}`, { headers });
+    
+    if (response.status === 404) {
+      // Session does not exist in OpenWA gateway, let's create it!
+      const createResponse = await fetch(`${OPENWA_URL}/api/sessions`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ id: OPENWA_SESSION, name: OPENWA_SESSION })
+      });
+      if (createResponse.ok) {
+        response = await fetch(`${OPENWA_URL}/api/sessions/${OPENWA_SESSION}`, { headers });
+      }
+    }
+    
     if (!response.ok) {
       return res.json({ connected: false, error: 'Session not found or OpenWA not running' });
     }
-    const data = await response.json();
-    res.json({ connected: data.status === 'CONNECTED', session: data });
+    
+    let data = await response.json();
+    
+    // If session is not connected, try to start it and get the QR code
+    let qrCode = null;
+    if (data.status !== 'CONNECTED') {
+      // If session status is DISCONNECTED, start it
+      if (data.status === 'DISCONNECTED') {
+        await fetch(`${OPENWA_URL}/api/sessions/${OPENWA_SESSION}/start`, {
+          method: 'POST',
+          headers
+        });
+        // Wait a short moment for engine to spin up
+        await new Promise(r => setTimeout(r, 1500));
+        // Refresh status
+        const refreshResponse = await fetch(`${OPENWA_URL}/api/sessions/${OPENWA_SESSION}`, { headers });
+        if (refreshResponse.ok) {
+          data = await refreshResponse.json();
+        }
+      }
+      
+      // Now attempt to fetch the QR code
+      const qrResponse = await fetch(`${OPENWA_URL}/api/sessions/${OPENWA_SESSION}/qr`, { headers });
+      if (qrResponse.ok) {
+        const qrData = await qrResponse.json();
+        qrCode = qrData.qrCode; // This is the base64 image data url (data:image/png;base64,...)
+      }
+    }
+    
+    res.json({ 
+      connected: data.status === 'CONNECTED', 
+      status: data.status,
+      qrCode, 
+      session: data 
+    });
   } catch (err) {
     res.json({ connected: false, error: 'OpenWA server is not reachable' });
   }

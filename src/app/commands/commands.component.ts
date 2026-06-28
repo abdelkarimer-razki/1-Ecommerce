@@ -63,11 +63,6 @@ export class CommandsComponent implements OnInit {
     private router: Router
   ) {}
 
-  contactWhatsApp(order: any) {
-    if (!order || !order.tel) return;
-    this.router.navigate(['/admin/whatsapp'], { queryParams: { tel: order.tel, name: order.fullname || '' } });
-  }
-
   getCurrentMonth(): string {
     const d = new Date();
     const month = String(d.getMonth() + 1).padStart(2, '0');

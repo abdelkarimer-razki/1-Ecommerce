@@ -26,7 +26,6 @@ import { SettingsComponent } from './settings/settings.component';
 import { CheckoutComponent } from './checkout/checkout.component';
 import { MessagesComponent } from './messages/messages.component';
 import { StatsComponent } from './stats/stats.component';
-import { WhatsappComponent } from './whatsapp/whatsapp.component';
 const customNotifierOptions: NotifierOptions = {
   position: {
 		horizontal: {
@@ -86,8 +85,7 @@ const customNotifierOptions: NotifierOptions = {
     SettingsComponent,
     CheckoutComponent,
     MessagesComponent,
-    StatsComponent,
-    WhatsappComponent
+    StatsComponent
   ],
   imports: [
     BrowserModule,
