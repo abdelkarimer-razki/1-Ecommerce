@@ -534,137 +534,147 @@ app.get('/revenu/:mois',verifyToken,async(req,res)=>{
 
 //update product
 app.post('/p12',verifyToken,async(req,res)=>{
-  const id=req.body.idproducts;
-  const name=req.body.name;
-  const prixf=req.body.prixf || 0;
-  const desc=req.body.description;
-  const cat=req.body.categorie;
-  const mange=req.body.mangable;
-  const pic=req.body.picture;
+  try {
+    const id=req.body.idproducts;
+    const name=req.body.name;
+    const prixf=req.body.prixf || 0;
+    const desc=req.body.description;
+    const cat=req.body.categorie;
+    const mange=req.body.mangable;
+    const pic=req.body.picture;
 
-  let sizes = req.body.sizes;
-  if (!sizes || !Array.isArray(sizes)) {
-    sizes = [];
-    if (req.body.taille && req.body.taille !== '0' && req.body.prix) {
-      sizes.push({ taille: req.body.taille, prix: req.body.prix });
+    let sizes = req.body.sizes;
+    if (!sizes || !Array.isArray(sizes)) {
+      sizes = [];
+      if (req.body.taille && req.body.taille !== '0' && req.body.prix) {
+        sizes.push({ taille: req.body.taille, prix: req.body.prix });
+      }
+      if (req.body.taille2 && req.body.taille2 !== '0' && req.body.prix2) {
+        sizes.push({ taille: req.body.taille2, prix: req.body.prix2 });
+      }
+      if (req.body.taille3 && req.body.taille3 !== '0' && req.body.prix3) {
+        sizes.push({ taille: req.body.taille3, prix: req.body.prix3 });
+      }
     }
-    if (req.body.taille2 && req.body.taille2 !== '0' && req.body.prix2) {
-      sizes.push({ taille: req.body.taille2, prix: req.body.prix2 });
+
+    if (cat && cat.trim() !== '') {
+      const cleanCat = cat.trim().toUpperCase();
+      const catEn = await translateText(cleanCat, 'en');
+      const catAr = await translateText(cleanCat, 'ar');
+      await p1.query("INSERT INTO categories (name, name_en, name_ar) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING", [cleanCat, catEn, catAr]);
     }
-    if (req.body.taille3 && req.body.taille3 !== '0' && req.body.prix3) {
-      sizes.push({ taille: req.body.taille3, prix: req.body.prix3 });
+
+    let name_en = req.body.name_en;
+    let name_ar = req.body.name_ar;
+    let desc_en = req.body.description_en;
+    let desc_ar = req.body.description_ar;
+
+    if (!name_en || name_en.trim() === '') {
+      name_en = await translateText(name, 'en');
     }
-  }
-
-  if (cat && cat.trim() !== '') {
-    const cleanCat = cat.trim().toUpperCase();
-    const catEn = await translateText(cleanCat, 'en');
-    const catAr = await translateText(cleanCat, 'ar');
-    await p1.query("INSERT INTO categories (name, name_en, name_ar) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING", [cleanCat, catEn, catAr]);
-  }
-
-  let name_en = req.body.name_en;
-  let name_ar = req.body.name_ar;
-  let desc_en = req.body.description_en;
-  let desc_ar = req.body.description_ar;
-
-  if (!name_en || name_en.trim() === '') {
-    name_en = await translateText(name, 'en');
-  }
-  if (!name_ar || name_ar.trim() === '') {
-    name_ar = await translateText(name, 'ar');
-  }
-  if (desc && (!desc_en || desc_en.trim() === '')) {
-    desc_en = await translateText(desc, 'en');
-  }
-  if (desc && (!desc_ar || desc_ar.trim() === '')) {
-    desc_ar = await translateText(desc, 'ar');
-  }
-
-  const onssa=req.body.onssa || false;
-  const onssa_number=req.body.onssa_number || '';
-
-  const query = await p1.query(
-    "UPDATE products SET name=$1,description=$2,categorie=$3,mangable=$4,prixf=$5,picture=$7,name_en=$8,name_ar=$9,description_en=$10,description_ar=$11,onssa=$12,onssa_number=$13 WHERE idproducts=$6",
-    [name,desc,cat,mange,prixf,id,pic,name_en,name_ar,desc_en,desc_ar,onssa,onssa_number]
-  );
-
-  await p1.query("DELETE FROM product_sizes WHERE idproducts = $1", [id]);
-  for (const s of sizes) {
-    if (s.taille && s.taille !== '0' && s.prix) {
-      await p1.query("INSERT INTO product_sizes (idproducts, taille, prix) VALUES ($1, $2, $3)", [id, s.taille, s.prix]);
+    if (!name_ar || name_ar.trim() === '') {
+      name_ar = await translateText(name, 'ar');
     }
-  }
+    if (desc && (!desc_en || desc_en.trim() === '')) {
+      desc_en = await translateText(desc, 'en');
+    }
+    if (desc && (!desc_ar || desc_ar.trim() === '')) {
+      desc_ar = await translateText(desc, 'ar');
+    }
 
-  res.json(query.rows);
+    const onssa=req.body.onssa || false;
+    const onssa_number=req.body.onssa_number || '';
+
+    const query = await p1.query(
+      "UPDATE products SET name=$1,description=$2,categorie=$3,mangable=$4,prixf=$5,picture=$7,name_en=$8,name_ar=$9,description_en=$10,description_ar=$11,onssa=$12,onssa_number=$13 WHERE idproducts=$6",
+      [name,desc,cat,mange,prixf,id,pic,name_en,name_ar,desc_en,desc_ar,onssa,onssa_number]
+    );
+
+    await p1.query("DELETE FROM product_sizes WHERE idproducts = $1", [id]);
+    for (const s of sizes) {
+      if (s.taille && s.taille !== '0' && s.prix) {
+        await p1.query("INSERT INTO product_sizes (idproducts, taille, prix) VALUES ($1, $2, $3)", [id, s.taille, s.prix]);
+      }
+    }
+
+    res.json(query.rows);
+  } catch (err) {
+    console.error("Error updating product:", err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 })
 
 //add product
 app.post('/addpro',verifyToken,async(req,res)=>
 {
-  const name=req.body.name;
-  const prixf=req.body.prixf || 0;
-  const desc=req.body.description;
-  const pic = req.body.picture;
-  const cat=req.body.categorie;
-  const mange=req.body.mangable;
-  
-  let sizes = req.body.sizes;
-  if (!sizes || !Array.isArray(sizes)) {
-    sizes = [];
-    if (req.body.taille && req.body.taille !== '0' && req.body.prix) {
-      sizes.push({ taille: req.body.taille, prix: req.body.prix });
+  try {
+    const name=req.body.name;
+    const prixf=req.body.prixf || 0;
+    const desc=req.body.description;
+    const pic = req.body.picture;
+    const cat=req.body.categorie;
+    const mange=req.body.mangable;
+    
+    let sizes = req.body.sizes;
+    if (!sizes || !Array.isArray(sizes)) {
+      sizes = [];
+      if (req.body.taille && req.body.taille !== '0' && req.body.prix) {
+        sizes.push({ taille: req.body.taille, prix: req.body.prix });
+      }
+      if (req.body.taille2 && req.body.taille2 !== '0' && req.body.prix2) {
+        sizes.push({ taille: req.body.taille2, prix: req.body.prix2 });
+      }
+      if (req.body.taille3 && req.body.taille3 !== '0' && req.body.prix3) {
+        sizes.push({ taille: req.body.taille3, prix: req.body.prix3 });
+      }
     }
-    if (req.body.taille2 && req.body.taille2 !== '0' && req.body.prix2) {
-      sizes.push({ taille: req.body.taille2, prix: req.body.prix2 });
+
+    if (cat && cat.trim() !== '') {
+      const cleanCat = cat.trim().toUpperCase();
+      const catEn = await translateText(cleanCat, 'en');
+      const catAr = await translateText(cleanCat, 'ar');
+      await p1.query("INSERT INTO categories (name, name_en, name_ar) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING", [cleanCat, catEn, catAr]);
     }
-    if (req.body.taille3 && req.body.taille3 !== '0' && req.body.prix3) {
-      sizes.push({ taille: req.body.taille3, prix: req.body.prix3 });
+
+    let name_en = req.body.name_en;
+    let name_ar = req.body.name_ar;
+    let desc_en = req.body.description_en;
+    let desc_ar = req.body.description_ar;
+
+    if (!name_en || name_en.trim() === '') {
+      name_en = await translateText(name, 'en');
     }
-  }
-
-  if (cat && cat.trim() !== '') {
-    const cleanCat = cat.trim().toUpperCase();
-    const catEn = await translateText(cleanCat, 'en');
-    const catAr = await translateText(cleanCat, 'ar');
-    await p1.query("INSERT INTO categories (name, name_en, name_ar) VALUES ($1, $2, $3) ON CONFLICT DO NOTHING", [cleanCat, catEn, catAr]);
-  }
-
-  let name_en = req.body.name_en;
-  let name_ar = req.body.name_ar;
-  let desc_en = req.body.description_en;
-  let desc_ar = req.body.description_ar;
-
-  if (!name_en || name_en.trim() === '') {
-    name_en = await translateText(name, 'en');
-  }
-  if (!name_ar || name_ar.trim() === '') {
-    name_ar = await translateText(name, 'ar');
-  }
-  if (desc && (!desc_en || desc_en.trim() === '')) {
-    desc_en = await translateText(desc, 'en');
-  }
-  if (desc && (!desc_ar || desc_ar.trim() === '')) {
-    desc_ar = await translateText(desc, 'ar');
-  }
-
-  const onssa=req.body.onssa || false;
-  const onssa_number=req.body.onssa_number || '';
-
-  const query = await p1.query(
-    "INSERT INTO products (name,picture,description,categorie,mangable,prixf,name_en,name_ar,description_en,description_ar,onssa,onssa_number) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING idproducts",
-    [name,pic,desc,cat,mange,prixf,name_en,name_ar,desc_en,desc_ar,onssa,onssa_number]
-  );
-  
-  const idproducts = query.rows[0].idproducts;
-
-  for (const s of sizes) {
-    if (s.taille && s.taille !== '0' && s.prix) {
-      await p1.query("INSERT INTO product_sizes (idproducts, taille, prix) VALUES ($1, $2, $3)", [idproducts, s.taille, s.prix]);
+    if (!name_ar || name_ar.trim() === '') {
+      name_ar = await translateText(name, 'ar');
     }
-  }
+    if (desc && (!desc_en || desc_en.trim() === '')) {
+      desc_en = await translateText(desc, 'en');
+    }
+    if (desc && (!desc_ar || desc_ar.trim() === '')) {
+      desc_ar = await translateText(desc, 'ar');
+    }
 
-  res.json(query.rows);
+    const onssa=req.body.onssa || false;
+    const onssa_number=req.body.onssa_number || '';
+
+    const query = await p1.query(
+      "INSERT INTO products (name,picture,description,categorie,mangable,prixf,name_en,name_ar,description_en,description_ar,onssa,onssa_number) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING idproducts",
+      [name,pic,desc,cat,mange,prixf,name_en,name_ar,desc_en,desc_ar,onssa,onssa_number]
+    );
+    
+    const idproducts = query.rows[0].idproducts;
+
+    for (const s of sizes) {
+      if (s.taille && s.taille !== '0' && s.prix) {
+        await p1.query("INSERT INTO product_sizes (idproducts, taille, prix) VALUES ($1, $2, $3)", [idproducts, s.taille, s.prix]);
+      }
+    }
+
+    res.json(query.rows);
+  } catch (err) {
+    console.error("Error adding product:", err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 })
 
 // ============================================================
@@ -851,9 +861,10 @@ app.post('/checkout',async(req,res)=>{
       const parts = fullname ? fullname.trim().split(' ') : ['Client', 'Anonyme'];
       const fname = parts[0] || 'Client';
       const lname = parts.slice(1).join(' ') || 'Anonyme';
+      const userEmail = (email && email.trim()) ? email.trim() : ('guest_' + (tel ? tel.trim() : Date.now()) + '@local.shop');
       const insertUser = await p1.query(
         "INSERT INTO public.users (fname, lname, adress, tel, email, password) VALUES ($1, $2, $3, $4, $5, 'guest_pwd') RETURNING iduser",
-        [fname, lname, adress||'', tel||'0000000000', (email && email.trim()) ? email.trim() : null]
+        [fname, lname, adress||'', tel||'0000000000', userEmail]
       );
       userId = insertUser.rows[0].iduser;
     }
@@ -904,9 +915,10 @@ app.post('/addManualCommand',verifyToken,async(req,res)=>{
       const parts = fullname ? fullname.trim().split(' ') : ['Client', 'Anonyme'];
       const fname = parts[0] || 'Client';
       const lname = parts.slice(1).join(' ') || 'Anonyme';
+      const userEmail = (email && email.trim()) ? email.trim() : ('guest_' + (tel ? tel.trim() : Date.now()) + '@local.shop');
       const insertUser = await p1.query(
         "INSERT INTO public.users (fname, lname, adress, tel, email, password) VALUES ($1, $2, $3, $4, $5, 'manual_guest_pwd') RETURNING iduser",
-        [fname, lname, adress||'', tel||'0000000000', (email && email.trim()) ? email.trim() : null]
+        [fname, lname, adress||'', tel||'0000000000', userEmail]
       );
       userId = insertUser.rows[0].iduser;
     }
