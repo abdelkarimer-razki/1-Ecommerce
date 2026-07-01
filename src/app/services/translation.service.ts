@@ -457,6 +457,7 @@ export class TranslationService {
     'LOGO_COOPERATIVE': { FR: 'Logo de la Coopérative', EN: 'Cooperative Logo', AR: 'شعار التعاونية' },
     
     // Stock & Batches management
+    'STOCK': { FR: 'Stock', EN: 'Stock', AR: 'المخزون' },
     'STOCK_BATCHES': { FR: 'Gestion des Stocks & Lots', EN: 'Stock & Batches Management', AR: 'إدارة المخزون والدفعات' },
     'GESTION_STOCK_COUTS': { FR: 'Gestion du Stock & Coûts', EN: 'Stock & Cost Management', AR: 'إدارة المخزون والتكاليف' },
     'STATUT_STOCK': { FR: 'Statut du Stock', EN: 'Stock Status', AR: 'حالة المخزون' },
