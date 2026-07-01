@@ -454,7 +454,32 @@ export class TranslationService {
     'INFOS_GENERALES_COOP': { FR: 'Informations Générales', EN: 'General Information', AR: 'معلومات عامة' },
     'NOM_COOPERATIVE': { FR: 'Nom de la Coopérative', EN: 'Cooperative Name', AR: 'اسم التعاونية' },
     'REMPLACER_LOGO': { FR: 'Remplacer le Logo', EN: 'Replace Logo', AR: 'استبدال الشعار' },
-    'LOGO_COOPERATIVE': { FR: 'Logo de la Coopérative', EN: 'Cooperative Logo', AR: 'شعار التعاونية' }
+    'LOGO_COOPERATIVE': { FR: 'Logo de la Coopérative', EN: 'Cooperative Logo', AR: 'شعار التعاونية' },
+    
+    // Stock & Batches management
+    'STOCK_BATCHES': { FR: 'Gestion des Stocks & Lots', EN: 'Stock & Batches Management', AR: 'إدارة المخزون والدفعات' },
+    'GESTION_STOCK_COUTS': { FR: 'Gestion du Stock & Coûts', EN: 'Stock & Cost Management', AR: 'إدارة المخزون والتكاليف' },
+    'STATUT_STOCK': { FR: 'Statut du Stock', EN: 'Stock Status', AR: 'حالة المخزون' },
+    'RUPTURE_DE_STOCK': { FR: 'En rupture', EN: 'Out of stock', AR: 'نفذ من المخزون' },
+    'STOCK_FAIBLE': { FR: 'Stock faible (<=10)', EN: 'Low stock (<=10)', AR: 'مخزون منخفض (<=10)' },
+    'EN_STOCK': { FR: 'En stock (>10)', EN: 'In stock (>10)', AR: 'متوفر في المخزون (>10)' },
+    'STOCK_CROISSANT': { FR: 'Stock croissant', EN: 'Stock: Low to High', AR: 'المخزون: من الأقل للأعلى' },
+    'STOCK_DECROISSANT': { FR: 'Stock décroissant', EN: 'Stock: High to Low', AR: 'المخزون: من الأعلى للأقل' },
+    'STOCK_TOTAL': { FR: 'Stock Global', EN: 'Total Stock', AR: 'إجمالي المخزون' },
+    'GERER_LOTS': { FR: 'Gérer les lots', EN: 'Manage batches', AR: 'إدارة الدفعات' },
+    'MASQUER': { FR: 'Masquer', EN: 'Hide', AR: 'إخفاء' },
+    'PRIX_VENTE': { FR: 'Prix de vente', EN: 'Selling Price', AR: 'سعر البيع' },
+    'COUT_ACHAT_MOYEN': { FR: 'Coût Moyen', EN: 'Average Cost', AR: 'متوسط التكلفة' },
+    'AJOUTER_LOT': { FR: 'Ajouter Lot', EN: 'Add Batch', AR: 'إضافة دفعة' },
+    'NOUVEAU_LOT_STOCK': { FR: 'Nouvel Approvisionnement (Stock)', EN: 'New Stock Batch', AR: 'دفعة مخزون جديدة' },
+    'PRODUIT_VARIATION': { FR: 'Produit & Variation', EN: 'Product & Variation', AR: 'المنتج والحجم' },
+    'QUANTITE_AJOUTEE': { FR: 'Quantité Ajoutée', EN: 'Quantity Added', AR: 'الكمية المضافة' },
+    'COUT_ACHAT_UNITAIRE': { FR: "Coût d'Achat Unitaire (DH)", EN: 'Unit Purchase Cost (DH)', AR: 'تكلفة الشراء للوحدة (درهم)' },
+    'VEUILLEZ_AJOUTER_DES_VARIATIONS': { FR: 'Veuillez ajouter des produits et des variations de taille pour gérer le stock.', EN: 'Please add products and size variations to manage stock.', AR: 'يرجى إضافة منتجات وأحجام لإدارة المخزون.' },
+    'CONFIRM_DELETE_BATCH': { FR: 'Êtes-vous sûr de vouloir supprimer ce lot de stock ?', EN: 'Are you sure you want to delete this stock batch?', AR: 'هل أنت متأكد من حذف دفعة المخزون هذه؟' },
+    'LOT_STOCK_AJOUTE': { FR: 'Lot de stock ajouté avec succès', EN: 'Stock batch added successfully', AR: 'تم إضافة دفعة المخزون بنجاح' },
+    'LOT_STOCK_SUPPRIME': { FR: 'Lot de stock supprimé avec succès', EN: 'Stock batch deleted successfully', AR: 'تم حذف دفعة المخزون بنجاح' },
+    'UNITES': { FR: 'unités', EN: 'units', AR: 'وحدات' }
   };
 
 
