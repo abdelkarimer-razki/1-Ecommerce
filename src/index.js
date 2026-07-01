@@ -2022,6 +2022,7 @@ app.get('/api/stock/batches', verifyToken, async (req, res) => {
     const query = await p1.query(`
       SELECT 
         p.idproducts, p.name as product_name, p.picture as product_picture,
+        p.categorie, p.name_en, p.name_ar,
         ps.idsize, ps.taille, ps.prix,
         COALESCE(SUM(sb.remaining_qty), 0)::integer as total_stock,
         COALESCE(
@@ -2039,7 +2040,7 @@ app.get('/api/stock/batches', verifyToken, async (req, res) => {
       FROM product_sizes ps
       JOIN products p ON ps.idproducts = p.idproducts
       LEFT JOIN stock_batches sb ON ps.idsize = sb.idsize
-      GROUP BY p.idproducts, p.name, p.picture, ps.idsize, ps.taille, ps.prix
+      GROUP BY p.idproducts, p.name, p.picture, p.categorie, p.name_en, p.name_ar, ps.idsize, ps.taille, ps.prix
       ORDER BY p.name ASC, ps.prix ASC
     `);
     res.json(query.rows);
