@@ -13,19 +13,24 @@
 
   <!-- TABS -->
   <div class="tabs" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
-    <button class="tab-btn" [class.active]="isEffectuer" (click)="changeTab(true)" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+    <button class="tab-btn" [class.active]="activeTab === 'pending'" (click)="changeTab('pending')" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
       <span class="material-symbols-outlined">pending_actions</span>
       {{trans.t('EN_ATTENTE')}}
       <span class="tab-badge" *ngIf="pendingOrders.length > 0">{{pendingOrders.length}}</span>
     </button>
-    <button class="tab-btn" [class.active]="!isEffectuer" (click)="changeTab(false)" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+    <button class="tab-btn" [class.active]="activeTab === 'completed'" (click)="changeTab('completed')" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
       <span class="material-symbols-outlined">check_circle</span>
       {{trans.t('EFFECTUEE')}}
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'unpaid'" (click)="changeTab('unpaid')" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+      <span class="material-symbols-outlined">payments</span>
+      {{trans.t('IMPAYES') || 'Clients avec Impayés'}}
+      <span class="tab-badge" *ngIf="unpaidCount > 0" style="background-color: #dc2626;">{{unpaidCount}}</span>
     </button>
   </div>
 
   <!-- MONTH NAVIGATOR (for Effectuées tab) -->
-  <div class="month-nav-row" *ngIf="!isEffectuer" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+  <div class="month-nav-row" *ngIf="activeTab === 'completed'" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
     <div class="month-nav" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
       <button class="arrow-btn" (click)="prevMonth()" [title]="trans.t('MOIS_PRECEDENT')">
         <span class="material-symbols-outlined">chevron_left</span>
@@ -43,7 +48,7 @@
   </div>
 
   <!-- PENDING ORDERS TABLE -->
-  <div *ngIf="isEffectuer">
+  <div *ngIf="activeTab === 'pending'">
     <!-- Skeleton table loader -->
     <div class="orders-table-wrap" *ngIf="loading">
       <table class="orders-table" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
@@ -129,7 +134,12 @@
               </span>
             </td>
             <td>
-              <span class="status-badge pending">{{trans.t('EN_ATTENTE')}}</span>
+              <div style="display: flex; flex-direction: column; gap: 4px; align-items: flex-start;">
+                <span class="status-badge pending">{{trans.t('EN_ATTENTE')}}</span>
+                <span class="status-badge" [ngClass]="order.paid ? 'done' : 'unpaid'" style="font-size: 0.7rem; padding: 2px 6px; border-radius: 4px;">
+                  {{order.paid ? (trans.t('PAYE') || 'Payé') : (trans.t('NON_PAYE') || 'Non Payé')}}
+                </span>
+              </div>
             </td>
             <td class="action-btns" style="justify-content: flex-end;">
               <span class="material-symbols-outlined action-dots" (click)="toggleDropdown($event, order, true)" style="margin-right: 12px;">more_vert</span>
@@ -141,7 +151,7 @@
   </div>
 
   <!-- COMPLETED ORDERS TABLE -->
-  <div *ngIf="!isEffectuer">
+  <div *ngIf="activeTab === 'completed'">
     <!-- Skeleton table loader -->
     <div class="orders-table-wrap" *ngIf="loading">
       <table class="orders-table" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
@@ -227,11 +237,76 @@
               </span>
             </td>
             <td>
-              <span class="status-badge done">{{trans.t('EFFECTUEE')}}</span>
+              <div style="display: flex; flex-direction: column; gap: 4px; align-items: flex-start;">
+                <span class="status-badge done">{{trans.t('EFFECTUEE')}}</span>
+                <span class="status-badge" [ngClass]="order.paid ? 'done' : 'unpaid'" style="font-size: 0.7rem; padding: 2px 6px; border-radius: 4px;">
+                  {{order.paid ? (trans.t('PAYE') || 'Payé') : (trans.t('NON_PAYE') || 'Non Payé')}}
+                </span>
+              </div>
             </td>
             <td class="action-btns" style="justify-content: flex-end;">
               <span class="material-symbols-outlined action-dots" (click)="toggleDropdown($event, order, false)" style="margin-right: 12px;">more_vert</span>
             </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- UNPAID CLIENT MONITORING -->
+  <div *ngIf="activeTab === 'unpaid'">
+    <div class="orders-table-wrap" *ngIf="loadingUnpaid">
+      <!-- Loader skeleton -->
+      <table class="orders-table">
+        <thead>
+          <tr>
+            <th>{{trans.t('CLIENT')}}</th>
+            <th>{{trans.t('TELEPHONE')}}</th>
+            <th style="text-align: center;">{{trans.t('COMMANDES_IMPAYEES') || 'Commandes Impayées'}}</th>
+            <th>{{trans.t('MONTANT_TOTAL') || 'Montant Total'}}</th>
+            <th>{{trans.t('ADRESSE')}}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let dummy of [1, 2, 3]">
+            <td><div class="skeleton-item" style="height: 1.2rem; width: 120px;"></div></td>
+            <td><div class="skeleton-item" style="height: 1.2rem; width: 90px;"></div></td>
+            <td><div class="skeleton-item" style="height: 1.2rem; width: 50px;"></div></td>
+            <td><div class="skeleton-item" style="height: 1.2rem; width: 80px;"></div></td>
+            <td><div class="skeleton-item" style="height: 1.2rem; width: 150px;"></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="empty-state" *ngIf="!loadingUnpaid && unpaidBuyers.length === 0">
+      <span class="material-symbols-outlined">payments</span>
+      <p>{{trans.t('AUCUN_IMPAYE') || 'Félicitations, aucun client n\'a de commandes impayées !'}}</p>
+    </div>
+
+    <div class="orders-table-wrap" *ngIf="!loadingUnpaid && unpaidBuyers.length > 0">
+      <table class="orders-table" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+        <thead>
+          <tr [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+            <th>{{trans.t('CLIENT')}}</th>
+            <th>{{trans.t('TELEPHONE')}}</th>
+            <th style="text-align: center;">{{trans.t('COMMANDES_IMPAYEES') || 'Commandes Impayées'}}</th>
+            <th>{{trans.t('MONTANT_TOTAL') || 'Total des Dettes'}}</th>
+            <th>{{trans.t('ADRESSE')}}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let buyer of unpaidBuyers">
+            <td class="order-client" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+              <div class="client-name">{{buyer.fullname}}</div>
+              <div class="client-addr" *ngIf="buyer.email" style="font-size: 0.8rem; color: #6b7280;">{{buyer.email}}</div>
+            </td>
+            <td>{{buyer.tel}}</td>
+            <td style="text-align: center;">
+              <span class="tab-badge" style="background-color: #dc2626; color: white; float: none; display: inline-block;">{{buyer.unpaid_orders_count}}</span>
+            </td>
+            <td style="color: #dc2626; font-weight: 700;">{{buyer.total_unpaid_amount | number:'1.0-0'}} DH</td>
+            <td>{{buyer.adress || '—'}}</td>
           </tr>
         </tbody>
       </table>
@@ -256,6 +331,8 @@
         </span>
         <span class="status-badge done" *ngIf="selectedOrder?.etat">{{trans.t('EFFECTUEE')}}</span>
         <span class="status-badge pending" *ngIf="!selectedOrder?.etat">{{trans.t('EN_ATTENTE')}}</span>
+        <span class="status-badge done" *ngIf="selectedOrder?.paid">{{trans.t('PAYE') || 'Payé'}}</span>
+        <span class="status-badge unpaid" *ngIf="!selectedOrder?.paid">{{trans.t('NON_PAYE') || 'Non Payé'}}</span>
       </div>
     </div>
     <button class="modal-close-btn" (click)="closeDetail()">
@@ -321,6 +398,10 @@
 
   <div class="modal-footer" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
     <button class="btn-cancel" (click)="closeDetail()">{{trans.t('FERMER')}}</button>
+    <button class="btn-save" (click)="togglePaid(selectedOrder); closeDetail()" style="background-color: #3b82f6; border-color: #3b82f6; color: white;">
+      <span class="material-symbols-outlined">payments</span>
+      {{selectedOrder?.paid ? (trans.t('MARQUER_NON_PAYE') || 'Marquer non payé') : (trans.t('MARQUER_PAYE') || 'Marquer payé')}}
+    </button>
     <button class="btn-effectue" *ngIf="!selectedOrder?.etat" (click)="toggleEffectue(selectedOrder); closeDetail()">
       <span class="material-symbols-outlined">check_circle</span>
       {{trans.t('MARQUER_EFFECTUEE')}}
@@ -378,13 +459,31 @@
       <span class="material-symbols-outlined">person</span> {{trans.t('INFORMATIONS_CLIENT')}}
     </div>
     <div class="modal-form-grid">
-      <div class="input-group" style="grid-column: 1 / -1;">
+      <div class="input-group" style="grid-column: 1 / -1; position: relative;">
         <label>{{trans.t('NOM_COMPLET_REQUIS')}}</label>
-        <input class="text" type="text" [(ngModel)]="manualCustomer.fullname" placeholder="Ex: Karim Bensouda">
+        <input class="text" type="text" [(ngModel)]="manualCustomer.fullname" (input)="filterBuyers('name')" (focus)="filterBuyers('name')" (blur)="hideSuggestionsLater('name')" placeholder="Ex: Karim Bensouda" autocomplete="off">
+        <ul class="suggestions-dropdown" *ngIf="showNameSuggestions">
+          <li *ngFor="let buyer of filteredBuyersByName" (mousedown)="selectBuyer(buyer)">
+            <span class="suggestion-name">{{buyer.fullname}}</span>
+            <span class="suggestion-meta">
+              <span>{{buyer.tel}}</span>
+              <span *ngIf="buyer.adress">— {{buyer.adress}}</span>
+            </span>
+          </li>
+        </ul>
       </div>
-      <div class="input-group">
+      <div class="input-group" style="position: relative;">
         <label>{{trans.t('TELEPHONE_REQUIS')}}</label>
-        <input class="text" type="tel" [(ngModel)]="manualCustomer.tel" placeholder="Ex: 0612345678">
+        <input class="text" type="tel" [(ngModel)]="manualCustomer.tel" (input)="filterBuyers('tel')" (focus)="filterBuyers('tel')" (blur)="hideSuggestionsLater('tel')" placeholder="Ex: 0612345678" autocomplete="off">
+        <ul class="suggestions-dropdown" *ngIf="showTelSuggestions">
+          <li *ngFor="let buyer of filteredBuyersByTel" (mousedown)="selectBuyer(buyer)">
+            <span class="suggestion-name">{{buyer.fullname}}</span>
+            <span class="suggestion-meta">
+              <span>{{buyer.tel}}</span>
+              <span *ngIf="buyer.adress">— {{buyer.adress}}</span>
+            </span>
+          </li>
+        </ul>
       </div>
       <div class="input-group">
         <label>{{trans.t('EMAIL_FACULTATIF')}}</label>
@@ -394,11 +493,18 @@
         <label>{{trans.t('ADRESSE_FACULTATIF')}}</label>
         <input class="text" type="text" [(ngModel)]="manualCustomer.adress" placeholder="Ex: Riad El Mansour, Meknès">
       </div>
-      <div class="input-group" style="grid-column: 1 / -1;">
+      <div class="input-group">
         <label>{{trans.t('STATUT_INITIAL')}}</label>
         <select class="optionP" [(ngModel)]="manualCustomer.etat">
           <option [ngValue]="false">{{trans.t('EN_ATTENTE')}}</option>
           <option [ngValue]="true">{{trans.t('LIVREE_EFFECTUEE')}}</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>{{trans.t('STATUT_PAIEMENT') || 'Paiement'}}</label>
+        <select class="optionP" [(ngModel)]="manualCustomer.paid">
+          <option [ngValue]="true">{{trans.t('PAYE') || 'Payé'}}</option>
+          <option [ngValue]="false">{{trans.t('NON_PAYE') || 'Non Payé'}}</option>
         </select>
       </div>
     </div>
@@ -446,9 +552,12 @@
             <div class="di-name">{{trans.t(it.name)}}</div>
             <div class="di-taille" *ngIf="it.taille">{{trans.t(it.taille)}}</div>
           </div>
-          <div class="detail-item-right" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+          <div class="detail-item-right" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'" style="display: flex; align-items: center; gap: 12px;">
             <span class="di-qte">×{{it.qte}}</span>
-            <span class="di-prix">{{(it.prix * it.qte) | number:'1.0-0'}} DH</span>
+            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 2px;">
+              <input class="text" type="number" [(ngModel)]="it.prix" (ngModelChange)="validatePrice(it)" [min]="it.buying_cost" style="width: 75px; height: 28px; padding: 0 4px; text-align: center; font-size: 0.85rem;" placeholder="Prix">
+              <span style="font-size: 0.65rem; color: var(--color-text-muted);">Min: {{it.buying_cost}} DH</span>
+            </div>
             <button class="remove-item-btn" (click)="removeManualItem(i)">
               <span class="material-symbols-outlined">close</span>
             </button>
@@ -480,10 +589,18 @@
   <ul *ngIf="isPendingDropdown">
     <li (click)="openDetail(activeDropdownOrder); showDropdown = false;"><span class="material-symbols-outlined">visibility</span> {{trans.t('DETAILS')}}</li>
     <li (click)="toggleEffectue(activeDropdownOrder); showDropdown = false;"><span class="material-symbols-outlined">check_circle</span> {{trans.t('EFFECTUEE')}}</li>
+    <li (click)="togglePaid(activeDropdownOrder); showDropdown = false;">
+      <span class="material-symbols-outlined">payments</span> 
+      {{activeDropdownOrder.paid ? (trans.t('MARQUER_NON_PAYE') || 'Marquer non payé') : (trans.t('MARQUER_PAYE') || 'Marquer payé')}}
+    </li>
     <li (click)="openDeleteConfirm(activeDropdownOrder); showDropdown = false;"><span class="material-symbols-outlined">delete</span> {{trans.t('SUPPRIMER')}}</li>
   </ul>
   <ul *ngIf="!isPendingDropdown">
     <li (click)="openDetail(activeDropdownOrder); showDropdown = false;"><span class="material-symbols-outlined">visibility</span> {{trans.t('DETAILS')}}</li>
     <li (click)="toggleEffectue(activeDropdownOrder); showDropdown = false;"><span class="material-symbols-outlined">undo</span> {{trans.t('EN_ATTENTE')}}</li>
+    <li (click)="togglePaid(activeDropdownOrder); showDropdown = false;">
+      <span class="material-symbols-outlined">payments</span> 
+      {{activeDropdownOrder.paid ? (trans.t('MARQUER_NON_PAYE') || 'Marquer non payé') : (trans.t('MARQUER_PAYE') || 'Marquer payé')}}
+    </li>
   </ul>
 </div>

@@ -318,7 +318,7 @@ export class ProductsComponent implements OnInit {
     if (!active.sizes) {
       active.sizes = [];
     }
-    active.sizes.push({ taille: '', prix: 0 });
+    active.sizes.push({ taille: '', prix: 0, stock: 0, buying_cost: 0 });
   }
 
   removeSizeVariation(index: number) {

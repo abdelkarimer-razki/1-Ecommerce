@@ -353,6 +353,12 @@
   border: 1px solid rgba(63, 98, 18, 0.15);
 }
 
+.status-badge.unpaid {
+  background: rgba(220, 38, 38, 0.1);
+  color: #dc2626;
+  border: 1px solid rgba(220, 38, 38, 0.15);
+}
+
 /* Action buttons */
 .action-btns {
   display: flex;

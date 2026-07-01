@@ -112,6 +112,22 @@ export class DashboardService {
     return this.http.post(this.url1 + "addManualCommand", command);
   }
 
+  getPreviousBuyers(): Observable<any[]> {
+    return this.http.get<any[]>(this.url1 + "previous-buyers");
+  }
+
+  payOrder(id: any): Observable<any> {
+    return this.http.put(this.url1 + "api/order-group/pay/" + id, {});
+  }
+
+  unpayOrder(id: any): Observable<any> {
+    return this.http.put(this.url1 + "api/order-group/unpay/" + id, {});
+  }
+
+  getUnpaidBuyers(): Observable<any[]> {
+    return this.http.get<any[]>(this.url1 + "api/unpaid-buyers");
+  }
+
   // Legacy cart methods (used by apropos/cart page)
   allcart(id:any, cart:any){
     return this.http.get(this.url1+"allcart/"+id+"&"+cart);
@@ -144,5 +160,17 @@ export class DashboardService {
 
   getProductDetailStats(id: number): Observable<any> {
     return this.http.get<any>(`${this.url1}api/products/${id}/stats`);
+  }
+
+  getStockBatches(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.url1}api/stock/batches`);
+  }
+
+  addStockBatch(batch: { idsize: number, quantity: number, unit_cost: number }): Observable<any> {
+    return this.http.post<any>(`${this.url1}api/stock/batches`, batch);
+  }
+
+  deleteStockBatch(idbatch: number): Observable<any> {
+    return this.http.delete<any>(`${this.url1}api/stock/batches/${idbatch}`);
   }
 }

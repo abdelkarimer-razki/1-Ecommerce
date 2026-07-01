@@ -26,6 +26,7 @@ import { SettingsComponent } from './settings/settings.component';
 import { CheckoutComponent } from './checkout/checkout.component';
 import { MessagesComponent } from './messages/messages.component';
 import { StatsComponent } from './stats/stats.component';
+import { StockComponent } from './stock/stock.component';
 const customNotifierOptions: NotifierOptions = {
   position: {
 		horizontal: {
@@ -85,7 +86,8 @@ const customNotifierOptions: NotifierOptions = {
     SettingsComponent,
     CheckoutComponent,
     MessagesComponent,
-    StatsComponent
+    StatsComponent,
+    StockComponent
   ],
   imports: [
     BrowserModule,

@@ -3,6 +3,8 @@ export interface ProductSize {
   idproducts?: number;
   taille: string;
   prix: number;
+  stock?: number;
+  buying_cost?: number;
 }
 
 export interface products{

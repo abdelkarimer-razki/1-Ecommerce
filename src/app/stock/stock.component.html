@@ -1,0 +1,251 @@
+<div class="admin-stock-container" [style.direction]="trans.isRtl() ? 'rtl' : 'ltr'">
+  <!-- PAGE HEADER -->
+  <div style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+    <h1 class="title" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+      <span class="material-symbols-outlined">warehouse</span>
+      {{trans.t('GESTION_STOCK_COUTS') || 'Gestion du Stock & Coûts'}}
+    </h1>
+  </div>
+
+  <!-- Filter & Search Panel -->
+  <div *ngIf="!loading && productsList.length > 0" class="filter-panel">
+    <div class="filter-row-top" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+      <div class="search-input-wrapper">
+        <span class="material-symbols-outlined search-icon" [style.margin-right]="trans.isRtl() ? '0' : '10px'" [style.margin-left]="trans.isRtl() ? '10px' : '0'">search</span>
+        <input 
+          type="text" 
+          [(ngModel)]="searchText" 
+          (ngModelChange)="onSearchChange()" 
+          [placeholder]="trans.t('RECHERCHER_PLACEHOLDER') || 'Rechercher un produit, taille ou catégorie...'"
+        >
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-wrapper" *ngIf="loading" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 300px; gap: 16px;">
+    <div class="spinner" style="border: 4px solid var(--border-color); border-top-color: var(--color-primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 0.8s linear infinite;"></div>
+    <span style="color: var(--color-text-muted); font-weight: 500;">{{trans.t('CHARGEMENT_EN_COURS') || 'Chargement...'}}</span>
+  </div>
+
+  <!-- Stock Tables -->
+  <div *ngIf="!loading && productsList.length > 0" class="table">
+    <div style="overflow-x: auto;">
+      <table>
+        <thead>
+          <tr [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+            <th style="width: 80px;">{{trans.t('APERCEVOIR') || 'Aperçu'}}</th>
+            <th>{{trans.t('PRODUIT')}}</th>
+            <th>{{trans.t('CATEGORIES') || 'Catégorie'}}</th>
+            <th>{{trans.t('VARIATIONS') || 'Variations'}}</th>
+            <th>{{trans.t('STOCK_TOTAL') || 'Stock Global'}}</th>
+            <th style="text-align: center; width: 180px;">{{trans.t('ACTIONS')}}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let product of getPaginatedProducts()">
+            <!-- Product Row -->
+            <tr class="TableElement" style="border-bottom: 1px solid var(--border-color); cursor: pointer;" (click)="toggleExpand(product.idproducts)">
+              <td style="padding: 16px;">
+                <div style="width: 44px; height: 44px; border-radius: 50%; overflow: hidden; border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; background-color: var(--color-bg-main);">
+                  <img [src]="transform(product.product_picture) || 'assets/no-img.png'" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+              </td>
+              <td style="padding: 16px; font-weight: 700; color: var(--color-text-main);">
+                {{trans.getLang() === 'AR' ? (product.name_ar || product.product_name) : (trans.getLang() === 'EN' ? (product.name_en || product.product_name) : product.product_name)}}
+              </td>
+              <td style="padding: 16px; font-weight: 600; color: var(--color-text-light);">{{product.categorie}}</td>
+              <td style="padding: 16px; font-weight: 600; color: var(--color-text-muted);">
+                {{product.sizes?.length}} {{product.sizes?.length > 1 ? 'variations' : 'variation'}}
+              </td>
+              <td style="padding: 16px;">
+                <span class="stock-badge" [ngClass]="{
+                  'out-of-stock': getProductGlobalStock(product) === 0,
+                  'low-stock': getProductGlobalStock(product) > 0 && getProductGlobalStock(product) <= 10,
+                  'in-stock': getProductGlobalStock(product) > 10
+                }">
+                  {{getProductGlobalStock(product)}} {{trans.t('UNITES') || 'unités'}}
+                </span>
+              </td>
+              <td style="padding: 16px; text-align: center;">
+                <button class="btn-cancel" style="padding: 6px 12px; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 4px; margin: 0 auto;" (click)="$event.stopPropagation(); toggleExpand(product.idproducts)">
+                  <span class="material-symbols-outlined" style="font-size: 1.15rem; transition: transform 0.2s;" [style.transform]="isExpanded(product.idproducts) ? 'rotate(180deg)' : 'none'">
+                    expand_more
+                  </span>
+                  <span>{{isExpanded(product.idproducts) ? (trans.t('MASQUER') || 'Masquer') : (trans.t('GERER_LOTS') || 'Gérer les lots')}}</span>
+                </button>
+              </td>
+            </tr>
+
+            <!-- Variations Sub-Row (Collapsible Drawer) -->
+            <tr *ngIf="isExpanded(product.idproducts)" style="background: white; border-bottom: 1px solid var(--border-color);">
+              <td colspan="6" style="padding: 0; border-bottom: 1px solid var(--border-color);">
+                <div class="batches-wrapper" style="border-left: 3px solid var(--color-primary); margin-left: 20px; padding: 20px 24px;">
+                  
+                  <!-- For each size variation of the product -->
+                  <div *ngFor="let size of product.sizes; last as isLast" style="padding-bottom: 20px; margin-bottom: 20px;" [style.border-bottom]="isLast ? 'none' : '1px dashed var(--border-color)'" [style.margin-bottom]="isLast ? '0' : '20px'" [style.padding-bottom]="isLast ? '0' : '20px'">
+                    
+                    <!-- Variation Header (Size, Price, Total Stock, Average Purchase Cost, Add Batch button) -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+                      <div style="display: flex; align-items: center; gap: 12px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+                        <span style="font-weight: 800; font-size: 1rem; color: var(--color-text-main);">
+                          {{trans.t('TAILLE') || 'Taille'}} : <span style="color: var(--color-secondary);">{{size.taille}}</span>
+                        </span>
+                        <span style="color: var(--border-color);">|</span>
+                        <span style="font-weight: 600; color: var(--color-text-muted); font-size: 0.88rem;">
+                          {{trans.t('PRIX_VENTE') || 'Prix de vente'}} : <strong>{{size.prix | number:'1.0-2'}} DH</strong>
+                        </span>
+                      </div>
+                      
+                      <div style="display: flex; align-items: center; gap: 16px;" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+                        <span class="stock-badge" [ngClass]="{
+                          'out-of-stock': size.total_stock === 0,
+                          'low-stock': size.total_stock > 0 && size.total_stock <= 5,
+                          'in-stock': size.total_stock > 5
+                        }">
+                          Stock: {{size.total_stock}} u
+                        </span>
+                        
+                        <span style="font-weight: 600; color: var(--color-text-muted); font-size: 0.88rem;">
+                          {{trans.t('COUT_ACHAT_MOYEN') || 'Coût Moyen'}} : <strong style="color: var(--color-secondary);">{{getAverageUnitCost(size.batches) | number:'1.0-2'}} DH</strong>
+                        </span>
+                        
+                        <button class="btn-add-batch" (click)="openAddBatchModal(size, product)" style="padding: 6px 12px; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 4px;">
+                          <span class="material-symbols-outlined" style="font-size: 1.1rem;">add_shopping_cart</span>
+                          <span>{{trans.t('AJOUTER_LOT') || 'Ajouter Lot'}}</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- FIFO Active Batches for this specific size variation -->
+                    <div *ngIf="size.batches && size.batches.length > 0">
+                      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-left: 12px;">
+                        <div class="batch-card" *ngFor="let batch of size.batches" [ngClass]="{depleted: batch.remaining_qty === 0}">
+                          <div style="display: flex; flex-direction: column; gap: 2px; flex: 1;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                              <span style="font-weight: 700; color: var(--color-text-main); font-size: 0.85rem;">
+                                Lot #{{batch.idbatch}}
+                              </span>
+                              <span class="batch-badge" [ngClass]="{
+                                'depleted': batch.remaining_qty === 0,
+                                'active': batch.remaining_qty > 0
+                              }">
+                                {{batch.remaining_qty === 0 ? 'Épuisé' : 'Actif'}}
+                              </span>
+                            </div>
+                            <span style="font-size: 0.72rem; color: var(--color-text-light);">
+                              Reçu le : {{batch.date_added}}
+                            </span>
+                            
+                            <div style="margin-top: 6px; display: flex; justify-content: space-between; font-size: 0.78rem; font-weight: 600;">
+                              <span>Stock: {{batch.remaining_qty}} / {{batch.quantity}} u</span>
+                              <span style="color: var(--color-primary); font-weight: 700;">{{batch.unit_cost}} DH/u</span>
+                            </div>
+                            
+                            <!-- Premium Progress Bar -->
+                            <div class="batch-progress-bar">
+                              <div class="batch-progress-bar-fill" [style.width]="(batch.remaining_qty / batch.quantity * 100) + '%'" [style.background-color]="batch.remaining_qty === 0 ? '#d6d3d1' : (batch.remaining_qty <= 3 ? 'var(--color-terracotta)' : 'var(--color-primary)')"></div>
+                            </div>
+                          </div>
+                          
+                          <div *ngIf="batch.remaining_qty === batch.quantity" style="margin-left: 12px;">
+                            <button class="btn-delete-batch" (click)="deleteBatch(batch)" title="Supprimer ce lot">
+                              <span class="material-symbols-outlined" style="font-size: 1.15rem;">delete</span>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div *ngIf="!size.batches || size.batches.length === 0" style="margin-left: 12px; font-size: 0.82rem; color: var(--color-text-light); font-style: italic;">
+                      Aucun lot actif pour cette variation.
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Pagination Controls -->
+  <div class="pagination-container" *ngIf="!loading && totalPages > 1" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+    <button class="pagination-btn" [disabled]="currentPage === 1" (click)="changePage(currentPage - 1)">
+      <span class="material-symbols-outlined" style="font-size: 1.15rem;">{{trans.isRtl() ? 'chevron_right' : 'chevron_left'}}</span>
+      <span>{{trans.t('PRECEDENT') || 'Précédent'}}</span>
+    </button>
+    <span class="pagination-info">
+      Page {{currentPage}} / {{totalPages}}
+    </span>
+    <button class="pagination-btn" [disabled]="currentPage === totalPages" (click)="changePage(currentPage + 1)">
+      <span>{{trans.t('SUIVANT') || 'Suivant'}}</span>
+      <span class="material-symbols-outlined" style="font-size: 1.15rem;">{{trans.isRtl() ? 'chevron_left' : 'chevron_right'}}</span>
+    </button>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!loading && productsList.length === 0" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 300px; border: 2px dashed var(--border-color); border-radius: var(--border-radius-lg); background: white;">
+    <span class="material-symbols-outlined" style="font-size: 3.5rem; color: var(--color-text-light); margin-bottom: 12px;">inventory_2</span>
+    <h3 style="font-weight: 700; color: var(--color-text-main);">{{trans.t('AUCUN_PRODUIT_TROUVE')}}</h3>
+    <p style="color: var(--color-text-muted); font-size: 0.9rem; margin-top: 4px;">{{trans.t('VEUILLEZ_AJOUTER_DES_VARIATIONS') || 'Veuillez ajouter des produits et des variations de taille pour gérer le stock.'}}</p>
+  </div>
+</div>
+
+<!-- ============================================ -->
+<!-- ADD BATCH MODAL -->
+<!-- ============================================ -->
+<div class="modal-backdrop" *ngIf="batchModalActive" (click)="closeAddBatchModal()"></div>
+<div class="modal-window" *ngIf="batchModalActive" style="max-width: 450px;" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+  <div class="modal-header" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+    <h3 style="font-family: var(--font-serif); font-weight: 700; color: var(--color-primary); margin: 0;">
+      {{trans.t('NOUVEAU_LOT_STOCK') || 'Nouvel Approvisionnement (Stock)'}}
+    </h3>
+    <button class="modal-close-btn" (click)="closeAddBatchModal()">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <!-- Size info -->
+    <div style="background-color: var(--color-bg-main); padding: 16px; border-radius: var(--border-radius-md); border: 1px solid var(--border-color); margin-bottom: 16px;">
+      <span style="font-size: 0.72rem; text-transform: uppercase; font-weight: 800; color: var(--color-text-light); display: block;">{{trans.t('PRODUIT_VARIATION') || 'Produit & Variation'}}</span>
+      <span style="font-weight: 700; color: var(--color-text-main); font-size: 1.05rem; display: block; margin-top: 4px;">
+        {{selectedProduct?.product_name}} ({{selectedSize?.taille}})
+      </span>
+      <span style="font-size: 0.88rem; color: var(--color-text-muted); display: block; margin-top: 4px;">
+        {{trans.t('PRIX_VENTE') || 'Prix de vente'}} : <strong>{{selectedSize?.prix}} DH</strong>
+      </span>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+      <!-- Quantity input -->
+      <div class="input-group">
+        <label style="display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 6px;">
+          <span>{{trans.t('QUANTITE_AJOUTEE') || 'Quantité Ajoutée'}} <span style="color: #dc2626;">*</span></span>
+        </label>
+        <input class="text" type="number" [(ngModel)]="newBatch.quantity" min="1" required placeholder="Ex: 20" style="width: 100%;" [style.border-color]="batchFormSubmitted && newBatch.quantity <= 0 ? '#dc2626' : ''">
+        <span *ngIf="batchFormSubmitted && newBatch.quantity <= 0" class="validation-error">{{trans.t('CHAMP_REQUIS')}}</span>
+      </div>
+
+      <!-- Buying Cost input -->
+      <div class="input-group">
+        <label style="display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 6px;">
+          <span>{{trans.t('COUT_ACHAT_UNITAIRE') || 'Coût d\'Achat Unitaire (DH)'}} <span style="color: #dc2626;">*</span></span>
+          <span style="font-size: 0.75rem; color: var(--color-text-light); font-weight: normal;">(Par unité)</span>
+        </label>
+        <input class="text" type="number" [(ngModel)]="newBatch.unit_cost" min="0" required placeholder="Ex: 20" style="width: 100%;" [style.border-color]="batchFormSubmitted && newBatch.unit_cost < 0 ? '#dc2626' : ''">
+        <span *ngIf="batchFormSubmitted && newBatch.unit_cost < 0" class="validation-error">{{trans.t('CHAMP_REQUIS')}}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+    <button class="btn-cancel" (click)="closeAddBatchModal()">{{trans.t('ANNULER')}}</button>
+    <button class="btn-save" (click)="submitAddBatch()">
+      <span class="material-symbols-outlined">check</span>
+      <span>{{trans.t('ENREGISTRER')}}</span>
+    </button>
+  </div>
+</div>

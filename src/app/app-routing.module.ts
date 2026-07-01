@@ -20,6 +20,7 @@ import { CheckoutComponent } from './checkout/checkout.component';
 import { MessagesComponent } from './messages/messages.component';
 import { NonAdminGuard } from './non-admin.guard';
 import { StatsComponent } from './stats/stats.component';
+import { StockComponent } from './stock/stock.component';
 
 const routes: Routes = [
   {path:'shopping',component:ShoppingComponent,canActivate:[NonAdminGuard]},
@@ -37,6 +38,7 @@ const routes: Routes = [
     {path:'commands',component:CommandsComponent,canActivate:[AuthGuard]},
     {path:'categories',component:CategoriesComponent,canActivate:[AuthGuard]},
     {path:'products',component:ProductsComponent,canActivate:[AuthGuard]},
+    {path:'stock',component:StockComponent,canActivate:[AuthGuard]},
     {path:'messages',component:MessagesComponent,canActivate:[AuthGuard]},
     {path:'settings',component:SettingsComponent,canActivate:[AuthGuard]}
   ]},

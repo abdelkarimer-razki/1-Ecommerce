@@ -462,6 +462,8 @@
           <div class="variations-grid-header" *ngIf="(activeProduct().sizes?.length || 0) > 0" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
             <div class="col-size">{{trans.t('TAILLE_EXEMPLE_LABEL')}}</div>
             <div class="col-price">{{trans.t('PRIX')}} (DH)</div>
+            <div class="col-stock">{{trans.t('STOCK') || 'Stock'}}</div>
+            <div class="col-cost">{{trans.t('COUT_ACHAT') || 'Coût d\'Achat (DH)'}}</div>
             <div class="col-action"></div>
           </div>
 
@@ -477,6 +479,16 @@
             <div class="col-price">
               <input class="text" type="number" [(ngModel)]="sizeRow.prix" placeholder="ex: 60" required [style.text-align]="trans.isRtl() ? 'right' : 'left'" [style.border-color]="productFormSubmitted && (sizeRow.prix === undefined || sizeRow.prix === null || sizeRow.prix <= 0) ? '#dc2626' : ''">
               <span *ngIf="productFormSubmitted && (sizeRow.prix === undefined || sizeRow.prix === null || sizeRow.prix <= 0)" class="validation-error">{{trans.t('CHAMP_REQUIS')}}</span>
+            </div>
+
+            <!-- Stock Input -->
+            <div class="col-stock">
+              <input class="text" type="number" [(ngModel)]="sizeRow.stock" placeholder="ex: 10" min="0" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
+            </div>
+
+            <!-- Cost Input -->
+            <div class="col-cost">
+              <input class="text" type="number" [(ngModel)]="sizeRow.buying_cost" placeholder="ex: 40" min="0" [style.text-align]="trans.isRtl() ? 'right' : 'left'">
             </div>
 
             <!-- Delete Button -->

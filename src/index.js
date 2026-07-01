@@ -239,6 +239,40 @@ async function initCategoriesTable() {
     await p1.query(`
       ALTER TABLE categories ADD COLUMN IF NOT EXISTS bg_color VARCHAR(50)
     `);
+    await p1.query(`
+      ALTER TABLE order_group ADD COLUMN IF NOT EXISTS paid BOOLEAN DEFAULT TRUE
+    `);
+    await p1.query(`
+      ALTER TABLE product_sizes ADD COLUMN IF NOT EXISTS stock INTEGER DEFAULT 0
+    `);
+    await p1.query(`
+      ALTER TABLE product_sizes ADD COLUMN IF NOT EXISTS buying_cost DECIMAL(10, 2) DEFAULT 0
+    `);
+    await p1.query(`
+      ALTER TABLE commande ADD COLUMN IF NOT EXISTS buying_cost DECIMAL(10, 2) DEFAULT 0
+    `);
+
+    await p1.query(`
+      CREATE TABLE IF NOT EXISTS stock_batches (
+        idbatch SERIAL PRIMARY KEY,
+        idsize INT REFERENCES product_sizes(idsize) ON DELETE CASCADE,
+        quantity INT NOT NULL,
+        remaining_qty INT NOT NULL,
+        unit_cost DECIMAL(10, 2) NOT NULL,
+        date_added TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    const checkBatches = await p1.query("SELECT COUNT(*) FROM stock_batches");
+    if (parseInt(checkBatches.rows[0].count) === 0) {
+      await p1.query(`
+        INSERT INTO stock_batches (idsize, quantity, remaining_qty, unit_cost)
+        SELECT idsize, COALESCE(stock, 0), COALESCE(stock, 0), COALESCE(buying_cost, 0)
+        FROM product_sizes
+        WHERE COALESCE(stock, 0) > 0
+      `);
+    }
+
 
     // Migrate translations for existing records in background
     setTimeout(async () => {
@@ -472,7 +506,7 @@ app.get('/productshow',async(req,res)=>{
   const query=await p1.query(`
     SELECT p.*, COALESCE(
       json_agg(
-        json_build_object('idsize', s.idsize, 'taille', s.taille, 'prix', s.prix)
+        json_build_object('idsize', s.idsize, 'taille', s.taille, 'prix', s.prix, 'stock', COALESCE(s.stock, 0), 'buying_cost', COALESCE(s.buying_cost, 0))
       ) FILTER (WHERE s.idsize IS NOT NULL),
       '[]'
     ) as sizes
@@ -593,7 +627,7 @@ app.post('/p12',verifyToken,async(req,res)=>{
     await p1.query("DELETE FROM product_sizes WHERE idproducts = $1", [id]);
     for (const s of sizes) {
       if (s.taille && s.taille !== '0' && s.prix) {
-        await p1.query("INSERT INTO product_sizes (idproducts, taille, prix) VALUES ($1, $2, $3)", [id, s.taille, s.prix]);
+        await p1.query("INSERT INTO product_sizes (idproducts, taille, prix, stock, buying_cost) VALUES ($1, $2, $3, $4, $5)", [id, s.taille, s.prix, s.stock || 0, s.buying_cost || 0]);
       }
     }
 
@@ -666,7 +700,7 @@ app.post('/addpro',verifyToken,async(req,res)=>
 
     for (const s of sizes) {
       if (s.taille && s.taille !== '0' && s.prix) {
-        await p1.query("INSERT INTO product_sizes (idproducts, taille, prix) VALUES ($1, $2, $3)", [idproducts, s.taille, s.prix]);
+        await p1.query("INSERT INTO product_sizes (idproducts, taille, prix, stock, buying_cost) VALUES ($1, $2, $3, $4, $5)", [idproducts, s.taille, s.prix, s.stock || 0, s.buying_cost || 0]);
       }
     }
 
@@ -686,7 +720,7 @@ app.get('/commandnonEffectuer',verifyToken,async(req,res)=>{
   const query=await p1.query(`
     SELECT 
       og.idgroup, og.fullname, og.tel, og.email, og.adress, og.source,
-      og.etat, og.verifie, og.prix_total,
+      og.etat, og.verifie, og.prix_total, og.paid,
       to_char(og.datecommand, 'DD/MM/YYYY') as to_char,
       COALESCE(
         json_agg(
@@ -717,7 +751,7 @@ app.get('/commandEffectuer',verifyToken,async(req,res)=>{
   const query=await p1.query(`
     SELECT 
       og.idgroup, og.fullname, og.tel, og.email, og.adress, og.source,
-      og.etat, og.verifie, og.prix_total,
+      og.etat, og.verifie, og.prix_total, og.paid,
       to_char(og.datecommand, 'DD/MM/YYYY') as to_char,
       COALESCE(
         json_agg(
@@ -751,7 +785,7 @@ app.get('/commandEffectuer/:date',async(req,res)=>{
     query = await p1.query(`
       SELECT 
         og.idgroup, og.fullname, og.tel, og.email, og.adress, og.source,
-        og.etat, og.verifie, og.prix_total,
+        og.etat, og.verifie, og.prix_total, og.paid,
         to_char(og.datecommand, 'DD/MM/YYYY') as to_char,
         COALESCE(
           json_agg(
@@ -778,7 +812,7 @@ app.get('/commandEffectuer/:date',async(req,res)=>{
     query = await p1.query(`
       SELECT 
         og.idgroup, og.fullname, og.tel, og.email, og.adress, og.source,
-        og.etat, og.verifie, og.prix_total,
+        og.etat, og.verifie, og.prix_total, og.paid,
         to_char(og.datecommand, 'DD/MM/YYYY') as to_char,
         COALESCE(
           json_agg(
@@ -841,6 +875,65 @@ app.delete('/order-group/:id',verifyToken,async(req,res)=>{
   res.json({success:true});
 })
 
+// Previous buyers autocomplete helper
+app.get('/previous-buyers', verifyToken, async (req, res) => {
+  try {
+    const result = await p1.query(`
+      SELECT DISTINCT ON (tel) tel, fullname, email, adress
+      FROM order_group
+      WHERE tel IS NOT NULL AND tel != ''
+      ORDER BY tel, idgroup DESC
+    `);
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error fetching previous buyers:", err);
+    res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+});
+
+// Pay / Unpay endpoints
+app.put('/api/order-group/pay/:id', verifyToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    await p1.query("UPDATE order_group SET paid = TRUE WHERE idgroup = $1", [id]);
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+});
+
+app.put('/api/order-group/unpay/:id', verifyToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    await p1.query("UPDATE order_group SET paid = FALSE WHERE idgroup = $1", [id]);
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+});
+
+// Unpaid buyers monitoring endpoint
+app.get('/api/unpaid-buyers', verifyToken, async (req, res) => {
+  try {
+    const result = await p1.query(`
+      SELECT 
+        tel, fullname, email, adress,
+        COUNT(idgroup) as unpaid_orders_count,
+        SUM(prix_total) as total_unpaid_amount
+      FROM order_group
+      WHERE paid = FALSE
+      GROUP BY tel, fullname, email, adress
+      ORDER BY total_unpaid_amount DESC
+    `);
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error fetching unpaid buyers:", err);
+    res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+});
+
 // ============================================================
 // CHECKOUT: Submit a multi-product order (guest or logged-in)
 // ============================================================
@@ -882,11 +975,43 @@ app.post('/checkout',async(req,res)=>{
 
     // Insert each item into commande
     for (const item of items) {
+      let qteNeeded = Number(item.qte);
+      let totalCostOfSold = 0;
+      
+      const batchesRes = await p1.query(`
+        SELECT sb.idbatch, sb.remaining_qty, sb.unit_cost 
+        FROM stock_batches sb
+        JOIN product_sizes ps ON sb.idsize = ps.idsize
+        WHERE ps.idproducts = $1 AND ps.taille = $2 AND sb.remaining_qty > 0 
+        ORDER BY sb.date_added ASC, sb.idbatch ASC
+      `, [item.idproducts, item.taille || '']);
+      
+      for (const batch of batchesRes.rows) {
+        if (qteNeeded <= 0) break;
+        const take = Math.min(qteNeeded, Number(batch.remaining_qty));
+        qteNeeded -= take;
+        totalCostOfSold += take * Number(batch.unit_cost);
+        await p1.query("UPDATE stock_batches SET remaining_qty = remaining_qty - $1 WHERE idbatch = $2", [take, batch.idbatch]);
+      }
+      
+      if (qteNeeded > 0) {
+        const fallbackCostRes = await p1.query("SELECT buying_cost FROM product_sizes WHERE idproducts = $1 AND taille = $2 LIMIT 1", [item.idproducts, item.taille || '']);
+        const fallbackUnitCost = fallbackCostRes.rows.length > 0 ? Number(fallbackCostRes.rows[0].buying_cost) : 0;
+        totalCostOfSold += qteNeeded * fallbackUnitCost;
+      }
+      
+      const unitBuyingCost = Number(item.qte) > 0 ? (totalCostOfSold / Number(item.qte)) : 0;
+
       await p1.query(
-        `INSERT INTO commande (idproducts, iduser, qte, prix, datecommand, cart, taille, verifie, etat, source, idgroup)
-         VALUES ($1, $2, $3, $4, CURRENT_DATE, false, $5, false, false, $6, $7)`,
-        [item.idproducts, userId, item.qte, Number(item.prix)*Number(item.qte), item.taille||'', source||'site', idgroup]
+        `INSERT INTO commande (idproducts, iduser, qte, prix, datecommand, cart, taille, verifie, etat, source, idgroup, buying_cost)
+         VALUES ($1, $2, $3, $4, CURRENT_DATE, false, $5, false, false, $6, $7, $8)`,
+        [item.idproducts, userId, item.qte, Number(item.prix)*Number(item.qte), item.taille||'', source||'site', idgroup, unitBuyingCost]
       );
+      await p1.query(`
+        UPDATE product_sizes 
+        SET stock = COALESCE((SELECT SUM(remaining_qty) FROM stock_batches sb WHERE sb.idsize = product_sizes.idsize), 0)
+        WHERE idproducts = $1 AND taille = $2
+      `, [item.idproducts, item.taille || '']);
     }
 
     triggerOrderNotification(idgroup);
@@ -900,7 +1025,7 @@ app.post('/checkout',async(req,res)=>{
 // Add manual in-store command (multi-product)
 app.post('/addManualCommand',verifyToken,async(req,res)=>{
   try {
-    const { fullname, adress, tel, email, items, etat, source: src } = req.body;
+    const { fullname, adress, tel, email, items, etat, source: src, paid } = req.body;
     const source = src || 'magasin';
 
     if (!items || items.length === 0) {
@@ -926,18 +1051,50 @@ app.post('/addManualCommand',verifyToken,async(req,res)=>{
     const total = items.reduce((sum, item) => sum + (Number(item.prix) * Number(item.qte)), 0);
 
     const grpResult = await p1.query(
-      `INSERT INTO order_group (iduser, fullname, tel, email, adress, source, etat, verifie, datecommand, prix_total)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, false, CURRENT_DATE, $8) RETURNING idgroup`,
-      [userId, fullname, tel||'', email||'', adress||'', source, etat === true, total]
+      `INSERT INTO order_group (iduser, fullname, tel, email, adress, source, etat, paid, verifie, datecommand, prix_total)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, false, CURRENT_DATE, $9) RETURNING idgroup`,
+      [userId, fullname, tel||'', email||'', adress||'', source, etat === true, paid !== false, total]
     );
     const idgroup = grpResult.rows[0].idgroup;
 
     for (const item of items) {
+      let qteNeeded = Number(item.qte);
+      let totalCostOfSold = 0;
+      
+      const batchesRes = await p1.query(`
+        SELECT sb.idbatch, sb.remaining_qty, sb.unit_cost 
+        FROM stock_batches sb
+        JOIN product_sizes ps ON sb.idsize = ps.idsize
+        WHERE ps.idproducts = $1 AND ps.taille = $2 AND sb.remaining_qty > 0 
+        ORDER BY sb.date_added ASC, sb.idbatch ASC
+      `, [item.idproducts, item.taille || '']);
+      
+      for (const batch of batchesRes.rows) {
+        if (qteNeeded <= 0) break;
+        const take = Math.min(qteNeeded, Number(batch.remaining_qty));
+        qteNeeded -= take;
+        totalCostOfSold += take * Number(batch.unit_cost);
+        await p1.query("UPDATE stock_batches SET remaining_qty = remaining_qty - $1 WHERE idbatch = $2", [take, batch.idbatch]);
+      }
+      
+      if (qteNeeded > 0) {
+        const fallbackCostRes = await p1.query("SELECT buying_cost FROM product_sizes WHERE idproducts = $1 AND taille = $2 LIMIT 1", [item.idproducts, item.taille || '']);
+        const fallbackUnitCost = fallbackCostRes.rows.length > 0 ? Number(fallbackCostRes.rows[0].buying_cost) : 0;
+        totalCostOfSold += qteNeeded * fallbackUnitCost;
+      }
+      
+      const unitBuyingCost = Number(item.qte) > 0 ? (totalCostOfSold / Number(item.qte)) : 0;
+
       await p1.query(
-        `INSERT INTO commande (idproducts, iduser, qte, prix, datecommand, cart, taille, verifie, etat, source, idgroup)
-         VALUES ($1, $2, $3, $4, CURRENT_DATE, false, $5, true, $6, $7, $8)`,
-        [item.idproducts, userId, item.qte, Number(item.prix)*Number(item.qte), item.taille||'', etat===true, source, idgroup]
+        `INSERT INTO commande (idproducts, iduser, qte, prix, datecommand, cart, taille, verifie, etat, source, idgroup, buying_cost)
+         VALUES ($1, $2, $3, $4, CURRENT_DATE, false, $5, true, $6, $7, $8, $9)`,
+        [item.idproducts, userId, item.qte, Number(item.prix)*Number(item.qte), item.taille||'', etat===true, source, idgroup, unitBuyingCost]
       );
+      await p1.query(`
+        UPDATE product_sizes 
+        SET stock = COALESCE((SELECT SUM(remaining_qty) FROM stock_batches sb WHERE sb.idsize = product_sizes.idsize), 0)
+        WHERE idproducts = $1 AND taille = $2
+      `, [item.idproducts, item.taille || '']);
     }
 
     triggerOrderNotification(idgroup);
@@ -1236,7 +1393,7 @@ app.get('/updatecommande/:id&:taille&:qte&:cart&:prix',async(req,res)=>{
 app.get('/cartotachat/:idcommande',async(req,res)=>{
   try {
     const id = req.params.idcommande;
-    const cmdResult = await p1.query("SELECT iduser, prix, qte FROM commande WHERE idcommande=$1", [id]);
+    const cmdResult = await p1.query("SELECT iduser, prix, qte, idproducts, taille FROM commande WHERE idcommande=$1", [id]);
     if (cmdResult.rows.length === 0) {
       return res.status(404).json({ success: false, error: 'Command not found' });
     }
@@ -1262,7 +1419,40 @@ app.get('/cartotachat/:idcommande',async(req,res)=>{
     );
     const idgroup = grpResult.rows[0].idgroup;
 
-    await p1.query("UPDATE commande SET cart=false, idgroup=$1 WHERE idcommande=$2", [idgroup, id]);
+    const row = cmdResult.rows[0];
+    let qteNeeded = Number(row.qte);
+    let totalCostOfSold = 0;
+    
+    const batchesRes = await p1.query(`
+      SELECT sb.idbatch, sb.remaining_qty, sb.unit_cost 
+      FROM stock_batches sb
+      JOIN product_sizes ps ON sb.idsize = ps.idsize
+      WHERE ps.idproducts = $1 AND ps.taille = $2 AND sb.remaining_qty > 0 
+      ORDER BY sb.date_added ASC, sb.idbatch ASC
+    `, [row.idproducts, row.taille || '']);
+    
+    for (const batch of batchesRes.rows) {
+      if (qteNeeded <= 0) break;
+      const take = Math.min(qteNeeded, Number(batch.remaining_qty));
+      qteNeeded -= take;
+      totalCostOfSold += take * Number(batch.unit_cost);
+      await p1.query("UPDATE stock_batches SET remaining_qty = remaining_qty - $1 WHERE idbatch = $2", [take, batch.idbatch]);
+    }
+    
+    if (qteNeeded > 0) {
+      const fallbackCostRes = await p1.query("SELECT buying_cost FROM product_sizes WHERE idproducts = $1 AND taille = $2 LIMIT 1", [row.idproducts, row.taille || '']);
+      const fallbackUnitCost = fallbackCostRes.rows.length > 0 ? Number(fallbackCostRes.rows[0].buying_cost) : 0;
+      totalCostOfSold += qteNeeded * fallbackUnitCost;
+    }
+    
+    const unitBuyingCost = Number(row.qte) > 0 ? (totalCostOfSold / Number(row.qte)) : 0;
+
+    await p1.query("UPDATE commande SET cart=false, idgroup=$1, buying_cost=$2 WHERE idcommande=$3", [idgroup, unitBuyingCost, id]);
+    await p1.query(`
+      UPDATE product_sizes 
+      SET stock = COALESCE((SELECT SUM(remaining_qty) FROM stock_batches sb WHERE sb.idsize = product_sizes.idsize), 0)
+      WHERE idproducts = $1 AND taille = $2
+    `, [row.idproducts, row.taille || '']);
     triggerOrderNotification(idgroup);
     res.json({ success: true, idgroup });
   } catch (err) {
@@ -1278,7 +1468,7 @@ app.get('/cartotachatall/:iduser',async(req,res)=>{
       return res.status(400).json({ success: false, error: 'Invalid user ID' });
     }
 
-    const cmdResult = await p1.query("SELECT idcommande, prix FROM commande WHERE iduser=$1 AND cart=true", [iduser]);
+    const cmdResult = await p1.query("SELECT idcommande, prix, idproducts, taille, qte FROM commande WHERE iduser=$1 AND cart=true", [iduser]);
     if (cmdResult.rows.length === 0) {
       return res.json({ success: true, message: 'Cart already empty' });
     }
@@ -1305,7 +1495,41 @@ app.get('/cartotachatall/:iduser',async(req,res)=>{
     );
     const idgroup = grpResult.rows[0].idgroup;
 
-    await p1.query("UPDATE commande SET cart=false, idgroup=$1 WHERE iduser=$2 AND cart=true", [idgroup, iduser]);
+    for (const row of cmdResult.rows) {
+      let qteNeeded = Number(row.qte);
+      let totalCostOfSold = 0;
+      
+      const batchesRes = await p1.query(`
+        SELECT sb.idbatch, sb.remaining_qty, sb.unit_cost 
+        FROM stock_batches sb
+        JOIN product_sizes ps ON sb.idsize = ps.idsize
+        WHERE ps.idproducts = $1 AND ps.taille = $2 AND sb.remaining_qty > 0 
+        ORDER BY sb.date_added ASC, sb.idbatch ASC
+      `, [row.idproducts, row.taille || '']);
+      
+      for (const batch of batchesRes.rows) {
+        if (qteNeeded <= 0) break;
+        const take = Math.min(qteNeeded, Number(batch.remaining_qty));
+        qteNeeded -= take;
+        totalCostOfSold += take * Number(batch.unit_cost);
+        await p1.query("UPDATE stock_batches SET remaining_qty = remaining_qty - $1 WHERE idbatch = $2", [take, batch.idbatch]);
+      }
+      
+      if (qteNeeded > 0) {
+        const fallbackCostRes = await p1.query("SELECT buying_cost FROM product_sizes WHERE idproducts = $1 AND taille = $2 LIMIT 1", [row.idproducts, row.taille || '']);
+        const fallbackUnitCost = fallbackCostRes.rows.length > 0 ? Number(fallbackCostRes.rows[0].buying_cost) : 0;
+        totalCostOfSold += qteNeeded * fallbackUnitCost;
+      }
+      
+      const unitBuyingCost = Number(row.qte) > 0 ? (totalCostOfSold / Number(row.qte)) : 0;
+
+      await p1.query("UPDATE commande SET cart=false, idgroup=$1, buying_cost=$2 WHERE idcommande=$3", [idgroup, unitBuyingCost, row.idcommande]);
+      await p1.query(`
+        UPDATE product_sizes 
+        SET stock = COALESCE((SELECT SUM(remaining_qty) FROM stock_batches sb WHERE sb.idsize = product_sizes.idsize), 0)
+        WHERE idproducts = $1 AND taille = $2
+      `, [row.idproducts, row.taille || '']);
+    }
     triggerOrderNotification(idgroup);
     res.json({ success: true, idgroup });
   } catch (err) {
@@ -1380,25 +1604,29 @@ app.get('/api/product-stats', verifyToken, async (req, res) => {
       subqueryDateFilter = "AND EXTRACT(MONTH FROM datecommand) = EXTRACT(MONTH FROM CURRENT_DATE) AND EXTRACT(YEAR FROM datecommand) = EXTRACT(YEAR FROM CURRENT_DATE)";
     }
 
-    // 1. Most sold products (top 5)
+    // 1. Most sold products (top 5) - paid only
     const mostSoldRes = await p1.query(`
       SELECT p.idproducts, p.name, p.name_en, p.name_ar, p.picture, p.categorie, 
              SUM(c.qte)::integer as total_sold, SUM(c.prix)::numeric as total_revenue
       FROM products p
       JOIN commande c ON p.idproducts = c.idproducts
-      WHERE c.cart = false AND c.etat = true ${dateFilter}
+      JOIN order_group og ON c.idgroup = og.idgroup
+      WHERE c.cart = false AND c.etat = true AND og.paid = true ${dateFilter}
       GROUP BY p.idproducts
       ORDER BY total_sold DESC, total_revenue DESC
       LIMIT 5
     `);
 
-    // 2. Least sold products (top 5)
+    // 2. Least sold products (top 5) - paid only
     const leastSoldRes = await p1.query(`
       SELECT p.idproducts, p.name, p.name_en, p.name_ar, p.picture, p.categorie, 
              COALESCE(SUM(c.qte), 0)::integer as total_sold, COALESCE(SUM(c.prix), 0)::numeric as total_revenue
       FROM products p
       LEFT JOIN (
-        SELECT * FROM commande WHERE cart = false AND etat = true ${subqueryDateFilter}
+        SELECT c.* 
+        FROM commande c 
+        JOIN order_group og ON c.idgroup = og.idgroup
+        WHERE c.cart = false AND c.etat = true AND og.paid = true ${subqueryDateFilter}
       ) c ON p.idproducts = c.idproducts
       GROUP BY p.idproducts
       ORDER BY total_sold ASC, total_revenue ASC, p.name ASC
@@ -1423,26 +1651,31 @@ app.get('/api/product-stats', verifyToken, async (req, res) => {
       LIMIT 5
     `);
 
-    // 4. General Stats Summary
+    // 4. General Stats Summary - paid only
     const prodCountRes = await p1.query("SELECT COUNT(*)::integer as count FROM products");
     const catCountRes = await p1.query("SELECT COUNT(*)::integer as count FROM categories");
     const salesSummaryRes = await p1.query(`
-      SELECT COALESCE(SUM(qte), 0)::integer as total_qty, COALESCE(SUM(prix), 0)::numeric as total_rev
+      SELECT 
+        COALESCE(SUM(c.qte), 0)::integer as total_qty, 
+        COALESCE(SUM(c.prix), 0)::numeric as total_rev,
+        COALESCE(SUM(c.prix - (COALESCE(c.buying_cost, 0) * c.qte)), 0)::numeric as total_profit
       FROM commande c
-      WHERE cart = false AND etat = true ${dateFilter}
+      JOIN order_group og ON c.idgroup = og.idgroup
+      WHERE c.cart = false AND c.etat = true AND og.paid = true ${dateFilter}
     `);
 
-    // 5. Category Revenue split (Doughnut Chart)
+    // 5. Category Revenue split (Doughnut Chart) - paid only
     const categoryRevenueRes = await p1.query(`
       SELECT COALESCE(p.categorie, 'DIVERS') as categorie, SUM(c.prix)::numeric as revenue
       FROM commande c
       JOIN products p ON c.idproducts = p.idproducts
-      WHERE c.cart = false AND c.etat = true ${dateFilter}
+      JOIN order_group og ON c.idgroup = og.idgroup
+      WHERE c.cart = false AND c.etat = true AND og.paid = true ${dateFilter}
       GROUP BY p.categorie
       ORDER BY revenue DESC
     `);
 
-    // 6. Seasonality & Trends Chart data
+    // 6. Seasonality & Trends Chart data - paid only
     const currentYear = new Date().getFullYear();
     let trends = [];
     let trendType = 'monthly'; // 'daily' or 'monthly'
@@ -1456,7 +1689,8 @@ app.get('/api/product-stats', verifyToken, async (req, res) => {
                SUM(c.qte)::integer as total_qty
         FROM commande c
         JOIN products p ON c.idproducts = p.idproducts
-        WHERE c.cart = false AND c.etat = true AND c.datecommand >= CURRENT_DATE - INTERVAL '6 days'
+        JOIN order_group og ON c.idgroup = og.idgroup
+        WHERE c.cart = false AND c.etat = true AND og.paid = true AND c.datecommand >= CURRENT_DATE - INTERVAL '6 days'
         GROUP BY p.categorie, c.datecommand
         ORDER BY c.datecommand ASC, p.categorie
       `);
@@ -1470,7 +1704,8 @@ app.get('/api/product-stats', verifyToken, async (req, res) => {
                SUM(c.qte)::integer as total_qty
         FROM commande c
         JOIN products p ON c.idproducts = p.idproducts
-        WHERE c.cart = false AND c.etat = true 
+        JOIN order_group og ON c.idgroup = og.idgroup
+        WHERE c.cart = false AND c.etat = true AND og.paid = true
           AND EXTRACT(MONTH FROM c.datecommand) = EXTRACT(MONTH FROM CURRENT_DATE) 
           AND EXTRACT(YEAR FROM c.datecommand) = EXTRACT(YEAR FROM CURRENT_DATE)
         GROUP BY p.categorie, label
@@ -1486,7 +1721,8 @@ app.get('/api/product-stats', verifyToken, async (req, res) => {
                SUM(c.qte)::integer as total_qty
         FROM commande c
         JOIN products p ON c.idproducts = p.idproducts
-        WHERE c.cart = false AND c.etat = true AND EXTRACT(YEAR FROM c.datecommand) = $1
+        JOIN order_group og ON c.idgroup = og.idgroup
+        WHERE c.cart = false AND c.etat = true AND og.paid = true AND EXTRACT(YEAR FROM c.datecommand) = $1
         GROUP BY p.categorie, label
         ORDER BY label ASC, p.categorie
       `, [currentYear]);
@@ -1501,7 +1737,8 @@ app.get('/api/product-stats', verifyToken, async (req, res) => {
         totalProducts: prodCountRes.rows[0].count,
         totalCategories: catCountRes.rows[0].count,
         totalItemsSold: salesSummaryRes.rows[0].total_qty,
-        totalRevenue: salesSummaryRes.rows[0].total_rev
+        totalRevenue: salesSummaryRes.rows[0].total_rev,
+        totalProfit: salesSummaryRes.rows[0].total_profit
       },
       categoryRevenue: categoryRevenueRes.rows,
       monthlyTrends: trends,
@@ -1538,27 +1775,29 @@ app.get('/api/products/:id/stats', verifyToken, async (req, res) => {
       WHERE idproducts = $1
     `, [id]);
 
-    // 3. Get sales summary
+    // 3. Get sales summary - paid only
     const salesRes = await p1.query(`
       SELECT 
-        COALESCE(SUM(qte), 0)::integer as sales_all,
-        COALESCE(SUM(prix), 0)::numeric as revenue_all,
-        COALESCE(SUM(CASE WHEN datecommand = CURRENT_DATE THEN qte END), 0)::integer as sales_today,
-        COALESCE(SUM(CASE WHEN datecommand = CURRENT_DATE THEN prix END), 0)::numeric as revenue_today,
-        COALESCE(SUM(CASE WHEN EXTRACT(MONTH FROM datecommand) = EXTRACT(MONTH FROM CURRENT_DATE) AND EXTRACT(YEAR FROM datecommand) = EXTRACT(YEAR FROM CURRENT_DATE) THEN qte END), 0)::integer as sales_month,
-        COALESCE(SUM(CASE WHEN EXTRACT(MONTH FROM datecommand) = EXTRACT(MONTH FROM CURRENT_DATE) AND EXTRACT(YEAR FROM datecommand) = EXTRACT(YEAR FROM CURRENT_DATE) THEN prix END), 0)::numeric as revenue_month
-      FROM commande
-      WHERE idproducts = $1 AND cart = false AND etat = true
+        COALESCE(SUM(c.qte), 0)::integer as sales_all,
+        COALESCE(SUM(c.prix), 0)::numeric as revenue_all,
+        COALESCE(SUM(CASE WHEN c.datecommand = CURRENT_DATE THEN c.qte END), 0)::integer as sales_today,
+        COALESCE(SUM(CASE WHEN c.datecommand = CURRENT_DATE THEN c.prix END), 0)::numeric as revenue_today,
+        COALESCE(SUM(CASE WHEN EXTRACT(MONTH FROM c.datecommand) = EXTRACT(MONTH FROM CURRENT_DATE) AND EXTRACT(YEAR FROM c.datecommand) = EXTRACT(YEAR FROM CURRENT_DATE) THEN c.qte END), 0)::integer as sales_month,
+        COALESCE(SUM(CASE WHEN EXTRACT(MONTH FROM c.datecommand) = EXTRACT(MONTH FROM CURRENT_DATE) AND EXTRACT(YEAR FROM c.datecommand) = EXTRACT(YEAR FROM CURRENT_DATE) THEN c.prix END), 0)::numeric as revenue_month
+      FROM commande c
+      JOIN order_group og ON c.idgroup = og.idgroup
+      WHERE c.idproducts = $1 AND c.cart = false AND c.etat = true AND og.paid = true
     `, [id]);
 
-    // 4. Get size breakdown
+    // 4. Get size breakdown - paid only
     const sizesRes = await p1.query(`
-      SELECT COALESCE(taille, 'Standard') as taille, 
-             SUM(qte)::integer as units_sold, 
-             SUM(prix)::numeric as revenue
-      FROM commande
-      WHERE idproducts = $1 AND cart = false AND etat = true
-      GROUP BY taille
+      SELECT COALESCE(c.taille, 'Standard') as taille, 
+             SUM(c.qte)::integer as units_sold, 
+             SUM(c.prix)::numeric as revenue
+      FROM commande c
+      JOIN order_group og ON c.idgroup = og.idgroup
+      WHERE c.idproducts = $1 AND c.cart = false AND c.etat = true AND og.paid = true
+      GROUP BY c.taille
       ORDER BY units_sold DESC
     `, [id]);
 
@@ -1769,8 +2008,96 @@ app.post('/api/whatsapp/send-bulk', verifyToken, async (req, res) => {
     }
     res.json({ success: true, results });
   } catch (err) {
-    console.error('WhatsApp bulk send error:', err);
     res.status(500).json({ success: false, error: 'Internal server error' });
+  }
+});
+
+// ============================================================
+// STOCK BATCHES MANAGEMENT ENDPOINTS
+// ============================================================
+
+// Get all product sizes with their stock batches
+app.get('/api/stock/batches', verifyToken, async (req, res) => {
+  try {
+    const query = await p1.query(`
+      SELECT 
+        p.idproducts, p.name as product_name, p.picture as product_picture,
+        ps.idsize, ps.taille, ps.prix,
+        COALESCE(SUM(sb.remaining_qty), 0)::integer as total_stock,
+        COALESCE(
+          json_agg(
+            json_build_object(
+              'idbatch', sb.idbatch,
+              'quantity', sb.quantity,
+              'remaining_qty', sb.remaining_qty,
+              'unit_cost', sb.unit_cost,
+              'date_added', to_char(sb.date_added, 'DD/MM/YYYY HH24:MI')
+            ) ORDER BY sb.date_added DESC
+          ) FILTER (WHERE sb.idbatch IS NOT NULL),
+          '[]'
+        ) as batches
+      FROM product_sizes ps
+      JOIN products p ON ps.idproducts = p.idproducts
+      LEFT JOIN stock_batches sb ON ps.idsize = sb.idsize
+      GROUP BY p.idproducts, p.name, p.picture, ps.idsize, ps.taille, ps.prix
+      ORDER BY p.name ASC, ps.prix ASC
+    `);
+    res.json(query.rows);
+  } catch (err) {
+    console.error("Error loading stock batches:", err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Add a new stock batch for a specific size
+app.post('/api/stock/batches', verifyToken, async (req, res) => {
+  try {
+    const { idsize, quantity, unit_cost } = req.body;
+    if (!idsize || quantity === undefined || quantity === null || quantity <= 0 || unit_cost === undefined || unit_cost === null) {
+      return res.status(400).json({ error: 'Invalid arguments' });
+    }
+    const result = await p1.query(`
+      INSERT INTO stock_batches (idsize, quantity, remaining_qty, unit_cost)
+      VALUES ($1, $2, $2, $3)
+      RETURNING *
+    `, [idsize, quantity, unit_cost]);
+    
+    await p1.query(`
+      UPDATE product_sizes 
+      SET stock = COALESCE((SELECT SUM(remaining_qty) FROM stock_batches WHERE idsize = $1), 0)
+      WHERE idsize = $1
+    `, [idsize]);
+    
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    console.error("Error adding stock batch:", err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Delete a stock batch
+app.delete('/api/stock/batches/:idbatch', verifyToken, async (req, res) => {
+  try {
+    const idbatch = parseInt(req.params.idbatch);
+    if (isNaN(idbatch)) {
+      return res.status(400).json({ error: 'Invalid batch ID' });
+    }
+    const batchRes = await p1.query("SELECT idsize FROM stock_batches WHERE idbatch = $1", [idbatch]);
+    if (batchRes.rows.length > 0) {
+      const idsize = batchRes.rows[0].idsize;
+      await p1.query("DELETE FROM stock_batches WHERE idbatch = $1", [idbatch]);
+      await p1.query(`
+        UPDATE product_sizes 
+        SET stock = COALESCE((SELECT SUM(remaining_qty) FROM stock_batches WHERE idsize = $1), 0)
+        WHERE idsize = $1
+      `, [idsize]);
+    } else {
+      await p1.query("DELETE FROM stock_batches WHERE idbatch = $1", [idbatch]);
+    }
+    res.json({ success: true });
+  } catch (err) {
+    console.error("Error deleting stock batch:", err);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
