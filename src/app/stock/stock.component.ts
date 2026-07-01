@@ -13,8 +13,11 @@ export class StockComponent implements OnInit {
   loading: boolean = true;
   productsList: any[] = []; // Grouped by product
   
-  // Search & Pagination
+  // Search & Pagination & Advanced Filters
   searchText: string = '';
+  selectedCategoryFilter: string = 'TOUS';
+  stockLevelFilter: string = 'TOUS';
+  sortByFilter: string = 'DEFAULT';
   currentPage: number = 1;
   pageSize: number = 10;
   totalPages: number = 1;
@@ -182,6 +185,7 @@ export class StockComponent implements OnInit {
   getPaginatedProducts(): any[] {
     let list = this.productsList;
     
+    // 1. Text Search Filter
     if (this.searchText && this.searchText.trim() !== '') {
       const term = this.searchText.toLowerCase().trim();
       list = list.filter(item => 
@@ -189,6 +193,42 @@ export class StockComponent implements OnInit {
         (item.categorie && item.categorie.toLowerCase().includes(term)) ||
         item.sizes.some((s: any) => s.taille && s.taille.toLowerCase().includes(term))
       );
+    }
+
+    // 2. Category Filter
+    if (this.selectedCategoryFilter && this.selectedCategoryFilter !== 'TOUS') {
+      list = list.filter(item => item.categorie === this.selectedCategoryFilter);
+    }
+
+    // 3. Stock Level Filter
+    if (this.stockLevelFilter && this.stockLevelFilter !== 'TOUS') {
+      list = list.filter(item => {
+        const stock = this.getProductGlobalStock(item);
+        if (this.stockLevelFilter === 'OUT_OF_STOCK') {
+          return stock === 0;
+        } else if (this.stockLevelFilter === 'LOW_STOCK') {
+          return stock > 0 && stock <= 10;
+        } else if (this.stockLevelFilter === 'IN_STOCK') {
+          return stock > 10;
+        }
+        return true;
+      });
+    }
+
+    // 4. Sorting Filter
+    if (this.sortByFilter && this.sortByFilter !== 'DEFAULT') {
+      list = [...list].sort((a, b) => {
+        if (this.sortByFilter === 'STOCK_ASC') {
+          return this.getProductGlobalStock(a) - this.getProductGlobalStock(b);
+        } else if (this.sortByFilter === 'STOCK_DESC') {
+          return this.getProductGlobalStock(b) - this.getProductGlobalStock(a);
+        } else if (this.sortByFilter === 'NAME_ASC') {
+          return (a.product_name || '').localeCompare(b.product_name || '');
+        } else if (this.sortByFilter === 'NAME_DESC') {
+          return (b.product_name || '').localeCompare(a.product_name || '');
+        }
+        return 0;
+      });
     }
     
     this.totalPages = Math.ceil(list.length / this.pageSize) || 1;
@@ -201,6 +241,24 @@ export class StockComponent implements OnInit {
     
     const start = (this.currentPage - 1) * this.pageSize;
     return list.slice(start, start + this.pageSize);
+  }
+
+  getCategories(): string[] {
+    const cats = new Set<string>();
+    for (const prod of this.productsList) {
+      if (prod.categorie) {
+        cats.add(prod.categorie);
+      }
+    }
+    return Array.from(cats);
+  }
+
+  resetFilters() {
+    this.searchText = '';
+    this.selectedCategoryFilter = 'TOUS';
+    this.stockLevelFilter = 'TOUS';
+    this.sortByFilter = 'DEFAULT';
+    this.currentPage = 1;
   }
 
   onSearchChange() {

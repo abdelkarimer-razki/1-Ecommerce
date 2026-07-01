@@ -20,6 +20,46 @@
         >
       </div>
     </div>
+
+    <div class="filter-row-bottom" [style.flex-direction]="trans.isRtl() ? 'row-reverse' : 'row'">
+      <!-- Category Filter -->
+      <div class="filter-group">
+        <label for="filter-category"><span class="material-symbols-outlined filter-icon">category</span>{{trans.t('CATEGORIES') || 'Catégorie'}}</label>
+        <select id="filter-category" [(ngModel)]="selectedCategoryFilter" (ngModelChange)="onSearchChange()">
+          <option value="TOUS">{{trans.t('TOUTES_CATEGORIES') || 'Toutes les catégories'}}</option>
+          <option *ngFor="let cat of getCategories()" [value]="cat">{{cat}}</option>
+        </select>
+      </div>
+
+      <!-- Stock level Filter -->
+      <div class="filter-group">
+        <label for="filter-stock"><span class="material-symbols-outlined filter-icon">inventory_2</span>{{trans.t('STATUT_STOCK') || 'Statut Stock'}}</label>
+        <select id="filter-stock" [(ngModel)]="stockLevelFilter" (ngModelChange)="onSearchChange()">
+          <option value="TOUS">{{trans.t('TOUS_STATUTS') || 'Tous les statuts'}}</option>
+          <option value="OUT_OF_STOCK">{{trans.t('RUPTURE_DE_STOCK') || 'En rupture'}}</option>
+          <option value="LOW_STOCK">{{trans.t('STOCK_FAIBLE') || 'Stock faible (<=10)'}}</option>
+          <option value="IN_STOCK">{{trans.t('EN_STOCK') || 'En stock (>10)'}}</option>
+        </select>
+      </div>
+
+      <!-- Sort By Filter -->
+      <div class="filter-group">
+        <label for="filter-sort"><span class="material-symbols-outlined filter-icon">sort</span>{{trans.t('TRIER_PAR') || 'Trier par'}}</label>
+        <select id="filter-sort" [(ngModel)]="sortByFilter" (ngModelChange)="onSearchChange()">
+          <option value="DEFAULT">{{trans.t('TRI_DEFAUT') || 'Tri par défaut'}}</option>
+          <option value="STOCK_ASC">{{trans.t('STOCK_CROISSANT') || 'Stock croissant'}}</option>
+          <option value="STOCK_DESC">{{trans.t('STOCK_DECROISSANT') || 'Stock décroissant'}}</option>
+          <option value="NAME_ASC">{{trans.t('NOM_AZ') || 'Nom A-Z'}}</option>
+          <option value="NAME_DESC">{{trans.t('NOM_ZA') || 'Nom Z-A'}}</option>
+        </select>
+      </div>
+
+      <!-- Reset button -->
+      <button class="btn-reset-filters" (click)="resetFilters()">
+        <span class="material-symbols-outlined">restart_alt</span>
+        {{trans.t('REINITIALISER') || 'Réinitialiser'}}
+      </button>
+    </div>
   </div>
 
   <!-- Loading State -->

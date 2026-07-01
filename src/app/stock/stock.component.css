@@ -90,6 +90,95 @@
   color: var(--color-text-light);
 }
 
+/* Filter Groups and Controls */
+.filter-row-bottom {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  align-items: flex-end;
+  width: 100%;
+}
+
+@media (max-width: 1024px) {
+  .filter-row-top {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.filter-group label {
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+}
+
+.filter-group label .filter-icon {
+  font-size: 0.95rem;
+  color: var(--color-secondary);
+}
+
+.filter-group select,
+.filter-group input {
+  height: 42px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  background-color: var(--color-bg-main);
+  padding: 0 12px;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text-main);
+  outline: none;
+  transition: var(--transition-smooth);
+}
+
+.filter-group select:focus,
+.filter-group input:focus {
+  border-color: var(--color-primary);
+  background-color: var(--color-bg-card);
+}
+
+.btn-reset-filters {
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: var(--color-bg-main);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--color-text-main);
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  padding: 0 16px;
+}
+
+.btn-reset-filters:hover {
+  background-color: rgba(194, 65, 12, 0.08);
+  border-color: rgba(194, 65, 12, 0.2);
+  color: var(--color-terracotta);
+}
+
+.btn-reset-filters span {
+  font-size: 1.15rem;
+}
+
 /* Table Card Wrapper */
 .table {
   background-color: var(--color-bg-card);
